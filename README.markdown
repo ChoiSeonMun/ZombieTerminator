@@ -1,14 +1,15 @@
 # Zombie Terminator
 
 ### members
-- bae min cheon
-- choi seon mun
-- lyu ho jin
+- programming team
+	- bae min cheon
+	- choi seon mun
+	- lyu ho jin
 - art team
 	- ahn jeong hee
 	- kang yeon ju
 
 ### network
-- master
+- masteri
 	- develop
 		- [initial of each member] ex) BMC, CSM, LHJ 
