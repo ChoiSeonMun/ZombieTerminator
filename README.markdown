@@ -10,6 +10,6 @@
 	- kang yeon ju
 
 ### network
-- masteri
+- master
 	- develop
 		- [initial of each member] ex) BMC, CSM, LHJ 
