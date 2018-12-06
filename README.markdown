@@ -9,7 +9,19 @@
 	- ahn jeong hee
 	- kang yeon ju
 
-### network
-- master
+### git-flow
+- branch
+	- master
+		- contains codes of available version
+	- release `temporary`
+		- tests the features here
+		- its name depends on the version
+		- ex) release/1.0.1
 	- develop
-		- [initial of each member] ex) BMC, CSM, LHJ 
+		- contains implementations
+	- feature `temporary`
+		- implements the feature here
+		- its name depends on the task
+		- ex) feature/some-task
+- process
+	- (master ->) develop -> feature -> develop -> release -> master -> develop
