@@ -1,5 +1,8 @@
 # Zombie Terminator
 
+### version
+- Unity `2018.2.17f1`
+
 ### members
 - programming team
 	- bae min cheon
