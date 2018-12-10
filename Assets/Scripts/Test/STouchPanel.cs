@@ -1,21 +1,17 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class SGame : MonoBehaviour
+public class STouchPanel : MonoBehaviour
 {
-    private GameObject[] targets = null;
+    private Image image = null;
 
     private void Awake()
     {
-        this.targets = GameObject.FindGameObjectsWithTag("Target");
-        Array.Sort(this.targets, delegate(GameObject _1, GameObject _2)
-        {
-            return _1.name.CompareTo(_2.name);
-        });
+        var panel = GameObject.Find("Canvas/Panel");
+        this.image = panel.GetComponent<Image>();
     }
 
     private void Update()
@@ -26,9 +22,8 @@ public class SGame : MonoBehaviour
     private void ProcessInput()
     {
         bool isTargetPressed = false;
-        GameObject targetObject = null;
 
-        if(Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButton(0))
         {
             PointerEventData pointer = new PointerEventData(EventSystem.current);
             pointer.position = Input.mousePosition;
@@ -43,30 +38,23 @@ public class SGame : MonoBehaviour
                     if (go.gameObject.tag == "Target")
                     {
                         isTargetPressed = true;
-                        targetObject = go.gameObject;
-                        break;
                     }
                 }
             }
         }
 
-        this.UpdatePanel(isTargetPressed, targetObject);
+        this.UpdatePanel(isTargetPressed);
     }
 
-    private void UpdatePanel(bool _isTarget, GameObject _obj)
+    private void UpdatePanel(bool _isTarget)
     {
-        if(_isTarget)
+        if (_isTarget)
         {
-            Image image = _obj.GetComponent<Image>();
-            image.color = Color.red;
+            this.image.color = Color.red;
         }
         else
         {
-            foreach(GameObject go in this.targets)
-            {
-                Image image = go.GetComponent<Image>();
-                image.color = Color.white;
-            }
+            this.image.color = Color.gray;
         }
     }
 }
