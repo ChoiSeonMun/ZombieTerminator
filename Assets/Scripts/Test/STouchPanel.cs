@@ -6,13 +6,11 @@ using UnityEngine.EventSystems;
 
 public class STouchPanel : MonoBehaviour
 {
-    private RectTransform rect = null;
     private Image image = null;
 
     private void Awake()
     {
         var panel = GameObject.Find("Canvas/Panel");
-        this.rect = panel.GetComponent<RectTransform>();
         this.image = panel.GetComponent<Image>();
     }
 
