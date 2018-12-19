@@ -27,8 +27,11 @@ public class SGame : MonoBehaviour
     private Button bYes = null;
     private Button bNo = null;
     private Text tLife = null;
+    private Text tReload = null;
+    private Text tBullet = null;
     private GameObject pEnd = null;
     private Button bOk = null;
+    private Button bReload = null;
 
     private GameState state = GameState.UNDEFINED;
     private Dictionary<GameState, Action> updates = null;
@@ -38,6 +41,13 @@ public class SGame : MonoBehaviour
     private System.Random rand = null;
 
     private int life = -1;
+
+    private int maxBullet = 0;
+    private int damage = 0;
+    private int ammo = 0;
+    private int bullets = 0;
+    private bool isReloading = false;
+    private float reloadTime = float.NaN;
 
     private void Awake()
     {
@@ -79,6 +89,16 @@ public class SGame : MonoBehaviour
         this.bOk.onClick.AddListener(this.OnClickOk);
         this.pEnd.SetActive(false);
 
+        obj = GameObject.Find("Canvas/PReload/Button");
+        this.bReload = obj.GetComponent<Button>();
+        this.bReload.onClick.AddListener(this.OnClickReload);
+
+        obj = GameObject.Find("Canvas/PReload/Button/Text");
+        this.tReload = obj.GetComponent<Text>();
+
+        obj = GameObject.Find("Canvas/PBullet/Text");
+        this.tBullet = obj.GetComponent<Text>();
+
         this.state = GameState.READY;
 
         this.updates = new Dictionary<GameState, Action>();
@@ -93,7 +113,16 @@ public class SGame : MonoBehaviour
 
         this.life = 3;
         this.tLife.text = "♡ " + this.life.ToString();
-    }
+
+        this.maxBullet = 30;
+        this.damage = 35;
+        this.ammo = 10;
+        this.bullets = 30;
+        this.reloadTime = 1.5f;
+    
+        this.tReload.text = "R :" + this.ammo.ToString();
+        this.tBullet.text = this.bullets.ToString() + "/" + this.maxBullet.ToString(); 
+}
 
     #region Functions to update
 
@@ -122,8 +151,7 @@ public class SGame : MonoBehaviour
     {
         if (_isTarget)
         {
-            Image image = _obj.GetComponent<Image>();
-            image.color = Color.red;
+            Shoot(_obj);
         }
         else
         {
@@ -194,6 +222,20 @@ public class SGame : MonoBehaviour
         }
     }
 
+    private void OnClickReload()
+    {
+        if (this.state == GameState.PLAYING)
+        {
+            // 타임 딜레이 기능 추가 할 것.
+            // 리로드 중에는 리로드가 되어서는 안됨.
+            if (!isReloading)
+            {
+                Reload();
+            }
+            
+        }
+    }
+
     private void OnClickYes()
     {
         SceneManager.LoadScene("Main");
@@ -261,6 +303,43 @@ public class SGame : MonoBehaviour
             {
                 this.state = GameState.GAMEOVER;
                 this.pEnd.SetActive(true);
+            }
+        }
+    }
+
+
+    #endregion
+
+    #region Functions to Gun System
+
+    public void Shoot(GameObject _obj)
+    {
+        if (this.state == GameState.PLAYING)
+        {
+            if (this.bullets > 0)
+            {
+                Image image = _obj.GetComponent<Image>();
+                image.color = Color.red;
+                if (_obj.activeSelf)
+                {
+                    _obj.gameObject.transform.GetChild(0).gameObject.GetComponent<SZombie>().getDamaged(this.damage);
+                }
+                bullets--;
+                this.tBullet.text = this.bullets.ToString() + "/" + this.maxBullet.ToString();
+            }
+        }
+    }
+
+    public void Reload()
+    {
+        if (this.state == GameState.PLAYING)
+        {
+            if (this.ammo > 0)
+            {
+                this.ammo--;
+                bullets = maxBullet;
+                this.tReload.text = "R :" + this.ammo.ToString();
+                this.tBullet.text = this.bullets.ToString() + "/" + this.maxBullet.ToString();
             }
         }
     }
