@@ -27,4 +27,4 @@
 		- its name depends on the task
 		- ex) feature/some-task
 - process
-	- develop -> feature -> develop -> release -> master
+	- develop -> feature -> develop ( -> release ) -> master
