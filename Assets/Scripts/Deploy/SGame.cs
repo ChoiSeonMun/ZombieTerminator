@@ -35,6 +35,7 @@ public class SGame : MonoBehaviour
     private Button bReload = null;
     private Button bBomb = null;
     private Text tBomb = null;
+    private Text tScore = null;
 
     private GameState state = GameState.UNDEFINED;
     private Dictionary<GameState, Action> updates = null;
@@ -52,7 +53,8 @@ public class SGame : MonoBehaviour
     private bool isReloading = false;
     private float reloadTime = float.NaN;
 
-    private int bomb = 3;
+    private int bomb = -1;
+    private int score = -1;
 
     private void Awake()
     {
@@ -106,6 +108,9 @@ public class SGame : MonoBehaviour
         obj = GameObject.Find("Canvas/PBomb/Button/Text");
         this.tBomb = obj.GetComponent<Text>();
 
+        obj = GameObject.Find("Canvas/PScore/Text");
+        this.tScore = obj.GetComponent<Text>();
+
         this.state = GameState.READY;
 
         this.updates = new Dictionary<GameState, Action>();
@@ -129,8 +134,12 @@ public class SGame : MonoBehaviour
     
         this.tReload.text = "R :" + this.ammo.ToString();
         this.tBullet.text = this.bullets.ToString() + "/" + this.maxBullet.ToString();
+
+        this.bomb = 3;
         this.tBomb.text = "B " + this.bomb.ToString();
-}
+        this.score = 0;
+        this.tScore.text = "SCORE " + this.score.ToString();
+    }
 
     #region Functions to update
 
@@ -148,6 +157,7 @@ public class SGame : MonoBehaviour
     {
         this.InputPlaying();
         this.CheckSpawn();
+        this.UpdateScore();
     }
 
     private void UpdatePaused()
@@ -198,8 +208,10 @@ public class SGame : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            PointerEventData pointer = new PointerEventData(EventSystem.current);
-            pointer.position = Input.mousePosition;
+            PointerEventData pointer = new PointerEventData(EventSystem.current)
+            {
+                position = Input.mousePosition
+            };
 
             List<RaycastResult> raycastResults = new List<RaycastResult>();
             EventSystem.current.RaycastAll(pointer, raycastResults);
@@ -292,7 +304,7 @@ public class SGame : MonoBehaviour
             if(target.transform.childCount == 0)
             {
                 GameObject zombie = Instantiate(this.oZombie, target.transform) as GameObject;
-                zombie.transform.parent = target.transform;
+                zombie.transform.SetParent(target.transform);
                 break;
             }
         }
@@ -326,15 +338,13 @@ public class SGame : MonoBehaviour
                 Image image = _obj.GetComponent<Image>();
                 image.color = Color.red;
 
-                GameObject zombie = _obj.gameObject.transform.GetChild(0).gameObject;
-
-                if (zombie.activeSelf)
+                if (_obj.transform.childCount > 0)
                 {
+                    GameObject zombie = _obj.gameObject.transform.GetChild(0).gameObject;
                     zombie.GetComponent<SZombie>().getDamaged(this.damage);
                 }
 
                 bullets--;
-
                 this.tBullet.text = this.bullets.ToString() + "/" + this.maxBullet.ToString();
             }
         }
@@ -381,6 +391,20 @@ public class SGame : MonoBehaviour
                 Destroy(target.gameObject.transform.GetChild(0).gameObject);
             }
         }
+    }
+
+    #endregion
+
+    #region Functions for score
+
+    public void IncreaseScore(int _s)
+    {
+        this.score += _s;
+    }
+
+    private void UpdateScore()
+    {
+        this.tScore.text = "SCORE " + this.score.ToString();
     }
 
     #endregion
