@@ -11,8 +11,6 @@ public class SZombie : MonoBehaviour
     private float runtime = float.NaN;
     private int life = 0;
 
-    private UnityEvent hit = null;
-
     private void Start()
     {
         var obj = GameObject.Find("Manager");
@@ -21,9 +19,6 @@ public class SZombie : MonoBehaviour
         this.lifetime = 3.0f;
         this.runtime = 0.0f;
         this.life = 100;
-
-        this.hit = new UnityEvent();
-        this.hit.AddListener(this.manager.OnHit);
     }
 
     private void Update()
@@ -32,9 +27,17 @@ public class SZombie : MonoBehaviour
 
         if(this.runtime >= this.lifetime)
         {
-            this.hit.Invoke();
+            this.manager.OnHit();
 
             this.Die();
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if(this.runtime < this.lifetime)
+        {
+            this.manager.IncreaseScore(10);
         }
     }
 
