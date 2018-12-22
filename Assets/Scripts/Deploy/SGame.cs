@@ -18,8 +18,9 @@ public class SGame : MonoBehaviour
         GAMEOVER
     };
 
+    private UnityEngine.Object oZombie = null;
+
     private GameObject[] targets = null;
-    private GameObject[] zombies = null;
     private GameObject pStart = null;
     private Button bStart = null;
     private Button bMenu = null;
@@ -32,6 +33,8 @@ public class SGame : MonoBehaviour
     private GameObject pEnd = null;
     private Button bOk = null;
     private Button bReload = null;
+    private Button bBomb = null;
+    private Text tBomb = null;
 
     private GameState state = GameState.UNDEFINED;
     private Dictionary<GameState, Action> updates = null;
@@ -49,19 +52,17 @@ public class SGame : MonoBehaviour
     private bool isReloading = false;
     private float reloadTime = float.NaN;
 
+    private int bomb = 3;
+
     private void Awake()
     {
+        this.oZombie = Resources.Load("Prefabs/Zombie");
+
         this.targets = GameObject.FindGameObjectsWithTag("Target");
         Array.Sort(this.targets, delegate (GameObject _1, GameObject _2)
         {
             return _1.name.CompareTo(_2.name);
         });
-        this.zombies = new GameObject[9];
-        for(int i = 0; i < 9; ++i)
-        {
-            this.zombies[i] = this.targets[i].gameObject.transform.GetChild(0).gameObject;
-            this.zombies[i].SetActive(false);
-        }
         this.pStart = GameObject.Find("Canvas/PStart");
         var obj = GameObject.Find("Canvas/PStart/Button");
         this.bStart = obj.GetComponent<Button>();
@@ -99,6 +100,12 @@ public class SGame : MonoBehaviour
         obj = GameObject.Find("Canvas/PBullet/Text");
         this.tBullet = obj.GetComponent<Text>();
 
+        obj = GameObject.Find("Canvas/PBomb/Button");
+        this.bBomb = obj.GetComponent<Button>();
+        this.bBomb.onClick.AddListener(this.OnClickBomb);
+        obj = GameObject.Find("Canvas/PBomb/Button/Text");
+        this.tBomb = obj.GetComponent<Text>();
+
         this.state = GameState.READY;
 
         this.updates = new Dictionary<GameState, Action>();
@@ -121,7 +128,8 @@ public class SGame : MonoBehaviour
         this.reloadTime = 1.5f;
     
         this.tReload.text = "R :" + this.ammo.ToString();
-        this.tBullet.text = this.bullets.ToString() + "/" + this.maxBullet.ToString(); 
+        this.tBullet.text = this.bullets.ToString() + "/" + this.maxBullet.ToString();
+        this.tBomb.text = "B " + this.bomb.ToString();
 }
 
     #region Functions to update
@@ -269,7 +277,6 @@ public class SGame : MonoBehaviour
         {
             order[i] = i;
         }
-
         for(int i = 8; i >= 0; --i)
         {
             int num = this.rand.Next(i + 1);
@@ -280,13 +287,12 @@ public class SGame : MonoBehaviour
 
         for(int i = 0; i < 9; ++i)
         {
-            if(this.zombies[order[i]].activeSelf)
+            GameObject target = this.targets[order[i]];
+
+            if(target.transform.childCount == 0)
             {
-                continue;
-            }
-            else
-            {
-                this.zombies[order[i]].SetActive(true);
+                GameObject zombie = Instantiate(this.oZombie, target.transform) as GameObject;
+                zombie.transform.parent = target.transform;
                 break;
             }
         }
@@ -307,10 +313,9 @@ public class SGame : MonoBehaviour
         }
     }
 
-
     #endregion
 
-    #region Functions to Gun System
+    #region Functions for gun system
 
     public void Shoot(GameObject _obj)
     {
@@ -320,11 +325,16 @@ public class SGame : MonoBehaviour
             {
                 Image image = _obj.GetComponent<Image>();
                 image.color = Color.red;
-                if (_obj.activeSelf)
+
+                GameObject zombie = _obj.gameObject.transform.GetChild(0).gameObject;
+
+                if (zombie.activeSelf)
                 {
-                    _obj.gameObject.transform.GetChild(0).gameObject.GetComponent<SZombie>().getDamaged(this.damage);
+                    zombie.GetComponent<SZombie>().getDamaged(this.damage);
                 }
+
                 bullets--;
+
                 this.tBullet.text = this.bullets.ToString() + "/" + this.maxBullet.ToString();
             }
         }
@@ -340,6 +350,35 @@ public class SGame : MonoBehaviour
                 bullets = maxBullet;
                 this.tReload.text = "R :" + this.ammo.ToString();
                 this.tBullet.text = this.bullets.ToString() + "/" + this.maxBullet.ToString();
+            }
+        }
+    }
+
+    #endregion
+
+    #region Functions for item
+
+    private void OnClickBomb()
+    {
+        if(this.state == GameState.PLAYING)
+        {
+            if (this.bomb > 0)
+            {
+                this.bomb = this.bomb - 1;
+                this.tBomb.text = "B " + this.bomb.ToString();
+
+                this.ProcessBomb();
+            }
+        }
+    }
+
+    private void ProcessBomb()
+    {
+        foreach (GameObject target in this.targets)
+        {
+            if(target.transform.childCount > 0)
+            {
+                Destroy(target.gameObject.transform.GetChild(0).gameObject);
             }
         }
     }
