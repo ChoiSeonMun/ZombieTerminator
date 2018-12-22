@@ -33,18 +33,23 @@ public class SZombie : MonoBehaviour
         if(this.runtime >= this.lifetime)
         {
             this.hit.Invoke();
-            this.gameObject.SetActive(false);
-            this.runtime = 0.0f;
-        }
 
-        if (this.life <= 0) {
-            this.gameObject.SetActive(false);
-            this.life = 100;
-            this.runtime = 0.0f;
+            this.Die();
         }
     }
 
-    public void getDamaged(int damage) {
+    public void getDamaged(int damage)
+    {
         this.life = this.life - damage;
+
+        if(this.life <= 0.0f)
+        {
+            this.Die();
+        }
+    }
+
+    private void Die()
+    {
+        Destroy(this.gameObject);
     }
 }
