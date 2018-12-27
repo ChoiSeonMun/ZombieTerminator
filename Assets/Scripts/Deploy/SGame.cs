@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.Events;
+using UnityEngine.Advertisements;
 
 public class SGame : MonoBehaviour
 {
@@ -55,6 +56,8 @@ public class SGame : MonoBehaviour
 
     private int bomb = -1;
     private int score = -1;
+
+    private static int mGameTrial = 0;
 
     private void Awake()
     {
@@ -183,7 +186,12 @@ public class SGame : MonoBehaviour
 
     private void UpdateGameover()
     {
-        ;
+        // 게임을 5번 플레이 했다면, 광고를 시청하게 한다.
+        if (mGameTrial == 5)
+        {
+            Advertisement.Show();
+            mGameTrial = 0;
+        }
     }
 
     private void OnClickOk()
@@ -319,6 +327,9 @@ public class SGame : MonoBehaviour
 
             if (this.life <= 0)
             {
+                // 게임이 끝나면, 게임 시도 횟수를 증가한다.
+                ++mGameTrial;
+
                 this.state = GameState.GAMEOVER;
                 this.pEnd.SetActive(true);
             }
