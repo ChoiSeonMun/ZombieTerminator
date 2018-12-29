@@ -49,10 +49,14 @@ public class SGame : MonoBehaviour
 
     private int maxBullet = 0;
     private int damage = 0;
-    private int ammo = 0;
     private int bullets = 0;
     private bool isReloading = false;
-    private float reloadTime = float.NaN;
+    private float reloadTime = 0.0f;
+    private float reloadDelay = 0.8f;
+    private float gunDelay = 0.2f;
+    private float lastShootTime = 0.0f;
+    private float nowShootTime = 0.0f;
+    private float sceneTimer = 0.0f;
 
     private int bomb = -1;
     private int score = -1;
@@ -131,11 +135,10 @@ public class SGame : MonoBehaviour
 
         this.maxBullet = 30;
         this.damage = 35;
-        this.ammo = 10;
         this.bullets = 30;
         this.reloadTime = 1.5f;
-    
-        this.tReload.text = "R :" + this.ammo.ToString();
+
+        this.tReload.text = "R";
         this.tBullet.text = this.bullets.ToString() + "/" + this.maxBullet.ToString();
 
         this.bomb = 3;
@@ -161,6 +164,7 @@ public class SGame : MonoBehaviour
         this.InputPlaying();
         this.CheckSpawn();
         this.UpdateScore();
+        this.UpdateSceneTimer();
     }
 
     private void UpdatePaused()
@@ -182,6 +186,10 @@ public class SGame : MonoBehaviour
                 image.color = Color.white;
             }
         }
+    }
+
+    private void UpdateSceneTimer() {
+        this.sceneTimer += Time.deltaTime;
     }
 
     private void UpdateGameover()
@@ -344,6 +352,9 @@ public class SGame : MonoBehaviour
     {
         if (this.state == GameState.PLAYING)
         {
+            this.nowShootTime = this.sceneTimer;
+            if ((nowShootTime - lastShootTime) < gunDelay) return;
+            if ((sceneTimer - reloadTime) < reloadDelay) return;
             if (this.bullets > 0)
             {
                 Image image = _obj.GetComponent<Image>();
@@ -357,6 +368,8 @@ public class SGame : MonoBehaviour
 
                 bullets--;
                 this.tBullet.text = this.bullets.ToString() + "/" + this.maxBullet.ToString();
+
+                lastShootTime = this.sceneTimer;
             }
         }
     }
@@ -365,13 +378,9 @@ public class SGame : MonoBehaviour
     {
         if (this.state == GameState.PLAYING)
         {
-            if (this.ammo > 0)
-            {
-                this.ammo--;
-                bullets = maxBullet;
-                this.tReload.text = "R :" + this.ammo.ToString();
-                this.tBullet.text = this.bullets.ToString() + "/" + this.maxBullet.ToString();
-            }
+            this.reloadTime = sceneTimer;
+            this.bullets = maxBullet;
+            this.tBullet.text = this.bullets.ToString() + "/" + this.maxBullet.ToString();
         }
     }
 
