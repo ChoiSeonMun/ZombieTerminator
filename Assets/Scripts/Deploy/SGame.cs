@@ -8,18 +8,17 @@ using UnityEngine.SceneManagement;
 using UnityEngine.Events;
 using UnityEngine.Advertisements;
 
+public enum GameState
+{
+    UNDEFINED,
+    READY,
+    PLAYING,
+    PAUSED,
+    GAMEOVER
+};
 
 public class SGame : MonoBehaviour
 {
-    public enum GameState
-    {
-        UNDEFINED,
-        READY,
-        PLAYING,
-        PAUSED,
-        GAMEOVER
-    };
-
     private UnityEngine.Object oZombie = null;
 
     private GameObject[] targets = null;
@@ -49,7 +48,7 @@ public class SGame : MonoBehaviour
 
     private int life = -1;
 
-    // variable for gun-system
+    // gun system 을 위한 변수들
     private int maxBullet = 0;
     private int damage = 0;
     private int bullets = 0;
@@ -308,13 +307,12 @@ public class SGame : MonoBehaviour
 
     private void SpawnZombie()
     {
+        // Fisher-Yates 셔플 알고리듬
         int[] order = new int[9];
-
         for(int i = 0; i < 9; ++i)
         {
             order[i] = i;
         }
-
         for(int i = 8; i >= 0; --i)
         {
             int num = this.rand.Next(i + 1);
@@ -323,39 +321,32 @@ public class SGame : MonoBehaviour
             order[i] = temp;
         }
 
+        // 무작위의 순서대로 타겟들을 순회
         for(int i = 0; i < 9; ++i)
         {
             GameObject target = this.targets[order[i]];
 
+            // 타겟에 자식이 없다면 ( 좀비가 없다면 )
             if(target.transform.childCount == 0)
             {
+                // 좀비 객체를 생성하고 타겟의 자식으로 설정
                 GameObject zombie = Instantiate(this.oZombie, target.transform) as GameObject;
                 zombie.transform.SetParent(target.transform);
 
-                // Debug.Log(zombie.GetInstanceID());
-
-                // 특수 좀비 소환, 임시로 4번에 한번으로
-                if (spawnCount == 3)
+                // 특수좀비 스폰카운터에 도달했을 경우
+                if (this.spawnCount == 3)
                 {
+                    this.spawnCount = 0;
+
+                    // 일반좀비와의 구분을 위해 이미지 변경 및 특수타입 설정
                     Image image = zombie.transform.GetComponent<Image>();
                     image.color = Color.blue;
-
-                    zombie.GetComponent<SZombie>().setZombieType(ZombieType.SPECIAL);
-
-                    // 아래의 Shoot 메소드와 같이 자식을 참조시키는 방법 이용해봤지만 실패...
-                    GameObject obj = target.transform.GetChild(0).gameObject;
-                    obj.transform.GetComponent<SZombie>().setZombieType(ZombieType.SPECIAL);
-
-                    // 이것이 zombie와 같은 것을 가리키는지 확인
-                    Debug.Log(zombie.GetComponent<SZombie>().getZombieType());
-                    Debug.Log(zombie.GetComponent<SZombie>().getLife());
-                    Debug.Log(zombie.GetInstanceID());
-
-                    spawnCount = 0;
+                    zombie.GetComponent<SZombie>().SetZombieType(ZombieType.SPECIAL);
                 }
 
-                spawnCount++;
+                this.spawnCount++;
 
+                // 좀비를 스폰했으므로 함수 종료
                 break;
             }
         }
@@ -375,7 +366,6 @@ public class SGame : MonoBehaviour
 
                 this.state = GameState.GAMEOVER;
                 this.pEnd.SetActive(true);
-
             }
         }
     }
@@ -389,9 +379,16 @@ public class SGame : MonoBehaviour
         if (this.state == GameState.PLAYING)
         {
             this.nowShootTime = this.sceneTimer;
-            if ((nowShootTime - lastShootTime) < gunDelay) return;
-            if ((sceneTimer - reloadTime) < reloadDelay) return;
-            if (this.bullets > 0)
+
+            if ((nowShootTime - lastShootTime) < gunDelay)
+            {
+                return;
+            }
+            else if ((sceneTimer - reloadTime) < reloadDelay)
+            {
+                return;
+            }
+            else if (this.bullets > 0)
             {
                 Image image = _obj.GetComponent<Image>();
                 image.color = Color.red;
@@ -400,8 +397,6 @@ public class SGame : MonoBehaviour
                 {
                     GameObject zombie = _obj.transform.GetChild(0).gameObject;
                     zombie.GetComponent<SZombie>().getDamaged(this.damage);
-                    
-                    // Debug.Log(zombie.transform.GetComponent<SZombie>().getZombieType());
                 }
                 
                 bullets--;
@@ -451,8 +446,10 @@ public class SGame : MonoBehaviour
         }
     }
 
-    public void getBombItem(int num) {
+    public void GetBomb(int num)
+    {
         bomb = bomb + num;
+
         this.tBomb.text = "B " + this.bomb.ToString();
     }
 

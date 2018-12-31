@@ -3,7 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public enum ZombieType { NORMAL, SPECIAL };
+public enum ZombieType
+{
+    UNDEFINED,
+    NORMAL,
+    SPECIAL
+};
 
 public class SZombie : MonoBehaviour
 {
@@ -12,20 +17,23 @@ public class SZombie : MonoBehaviour
     private float lifetime = float.NaN;
     private float runtime = float.NaN;
     private int life = 0;
-    private ZombieType zombieType;
+    private ZombieType zombieType = ZombieType.UNDEFINED;
     
-    private void Start()
+    private void Awake()
     {
         var obj = GameObject.Find("Manager");
         this.manager = obj.GetComponent<SGame>();
 
-        this.setZombieType(ZombieType.NORMAL);
-
+        this.zombieType = ZombieType.NORMAL;
+        this.life = 100;
+        this.lifetime = 3.0f;
+        this.runtime = 0.0f;
     }
 
     private void Update()
     {
-        if(manager.getState() == SGame.GameState.PLAYING) { 
+        if(manager.getState() == GameState.PLAYING)
+        { 
             this.runtime += Time.deltaTime;
 
             if(this.runtime >= this.lifetime)
@@ -51,39 +59,27 @@ public class SZombie : MonoBehaviour
 
         if(this.life <= 0.0f)
         {
-            if (this.zombieType == ZombieType.SPECIAL)
-            {
-                manager.getBombItem(1);
-            }
             this.Die();
         }
     }
 
     private void Die()
     {
-        // Debug.Log(this.getZombieType());
+        // 이 좀비가 특수좀비일 경우 폭탄 아이템을 증가시킨다
+        if (this.zombieType == ZombieType.SPECIAL)
+        {
+            manager.GetBomb(1);
+        }
+
         Destroy(this.gameObject);
     }
 
-    public void setZombieType(ZombieType zombieType)
+    public void SetZombieType(ZombieType zombieType)
     {
         this.zombieType = zombieType;
-
-        if (this.zombieType == ZombieType.NORMAL)
-        {
-            this.life = 100;
-            this.lifetime = 3.0f;
-            this.runtime = 0.0f;
-        }
-        else if(this.zombieType == ZombieType.SPECIAL)
-        {
-            this.life = 300;
-            this.lifetime = 3.0f;
-            this.runtime = 0.0f;
-        }
     }
 
-    public ZombieType getZombieType()
+    public ZombieType GetZombieType()
     {
         return this.zombieType;
     }
