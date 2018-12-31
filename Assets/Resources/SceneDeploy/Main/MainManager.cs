@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class SMain : MonoBehaviour
+public class MainManager : MonoBehaviour
 {
     Button bStart = null;
     Button bRank = null;
