@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class SRank : MonoBehaviour
+public class RankManager : MonoBehaviour
 {
     private Button bBack = null;
 

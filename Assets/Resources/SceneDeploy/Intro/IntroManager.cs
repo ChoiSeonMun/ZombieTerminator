@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class SIntro : MonoBehaviour
+public class IntroManager : MonoBehaviour
 {
     private GameObject canvas = null;
     private Text notice = null;
@@ -33,14 +33,7 @@ public class SIntro : MonoBehaviour
 
     private void ProcessInput()
     {
-        if (Input.touchCount > 0)
-        {
-            if (Input.GetTouch(0).phase == TouchPhase.Ended)
-            {
-                this.LoadMain();
-            }
-        }
-        else if (Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonUp(0))
         {
             this.LoadMain();
         }

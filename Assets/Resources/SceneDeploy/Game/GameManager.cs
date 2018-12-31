@@ -5,7 +5,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
-using UnityEngine.Events;
 using UnityEngine.Advertisements;
 
 public enum GameState
@@ -17,7 +16,7 @@ public enum GameState
     GAMEOVER
 };
 
-public class SGame : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
     private UnityEngine.Object oZombie = null;
 
@@ -341,7 +340,7 @@ public class SGame : MonoBehaviour
                     // 일반좀비와의 구분을 위해 이미지 변경 및 특수타입 설정
                     Image image = zombie.transform.GetComponent<Image>();
                     image.color = Color.blue;
-                    zombie.GetComponent<SZombie>().SetZombieType(ZombieType.SPECIAL);
+                    zombie.GetComponent<Zombie>().SetZombieType(ZombieType.SPECIAL);
                 }
 
                 this.spawnCount++;
@@ -396,7 +395,7 @@ public class SGame : MonoBehaviour
                 if (_obj.transform.childCount > 0)
                 {
                     GameObject zombie = _obj.transform.GetChild(0).gameObject;
-                    zombie.GetComponent<SZombie>().getDamaged(this.damage);
+                    zombie.GetComponent<Zombie>().getDamaged(this.damage);
                 }
                 
                 bullets--;

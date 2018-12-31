@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 public enum ZombieType
 {
@@ -10,9 +9,9 @@ public enum ZombieType
     SPECIAL
 };
 
-public class SZombie : MonoBehaviour
+public class Zombie : MonoBehaviour
 {
-    private SGame manager = null;
+    private GameManager manager = null;
 
     private float lifetime = float.NaN;
     private float runtime = float.NaN;
@@ -22,7 +21,7 @@ public class SZombie : MonoBehaviour
     private void Awake()
     {
         var obj = GameObject.Find("Manager");
-        this.manager = obj.GetComponent<SGame>();
+        this.manager = obj.GetComponent<GameManager>();
 
         this.zombieType = ZombieType.NORMAL;
         this.life = 100;
