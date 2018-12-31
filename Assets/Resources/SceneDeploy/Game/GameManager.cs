@@ -5,19 +5,19 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
-using UnityEngine.Events;
+using UnityEngine.Advertisements;
 
-public class SGame : MonoBehaviour
+public enum GameState
 {
-    private enum GameState
-    {
-        UNDEFINED,
-        READY,
-        PLAYING,
-        PAUSED,
-        GAMEOVER
-    };
+    UNDEFINED,
+    READY,
+    PLAYING,
+    PAUSED,
+    GAMEOVER
+};
 
+public class GameManager : MonoBehaviour
+{
     private UnityEngine.Object oZombie = null;
 
     private GameObject[] targets = null;
@@ -28,7 +28,6 @@ public class SGame : MonoBehaviour
     private Button bYes = null;
     private Button bNo = null;
     private Text tLife = null;
-    private Text tReload = null;
     private Text tBullet = null;
     private GameObject pEnd = null;
     private Button bOk = null;
@@ -42,19 +41,27 @@ public class SGame : MonoBehaviour
 
     private float cooldown = float.NaN;
     private float timer = float.NaN;
+    private int spawnCount = 0;
     private System.Random rand = null;
 
     private int life = -1;
 
+    // gun system 을 위한 변수들
     private int maxBullet = 0;
     private int damage = 0;
-    private int ammo = 0;
     private int bullets = 0;
     private bool isReloading = false;
-    private float reloadTime = float.NaN;
+    private float reloadTime = 0.0f;
+    private float reloadDelay = 0.8f;
+    private float gunDelay = 0.1f;
+    private float lastShootTime = 0.0f;
+    private float nowShootTime = 0.0f;
+    private float sceneTimer = 0.0f;
 
     private int bomb = -1;
     private int score = -1;
+
+    private static int mGameTrial = 0;
 
     private void Awake()
     {
@@ -96,16 +103,13 @@ public class SGame : MonoBehaviour
         this.bReload = obj.GetComponent<Button>();
         this.bReload.onClick.AddListener(this.OnClickReload);
 
-        obj = GameObject.Find("Canvas/PReload/Button/Text");
-        this.tReload = obj.GetComponent<Text>();
-
         obj = GameObject.Find("Canvas/PBullet/Text");
         this.tBullet = obj.GetComponent<Text>();
 
         obj = GameObject.Find("Canvas/PBomb/Button");
         this.bBomb = obj.GetComponent<Button>();
         this.bBomb.onClick.AddListener(this.OnClickBomb);
-        obj = GameObject.Find("Canvas/PBomb/Button/Text");
+        obj = GameObject.Find("Canvas/PBomb/Text");
         this.tBomb = obj.GetComponent<Text>();
 
         obj = GameObject.Find("Canvas/PScore/Text");
@@ -124,21 +128,24 @@ public class SGame : MonoBehaviour
         this.rand = new System.Random();
 
         this.life = 3;
-        this.tLife.text = "♡ " + this.life.ToString();
+        this.tLife.text = "X " + this.life.ToString();
 
         this.maxBullet = 30;
         this.damage = 35;
-        this.ammo = 10;
         this.bullets = 30;
         this.reloadTime = 1.5f;
-    
-        this.tReload.text = "R :" + this.ammo.ToString();
-        this.tBullet.text = this.bullets.ToString() + "/" + this.maxBullet.ToString();
+
+        this.tBullet.text = this.bullets.ToString() + " / " + this.maxBullet.ToString();
 
         this.bomb = 3;
-        this.tBomb.text = "B " + this.bomb.ToString();
+        this.tBomb.text = "X " + this.bomb.ToString();
         this.score = 0;
-        this.tScore.text = "SCORE " + this.score.ToString();
+        this.tScore.text = this.score.ToString();
+    }
+
+    public GameState getState()
+    {
+        return this.state;
     }
 
     #region Functions to update
@@ -158,6 +165,7 @@ public class SGame : MonoBehaviour
         this.InputPlaying();
         this.CheckSpawn();
         this.UpdateScore();
+        this.UpdateSceneTimer();
     }
 
     private void UpdatePaused()
@@ -181,9 +189,18 @@ public class SGame : MonoBehaviour
         }
     }
 
+    private void UpdateSceneTimer() {
+        this.sceneTimer += Time.deltaTime;
+    }
+
     private void UpdateGameover()
     {
-        ;
+        // 게임을 5번 플레이 했다면, 광고를 시청하게 한다.
+        if (mGameTrial == 5)
+        {
+            Advertisement.Show();
+            mGameTrial = 0;
+        }
     }
 
     private void OnClickOk()
@@ -284,6 +301,7 @@ public class SGame : MonoBehaviour
 
     private void SpawnZombie()
     {
+        // Fisher-Yates 셔플 알고리듬
         int[] order = new int[9];
         for(int i = 0; i < 9; ++i)
         {
@@ -297,14 +315,32 @@ public class SGame : MonoBehaviour
             order[i] = temp;
         }
 
+        // 무작위의 순서대로 타겟들을 순회
         for(int i = 0; i < 9; ++i)
         {
             GameObject target = this.targets[order[i]];
 
+            // 타겟에 자식이 없다면 ( 좀비가 없다면 )
             if(target.transform.childCount == 0)
             {
+                // 좀비 객체를 생성하고 타겟의 자식으로 설정
                 GameObject zombie = Instantiate(this.oZombie, target.transform) as GameObject;
                 zombie.transform.SetParent(target.transform);
+
+                // 특수좀비 스폰카운터에 도달했을 경우
+                if (this.spawnCount == 3)
+                {
+                    this.spawnCount = 0;
+
+                    // 일반좀비와의 구분을 위해 이미지 변경 및 특수타입 설정
+                    Image image = zombie.transform.GetComponent<Image>();
+                    image.color = Color.blue;
+                    zombie.GetComponent<Zombie>().SetZombieType(ZombieType.SPECIAL);
+                }
+
+                this.spawnCount++;
+
+                // 좀비를 스폰했으므로 함수 종료
                 break;
             }
         }
@@ -315,10 +351,13 @@ public class SGame : MonoBehaviour
         if (this.state == GameState.PLAYING)
         {
             this.life -= 1;
-            this.tLife.text = "♡ " + this.life.ToString();
+            this.tLife.text = "X " + this.life.ToString();
 
             if (this.life <= 0)
             {
+                // 게임이 끝나면, 게임 시도 횟수를 증가한다.
+                ++mGameTrial;
+
                 this.state = GameState.GAMEOVER;
                 this.pEnd.SetActive(true);
             }
@@ -333,19 +372,31 @@ public class SGame : MonoBehaviour
     {
         if (this.state == GameState.PLAYING)
         {
-            if (this.bullets > 0)
+            this.nowShootTime = this.sceneTimer;
+
+            if ((nowShootTime - lastShootTime) < gunDelay)
+            {
+                return;
+            }
+            else if ((sceneTimer - reloadTime) < reloadDelay)
+            {
+                return;
+            }
+            else if (this.bullets > 0)
             {
                 Image image = _obj.GetComponent<Image>();
                 image.color = Color.red;
 
                 if (_obj.transform.childCount > 0)
                 {
-                    GameObject zombie = _obj.gameObject.transform.GetChild(0).gameObject;
-                    zombie.GetComponent<SZombie>().getDamaged(this.damage);
+                    GameObject zombie = _obj.transform.GetChild(0).gameObject;
+                    zombie.GetComponent<Zombie>().getDamaged(this.damage);
                 }
-
+                
                 bullets--;
-                this.tBullet.text = this.bullets.ToString() + "/" + this.maxBullet.ToString();
+                this.tBullet.text = this.bullets.ToString() + " / " + this.maxBullet.ToString();
+
+                lastShootTime = this.sceneTimer;
             }
         }
     }
@@ -354,13 +405,9 @@ public class SGame : MonoBehaviour
     {
         if (this.state == GameState.PLAYING)
         {
-            if (this.ammo > 0)
-            {
-                this.ammo--;
-                bullets = maxBullet;
-                this.tReload.text = "R :" + this.ammo.ToString();
-                this.tBullet.text = this.bullets.ToString() + "/" + this.maxBullet.ToString();
-            }
+            this.reloadTime = sceneTimer;
+            this.bullets = maxBullet;
+            this.tBullet.text = this.bullets.ToString() + " / " + this.maxBullet.ToString();
         }
     }
 
@@ -375,7 +422,7 @@ public class SGame : MonoBehaviour
             if (this.bomb > 0)
             {
                 this.bomb = this.bomb - 1;
-                this.tBomb.text = "B " + this.bomb.ToString();
+                this.tBomb.text = "X " + this.bomb.ToString();
 
                 this.ProcessBomb();
             }
@@ -393,6 +440,13 @@ public class SGame : MonoBehaviour
         }
     }
 
+    public void GetBomb(int num)
+    {
+        bomb = bomb + num;
+
+        this.tBomb.text = "X " + this.bomb.ToString();
+    }
+
     #endregion
 
     #region Functions for score
@@ -404,7 +458,7 @@ public class SGame : MonoBehaviour
 
     private void UpdateScore()
     {
-        this.tScore.text = "SCORE " + this.score.ToString();
+        this.tScore.text = this.score.ToString();
     }
 
     #endregion

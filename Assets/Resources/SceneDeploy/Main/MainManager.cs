@@ -4,18 +4,18 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class SMain : MonoBehaviour
+public class MainManager : MonoBehaviour
 {
     Button bStart = null;
     Button bRank = null;
 
     private void Start()
     {
-        var obj = GameObject.Find("Canvas/Game");
+        var obj = GameObject.Find("Canvas/PStart/Button");
         this.bStart = obj.GetComponent<Button>();
         this.bStart.onClick.AddListener(this.OnClickStart);
 
-        obj = GameObject.Find("Canvas/Rank");
+        obj = GameObject.Find("Canvas/PRank/Button");
         this.bRank = obj.GetComponent<Button>();
         this.bRank.onClick.AddListener(this.OnClickRank);
     }

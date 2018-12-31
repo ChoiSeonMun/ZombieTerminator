@@ -4,9 +4,9 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class SIntro : MonoBehaviour
+public class IntroManager : MonoBehaviour
 {
-    private GameObject canvas = null;
+    private GameObject panel = null;
     private Text notice = null;
 
     private Color blink_color = Color.white;
@@ -14,11 +14,11 @@ public class SIntro : MonoBehaviour
 
     private void Awake()
     {
-        this.canvas = GameObject.Find("Canvas");
-        var children_text = this.canvas.GetComponentsInChildren<Text>();
+        this.panel = GameObject.Find("Canvas/PNotice");
+        var children_text = this.panel.GetComponentsInChildren<Text>();
         foreach (var child in children_text)
         {
-            if (child.name == "Notice")
+            if (child.name == "Text")
             {
                 this.notice = child;
             }
@@ -33,14 +33,7 @@ public class SIntro : MonoBehaviour
 
     private void ProcessInput()
     {
-        if (Input.touchCount > 0)
-        {
-            if (Input.GetTouch(0).phase == TouchPhase.Ended)
-            {
-                this.LoadMain();
-            }
-        }
-        else if (Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonUp(0))
         {
             this.LoadMain();
         }
