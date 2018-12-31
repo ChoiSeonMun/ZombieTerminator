@@ -10,7 +10,7 @@ public class RankManager : MonoBehaviour
 
     private void Start()
     {
-        GameObject obj = GameObject.Find("Canvas/Back");
+        GameObject obj = GameObject.Find("Canvas/PBack/Button");
         this.bBack = obj.GetComponent<Button>();
         this.bBack.onClick.AddListener(this.OnClickBack);
     }

@@ -28,7 +28,6 @@ public class GameManager : MonoBehaviour
     private Button bYes = null;
     private Button bNo = null;
     private Text tLife = null;
-    private Text tReload = null;
     private Text tBullet = null;
     private GameObject pEnd = null;
     private Button bOk = null;
@@ -104,16 +103,13 @@ public class GameManager : MonoBehaviour
         this.bReload = obj.GetComponent<Button>();
         this.bReload.onClick.AddListener(this.OnClickReload);
 
-        obj = GameObject.Find("Canvas/PReload/Button/Text");
-        this.tReload = obj.GetComponent<Text>();
-
         obj = GameObject.Find("Canvas/PBullet/Text");
         this.tBullet = obj.GetComponent<Text>();
 
         obj = GameObject.Find("Canvas/PBomb/Button");
         this.bBomb = obj.GetComponent<Button>();
         this.bBomb.onClick.AddListener(this.OnClickBomb);
-        obj = GameObject.Find("Canvas/PBomb/Button/Text");
+        obj = GameObject.Find("Canvas/PBomb/Text");
         this.tBomb = obj.GetComponent<Text>();
 
         obj = GameObject.Find("Canvas/PScore/Text");
@@ -132,20 +128,19 @@ public class GameManager : MonoBehaviour
         this.rand = new System.Random();
 
         this.life = 3;
-        this.tLife.text = "♡ " + this.life.ToString();
+        this.tLife.text = "X " + this.life.ToString();
 
         this.maxBullet = 30;
         this.damage = 35;
         this.bullets = 30;
         this.reloadTime = 1.5f;
 
-        this.tReload.text = "R";
-        this.tBullet.text = this.bullets.ToString() + "/" + this.maxBullet.ToString();
+        this.tBullet.text = this.bullets.ToString() + " / " + this.maxBullet.ToString();
 
         this.bomb = 3;
-        this.tBomb.text = "B " + this.bomb.ToString();
+        this.tBomb.text = "X " + this.bomb.ToString();
         this.score = 0;
-        this.tScore.text = "SCORE " + this.score.ToString();
+        this.tScore.text = this.score.ToString();
     }
 
     public GameState getState()
@@ -356,7 +351,7 @@ public class GameManager : MonoBehaviour
         if (this.state == GameState.PLAYING)
         {
             this.life -= 1;
-            this.tLife.text = "♡ " + this.life.ToString();
+            this.tLife.text = "X " + this.life.ToString();
 
             if (this.life <= 0)
             {
@@ -399,7 +394,7 @@ public class GameManager : MonoBehaviour
                 }
                 
                 bullets--;
-                this.tBullet.text = this.bullets.ToString() + "/" + this.maxBullet.ToString();
+                this.tBullet.text = this.bullets.ToString() + " / " + this.maxBullet.ToString();
 
                 lastShootTime = this.sceneTimer;
             }
@@ -412,7 +407,7 @@ public class GameManager : MonoBehaviour
         {
             this.reloadTime = sceneTimer;
             this.bullets = maxBullet;
-            this.tBullet.text = this.bullets.ToString() + "/" + this.maxBullet.ToString();
+            this.tBullet.text = this.bullets.ToString() + " / " + this.maxBullet.ToString();
         }
     }
 
@@ -427,7 +422,7 @@ public class GameManager : MonoBehaviour
             if (this.bomb > 0)
             {
                 this.bomb = this.bomb - 1;
-                this.tBomb.text = "B " + this.bomb.ToString();
+                this.tBomb.text = "X " + this.bomb.ToString();
 
                 this.ProcessBomb();
             }
@@ -449,7 +444,7 @@ public class GameManager : MonoBehaviour
     {
         bomb = bomb + num;
 
-        this.tBomb.text = "B " + this.bomb.ToString();
+        this.tBomb.text = "X " + this.bomb.ToString();
     }
 
     #endregion
@@ -463,7 +458,7 @@ public class GameManager : MonoBehaviour
 
     private void UpdateScore()
     {
-        this.tScore.text = "SCORE " + this.score.ToString();
+        this.tScore.text = this.score.ToString();
     }
 
     #endregion

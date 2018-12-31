@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class IntroManager : MonoBehaviour
 {
-    private GameObject canvas = null;
+    private GameObject panel = null;
     private Text notice = null;
 
     private Color blink_color = Color.white;
@@ -14,11 +14,11 @@ public class IntroManager : MonoBehaviour
 
     private void Awake()
     {
-        this.canvas = GameObject.Find("Canvas");
-        var children_text = this.canvas.GetComponentsInChildren<Text>();
+        this.panel = GameObject.Find("Canvas/PNotice");
+        var children_text = this.panel.GetComponentsInChildren<Text>();
         foreach (var child in children_text)
         {
-            if (child.name == "Notice")
+            if (child.name == "Text")
             {
                 this.notice = child;
             }
