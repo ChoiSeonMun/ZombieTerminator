@@ -43,3 +43,12 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Background
+    uniqueID: 136421141
+    locked: 0
+  - name: Surface
+    uniqueID: 4172688943
+    locked: 0
+  - name: Object
+    uniqueID: 1852810257
+    locked: 0
