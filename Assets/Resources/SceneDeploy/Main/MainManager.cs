@@ -11,7 +11,7 @@ public class MainManager : MonoBehaviour
 
     private void Start()
     {
-        var obj = GameObject.Find("Canvas/Game");
+        var obj = GameObject.Find("Canvas/Start");
         this.bStart = obj.GetComponent<Button>();
         this.bStart.onClick.AddListener(this.OnClickStart);
 
