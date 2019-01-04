@@ -11,12 +11,12 @@ public class IntroManager : MonoBehaviour
     private Color mBlinkColor = Color.white;
     private float mBlinkCount = 1.0f;
 
-    private void Awake()
+    internal void Awake()
     {
         this.mNotice = GameObject.Find("Canvas/Panel/Notice").GetComponent<Text>();
     }
 
-    private void Update()
+    internal void Update()
     {
         this.ProcessInput();
 

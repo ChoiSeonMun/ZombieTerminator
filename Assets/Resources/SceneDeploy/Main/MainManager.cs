@@ -9,7 +9,7 @@ public class MainManager : MonoBehaviour
     private Button mBStart = null;
     private Button mBRank = null;
 
-    private void Start()
+    internal void Start()
     {
         this.mBStart = GameObject.Find("Canvas/Panel/Start").GetComponent<Button>();
         this.mBStart.onClick.AddListener(this.OnClickStart);

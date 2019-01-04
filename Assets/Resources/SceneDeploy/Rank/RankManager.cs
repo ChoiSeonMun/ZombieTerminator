@@ -8,7 +8,7 @@ public class RankManager : MonoBehaviour
 {
     private Button mBBack = null;
 
-    private void Start()
+    internal void Start()
     {
         this.mBBack = GameObject.Find("Canvas/Panel/Back").GetComponent<Button>();
         this.mBBack.onClick.AddListener(this.OnClickBack);
