@@ -2,61 +2,67 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum ZombieType
-{
-    UNDEFINED,
-    NORMAL,
-    SPECIAL
-};
-
 public class Zombie : MonoBehaviour
 {
-    private GameManager manager = null;
-
-    private float lifetime = float.NaN;
-    private float runtime = float.NaN;
-    private int life = 0;
-    private ZombieType zombieType = ZombieType.UNDEFINED;
-    
-    private void Awake()
+    public enum EType
     {
-        var obj = GameObject.Find("Manager");
-        this.manager = obj.GetComponent<GameManager>();
+        UNDEFINED,
+        NORMAL,
+        SPECIAL
+    };
 
-        this.zombieType = ZombieType.NORMAL;
-        this.life = 100;
-        this.lifetime = 3.0f;
-        this.runtime = 0.0f;
+    private Player mPlayer = null;
+
+    private float mLifetime = float.NaN;
+    private float mRuntime = float.NaN;
+    private int mLife = 0;
+    private EType mType = EType.UNDEFINED;
+
+    public void SetType(EType type)
+    {
+        this.mType = type;
     }
 
-    private void Update()
+    internal void Awake()
     {
-        if(manager.getState() == GameState.PLAYING)
-        { 
-            this.runtime += Time.deltaTime;
+        this.mPlayer = GameObject.Find("Player").GetComponent<Player>();
 
-            if(this.runtime >= this.lifetime)
-            {
-                this.manager.OnHit();
+        this.mType = EType.NORMAL;
+        this.mLife = 100;
+        this.mLifetime = 3.0f;
+        this.mRuntime = 0.0f;
+    }
 
-                this.Die();
-            }
+    internal void Update()
+    {
+        this.mRuntime += Time.deltaTime;
+
+        if (this.mRuntime >= this.mLifetime)
+        {
+            this.mPlayer.Hit();
+            this.Die();
         }
     }
 
-    private void OnDestroy()
+    internal void OnDestroy()
     {
-        if(this.runtime < this.lifetime)
+        // 이 좀비가 특수좀비일 경우 폭탄 아이템을 증가시킨다
+        if (this.mType == EType.SPECIAL)
         {
-            this.manager.IncreaseScore(10);
+            this.mPlayer.GainBomb();
+        }
+        // 좀비가 공격을 당해 죽었을 경우 점수를 얻는다
+        if (this.mRuntime < this.mLifetime)
+        {
+            this.mPlayer.GainScore(10);
         }
     }
 
     public void getDamaged(int damage)
     {
-        this.life = this.life - damage;
+        this.mLife = this.mLife - damage;
 
-        if(this.life <= 0.0f)
+        if(this.mLife <= 0.0f)
         {
             this.Die();
         }
@@ -64,27 +70,6 @@ public class Zombie : MonoBehaviour
 
     private void Die()
     {
-        // 이 좀비가 특수좀비일 경우 폭탄 아이템을 증가시킨다
-        if (this.zombieType == ZombieType.SPECIAL)
-        {
-            manager.GetBomb(1);
-        }
-
         Destroy(this.gameObject);
-    }
-
-    public void SetZombieType(ZombieType zombieType)
-    {
-        this.zombieType = zombieType;
-    }
-
-    public ZombieType GetZombieType()
-    {
-        return this.zombieType;
-    }
-
-    public int getLife()
-    {
-        return this.life;
     }
 }

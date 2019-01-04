@@ -6,18 +6,16 @@ using UnityEngine.UI;
 
 public class MainManager : MonoBehaviour
 {
-    Button bStart = null;
-    Button bRank = null;
+    private Button mBStart = null;
+    private Button mBRank = null;
 
-    private void Start()
+    internal void Start()
     {
-        var obj = GameObject.Find("Canvas/PStart/Button");
-        this.bStart = obj.GetComponent<Button>();
-        this.bStart.onClick.AddListener(this.OnClickStart);
+        this.mBStart = GameObject.Find("Canvas/Panel/Start").GetComponent<Button>();
+        this.mBStart.onClick.AddListener(this.OnClickStart);
 
-        obj = GameObject.Find("Canvas/PRank/Button");
-        this.bRank = obj.GetComponent<Button>();
-        this.bRank.onClick.AddListener(this.OnClickRank);
+        this.mBRank = GameObject.Find("Canvas/Panel/Rank").GetComponent<Button>();
+        this.mBRank.onClick.AddListener(this.OnClickRank);
     }
 
     private void OnClickStart()
