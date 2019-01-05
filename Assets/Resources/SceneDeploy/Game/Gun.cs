@@ -78,9 +78,9 @@ public class Gun : MonoBehaviour
         this.mBulletMax = 30;
         this.mDamage = 35;
         this.mbReloading = false;
-        this.mReloadTime = 1.5f;
+        this.mReloadTime = 0.0f;
         this.mReloadDelay = 1.0f;
-        this.mFireDelay = 0.1f;
+        this.mFireDelay = 0.2f;
         this.mShootTimeLast = 0.0f;
         this.mShootTimeCurr = 0.0f;
         this.mSceneTimer = 0.0f;
@@ -94,5 +94,21 @@ public class Gun : MonoBehaviour
     private void UpdateSceneTimer()
     {
         this.mSceneTimer += Time.deltaTime;
+    }
+
+    public void SetFever(bool isFeverOn)
+    {
+        if (isFeverOn)
+        {
+            this.mDamage = 50;
+            this.mReloadDelay = 0.0f;
+            this.mFireDelay = 0.0f;
+        }
+        else
+        {
+            this.mDamage = 35;
+            this.mReloadDelay = 1.0f;
+            this.mFireDelay = 0.2f;
+        }
     }
 }
