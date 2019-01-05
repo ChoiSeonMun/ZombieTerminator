@@ -48,9 +48,11 @@ public class Player : MonoBehaviour
     }
 
     // 자신의 생명력을 감소시키고, 만약 이것이 0 에 도달했다면 게임을 종료시킨다
+    // 데미지를 입는다면 fever count를 0로 만든다
     public void Hit()
     {
         this.mLife -= 1;
+        this.mFever.ResetFeverCount();
         if(this.mLife <= 0)
         {
             this.mManager.EndGame();
