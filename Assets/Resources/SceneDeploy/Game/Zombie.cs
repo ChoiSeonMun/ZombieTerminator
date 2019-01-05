@@ -12,6 +12,7 @@ public class Zombie : MonoBehaviour
     };
 
     private Player mPlayer = null;
+    private Fever mFever = null;
 
     private float mLifetime = float.NaN;
     private float mRuntime = float.NaN;
@@ -26,6 +27,7 @@ public class Zombie : MonoBehaviour
     internal void Awake()
     {
         this.mPlayer = GameObject.Find("Player").GetComponent<Player>();
+        this.mFever = GameObject.Find("Player").GetComponent<Fever>();
 
         this.mType = EType.NORMAL;
         this.mLife = 100;
@@ -54,6 +56,7 @@ public class Zombie : MonoBehaviour
         // 좀비가 공격을 당해 죽었을 경우 점수를 얻는다
         if (this.mRuntime < this.mLifetime)
         {
+            this.mFever.GainFeverCount();
             this.mPlayer.GainScore(10);
         }
     }

@@ -6,6 +6,7 @@ public class Player : MonoBehaviour
 {
     private GameManager mManager = null;
     private Gun mGun = null;
+    private Fever mFever = null;
 
     private int mLife = -1;
     private int mBomb = -1;
@@ -42,6 +43,7 @@ public class Player : MonoBehaviour
     {
         this.mLife -= 1;
 
+
         if(this.mLife <= 0)
         {
             this.mManager.EndGame();
@@ -52,6 +54,7 @@ public class Player : MonoBehaviour
     {
         this.mManager = GameObject.Find("Manager").GetComponent<GameManager>();
         this.mGun = this.gameObject.GetComponent<Gun>();
+        this.mFever = GameObject.Find("Player").GetComponent<Fever>();
 
         this.mLife = 3;
         this.mBomb = 3;
