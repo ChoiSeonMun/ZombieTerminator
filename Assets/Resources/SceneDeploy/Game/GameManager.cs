@@ -7,6 +7,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.Advertisements;
 
+// 화면에 출력해야할 정보들을 전달하기 위해 사용할 구조체
 public struct GameInfo
 {
     public int life;
@@ -16,8 +17,12 @@ public struct GameInfo
     public int bulletMax;
 }
 
+// Game scene 을 총괄하는 클래스
+// 담당 업무는 UI 관리, 아이템 기능 그리고 Spawn 기능
+// 그 외 업무는 다른 클래스에게 맡긴다
 public class GameManager : MonoBehaviour
 {
+    // Game scene 이 가질 수 있는 상태값들
     public enum EState
     {
         UNDEFINED,
@@ -27,32 +32,48 @@ public class GameManager : MonoBehaviour
         GAMEOVER
     };
 
+    // 플레이어 객체와 플레이어 스크립트
     private GameObject mPlayer = null;
     private Player mSPlayer = null;
-
+    // Instantiate() 에서 사용하기 위한 좀비 Prefab
     private UnityEngine.Object mOZombie = null;
-
+    // target 객체들과 각 target 의 ButtonExtension
     private GameObject[] mTargets = null;
     private ButtonExtension[] mBTargets = null;
+    // PanelStart 객체 및 그 자식의 ButtonExtension
     private GameObject mPStart = null;
     private ButtonExtension mBStart = null;
+    // EState.PLAYING 에서 클릭할 수 있는 메뉴 버튼
     private ButtonExtension mBMenu = null;
+    // PanelDialog 객체 및 그 자식들의 ButtonExtension
     private GameObject mPDialog = null;
     private ButtonExtension mBYes = null;
     private ButtonExtension mBNo = null;
+    // 플레이어 체력을 출력하기 위한 Text
     private Text mTLife = null;
+    // 잔탄수를 출력하기 위한 Text
     private Text mTBullet = null;
+    // PanelEnd 객체 및 그 자식의 ButtonExtension
     private GameObject mPEnd = null;
     private ButtonExtension mBOk = null;
+    // EState.PLAYING 에서 클릭할 수 있는 장전 버튼
     private ButtonExtension mBReload = null;
+    // EState.PLAYING 에서 클릭할 수 있는 폭탄 버튼
     private ButtonExtension mBBomb = null;
+    // 잔여 폭탄 개수를 출력하기 위한 Text
     private Text mTBomb = null;
+    // 현재 점수를 출력하기 위한 Text
     private Text mTScore = null;
 
+    // 게임 상태에 따른 업데이트 함수를 저장하는 map
     private Dictionary<EState, Action> mUpdates = null;
+    // 새로운 게임 상태로 전환될 때 실행되는 함수를 저장하는 map
     private Dictionary<EState, Action> mStarts = null;
+    // 기존 게임 상태에서 벗어날 때 실행되는 함수를 저장하는 map
     private Dictionary<EState, Action> mEnds = null;
+    // 내부적으로 EState 를 저장하는 변수
     private EState _state = EState.UNDEFINED;
+    // EState 대입만으로 함수 호출을 자동화하기 위한 property
     private EState mState
     {
         get
@@ -70,15 +91,21 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // Spawn Cooldown 시간값을 저장하는 변수
     private float mCooldownSpawn = float.NaN;
+    // 이전 Spawn 으로부터 얼마나 시간이 지났는지를 저장하는 변수
     private float mTimerSpawn = float.NaN;
+    // 특수 좀비를 Spawn 하기 위해, 일반 좀비가 몇 번이나 Spawn 되었는지 저장하는 변수
     private int mCountSpawn = -1;
+    // 난수 생성을 위한 Random 객체
     private System.Random mRand = null;
-
+    // 게임이 몇 번 종료되었는지 저장하는 변수
+    // Game scene 이 여러 번 시작되고 종료되어도 그 값을 유지하기 위해 static
     private static int mGameTrial = 0;
 
     #region Public Functions
 
+    // 게임 정보를 구조체로 받아와 갱신
     public void RefreshUI(GameInfo gi)
     {
         this.mTLife.text = "X " + gi.life.ToString();
@@ -105,11 +132,13 @@ public class GameManager : MonoBehaviour
         this.mOZombie = Resources.Load("Prefabs/Zombie");
 
         this.mTargets = GameObject.FindGameObjectsWithTag("Target");
+        // T0 부터 T8 까지 순서대로 정렬하기 위한 Sort
         Array.Sort(this.mTargets, delegate (GameObject _1, GameObject _2)
         {
             return _1.name.CompareTo(_2.name);
         });
         this.mBTargets = new ButtonExtension[this.mTargets.Length];
+        // 각 target 마다의 ButtonExtension 을 대응시켜준다
         for(int i = 0; i < this.mBTargets.Length; ++i)
         {
             this.mBTargets[i] = this.mTargets[i].GetComponent<ButtonExtension>();
@@ -179,11 +208,11 @@ public class GameManager : MonoBehaviour
         {
             this.mState = EState.PAUSED;
         }
-
         if (this.mBReload.IsPressed)
         {
             this.mSPlayer.Reload();
         }
+        // 폭탄 버튼이 눌렸고, 폭탄을 사용할 수 있다면 폭탄 기능을 수행한다
         if (this.mBBomb.IsPressed)
         {
             if(this.mSPlayer.CanBomb())
@@ -191,8 +220,9 @@ public class GameManager : MonoBehaviour
                 this.UseBomb();
             }
         }
-
+        // 각 target 에 대해 입력이 있는지 검사한다
         this.InputTarget();
+        // Spawn 을 해야하는지 검사한다
         this.CheckSpawn();
     }
 
@@ -200,10 +230,13 @@ public class GameManager : MonoBehaviour
     {
         for (int i = 0; i < this.mBTargets.Length; ++i)
         {
+            // target 이 눌렸다면, 해당 target 에 대해 사격한다
             if (this.mBTargets[i].IsPressed)
             {
                 this.mSPlayer.Shoot(this.mTargets[i]);
             }
+            // 그렇지않다면, 해당 target 의 색을 원래대로 돌린다
+            // Color.white 로 설정하는 것은 모든 색을 통과시키는 마스킹을 하는 것과 같다
             else
             {
                 Image image = this.mTargets[i].GetComponent<Image>();
@@ -214,8 +247,8 @@ public class GameManager : MonoBehaviour
 
     private void CheckSpawn()
     {
+        // 타이머를 증가시키고, 지정했던 cooldown 에 도달했을 때 좀비를 Spawn 한다
         this.mTimerSpawn += Time.deltaTime;
-
         if (this.mTimerSpawn >= this.mCooldownSpawn)
         {
             this.SpawnZombie();
@@ -272,6 +305,7 @@ public class GameManager : MonoBehaviour
 
     private void UseBomb()
     {
+        // 좀비를 가지고 있는 target 을 순회하면서, 각 좀비를 죽인다
         foreach (GameObject target in this.mTargets)
         {
             if (target.transform.childCount > 0)
@@ -305,31 +339,37 @@ public class GameManager : MonoBehaviour
 
     #region Scene Change
 
+    // NullException 을 방지하기 위해 형식상 만들어둔 함수
     private void OnEndUndefined()
     {
         ;
     }
 
+    // EState.READY 에 진입할 때 실행되는 함수
     private void OnStartReady()
     {
         this.mPStart.SetActive(true);
     }
 
+    // EState.READY 에서 빠져나갈 때 실행되는 함수
     private void OnEndReady()
     {
         this.mPStart.SetActive(false);
     }
 
+    // EState.PLAYING 에 진입할 때 실행되는 함수
     private void OnStartPlaying()
     {
         this.mPlayer.SetActive(true);
     }
 
+    // EState.PLAYING 에서 빠져나갈 때 실행되는 함수
     private void OnEndPlaying()
     {
         this.mPlayer.SetActive(false);
     }
 
+    // EState.PAUSED 에 진입할 때 실행되는 함수
     private void OnStartPaused()
     {
         this.mPDialog.SetActive(true);
@@ -337,6 +377,7 @@ public class GameManager : MonoBehaviour
         this.StopTarget();
     }
 
+    // 좀비들이 업데이트되는 것을 막기 위해 모두 비활성화
     private void StopTarget()
     {
         foreach (GameObject target in this.mTargets)
@@ -349,6 +390,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // EState.PAUSED 에서 빠져나갈 때 실행되는 함수
     private void OnEndPaused()
     {
         this.ResumeTarget();
@@ -356,6 +398,7 @@ public class GameManager : MonoBehaviour
         this.mPDialog.SetActive(false);
     }
 
+    // 좀비들이 다시 업데이트되도록 모두 활성화
     private void ResumeTarget()
     {
         foreach (GameObject target in this.mTargets)
@@ -368,6 +411,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // EState.GAMEOVER 에 진입할 때 실행되는 함수
     private void OnStartGameover()
     {
         // 게임이 끝나면, 게임 시도 횟수를 증가한다.
@@ -382,6 +426,7 @@ public class GameManager : MonoBehaviour
         this.mPEnd.SetActive(true);
     }
 
+    // EState.GAMEOVER 에서 빠져나갈 때 실행되는 함수
     private void OnEndGameover()
     {
         this.mPEnd.SetActive(false);
