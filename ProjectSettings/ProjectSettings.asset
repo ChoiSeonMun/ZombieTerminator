@@ -148,7 +148,7 @@ PlayerSettings:
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
-    Android: com.Company.BCSDLab
+    Android: com.bcsdlab.zombie_terminator
     Standalone: com.Company.ProductName
   buildNumber: {}
   AndroidBundleVersionCode: 1
@@ -590,7 +590,7 @@ PlayerSettings:
   incrementalIl2cppBuild: {}
   allowUnsafeCode: 0
   additionalIl2CppArgs: 
-  scriptingRuntimeVersion: 0
+  scriptingRuntimeVersion: 1
   apiCompatibilityLevelPerPlatform: {}
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
@@ -676,7 +676,7 @@ PlayerSettings:
   facebookStatus: 1
   facebookXfbml: 0
   facebookFrictionlessRequests: 1
-  apiCompatibilityLevel: 2
+  apiCompatibilityLevel: 6
   cloudProjectId: a06edd18-4705-4a03-bc33-3dbe16ae9da2
   framebufferDepthMemorylessMode: 0
   projectName: ZombieTerminator
