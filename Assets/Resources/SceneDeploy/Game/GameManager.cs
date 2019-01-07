@@ -40,9 +40,9 @@ public class GameManager : MonoBehaviour
     // target 객체들과 각 target 의 ButtonExtension
     private GameObject[] mTargets = null;
     private ButtonExtension[] mBTargets = null;
-    // PanelStart 객체 및 그 자식의 ButtonExtension
+    // PanelStart 객체 및 Image 컴포넌트
     private GameObject mPStart = null;
-    private ButtonExtension mBStart = null;
+    private Image mIStart = null;
     // EState.PLAYING 에서 클릭할 수 있는 메뉴 버튼
     private ButtonExtension mBMenu = null;
     // PanelDialog 객체 및 그 자식들의 ButtonExtension
@@ -144,7 +144,7 @@ public class GameManager : MonoBehaviour
             this.mBTargets[i] = this.mTargets[i].GetComponent<ButtonExtension>();
         }
         this.mPStart = GameObject.Find("Canvas/PanelStart");
-        this.mBStart = GameObject.Find("Canvas/PanelStart/OK").GetComponent<ButtonExtension>();
+        this.mIStart = this.mPStart.GetComponent<Image>();
         this.mPStart.SetActive(false);
         this.mBMenu = GameObject.Find("Canvas/PanelSub/Menu").GetComponent<ButtonExtension>();
         this.mPDialog = GameObject.Find("Canvas/PanelDialog");
@@ -196,7 +196,11 @@ public class GameManager : MonoBehaviour
 
     private void UpdateReady()
     {
-        if (this.mBStart.IsPressed)
+        Color newColor = this.mIStart.color;
+        newColor.a -= 0.01f;
+        this.mIStart.color = newColor;
+
+        if(this.mIStart.color.a <= 0.0f)
         {
             this.mState = EState.PLAYING;
         }
