@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using GooglePlayGames;
+using GooglePlayGames.BasicApi;
 
 public class IntroManager : MonoBehaviour
 {
@@ -12,12 +14,28 @@ public class IntroManager : MonoBehaviour
     private Color mBlinkColor = Color.white;
     private float mBlinkCount = 1.0f;
 
-    internal void Awake()
+    void Start()
+    {
+        // Google Play Games 활성화
+        PlayGamesClientConfiguration config = new PlayGamesClientConfiguration.Builder()
+            .Build();
+        PlayGamesPlatform.InitializeInstance(config);
+        PlayGamesPlatform.DebugLogEnabled = true;
+        PlayGamesPlatform.Activate();
+
+        // Google ID로 유저 인증
+        PlayGamesPlatform.Instance.Authenticate((bool bSuccess) =>
+        {
+            Debug.Log("Authentication: " + bSuccess);
+        }, false);
+    }
+
+    void Awake()
     {
         this.mNotice = GameObject.Find("Canvas/Panel/Notice").GetComponent<Text>();
     }
 
-    internal void Update()
+    void Update()
     {
         this.ProcessInput();
 
