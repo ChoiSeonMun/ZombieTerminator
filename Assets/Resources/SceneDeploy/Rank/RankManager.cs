@@ -6,13 +6,14 @@ using UnityEngine.UI;
 
 public class RankManager : MonoBehaviour
 {
-    private Button bBack = null;
+    // BACK 버튼
+    private Button mBBack = null;
 
-    private void Start()
+    internal void Start()
     {
-        GameObject obj = GameObject.Find("Canvas/PBack/Button");
-        this.bBack = obj.GetComponent<Button>();
-        this.bBack.onClick.AddListener(this.OnClickBack);
+        this.mBBack = GameObject.Find("Canvas/Panel/Back").GetComponent<Button>();
+        // BACK 버튼이 클릭되면 OnClickBack 함수를 실행하도록 설정
+        this.mBBack.onClick.AddListener(this.OnClickBack);
     }
 
     private void OnClickBack()

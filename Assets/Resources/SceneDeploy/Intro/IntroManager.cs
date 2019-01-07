@@ -3,31 +3,42 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using GooglePlayGames;
+using GooglePlayGames.BasicApi;
 
 public class IntroManager : MonoBehaviour
 {
-    private GameObject panel = null;
-    private Text notice = null;
+    // touch to start 문구를 출력하기 위한 Text
+    private Text mNotice = null;
+    // touch to start 문구를 깜빡이게 하기 위한 변수들
+    private Color mBlinkColor = Color.white;
+    private float mBlinkCount = 1.0f;
 
-    private Color blink_color = Color.white;
-    private float blink_count = 1.0f;
-
-    private void Awake()
+    void Start()
     {
-        this.panel = GameObject.Find("Canvas/PNotice");
-        var children_text = this.panel.GetComponentsInChildren<Text>();
-        foreach (var child in children_text)
+        // Google Play Games 활성화
+        PlayGamesClientConfiguration config = new PlayGamesClientConfiguration.Builder()
+            .Build();
+        PlayGamesPlatform.InitializeInstance(config);
+        PlayGamesPlatform.DebugLogEnabled = true;
+        PlayGamesPlatform.Activate();
+
+        // Google ID로 유저 인증
+        PlayGamesPlatform.Instance.Authenticate((bool bSuccess) =>
         {
-            if (child.name == "Text")
-            {
-                this.notice = child;
-            }
-        }
+            Debug.Log("Authentication: " + bSuccess);
+        }, false);
     }
 
-    private void Update()
+    void Awake()
+    {
+        this.mNotice = GameObject.Find("Canvas/Panel/Notice").GetComponent<Text>();
+    }
+
+    void Update()
     {
         this.ProcessInput();
+
         this.BlinkNotice();
     }
 
@@ -46,16 +57,18 @@ public class IntroManager : MonoBehaviour
 
     private void BlinkNotice()
     {
-        if(this.blink_count >= 1.0f)
+        // 카운터가 1.0 보다 커지면 == 문구가 흰색이 된다면
+        // 카운터를 0.0 값으로 한다 == 문구를 검은색으로 한다
+        // 그 외의 경우 카운터를 조금씩 증가시킨다 == 문구를 밝게 변화시킨다
+        if(this.mBlinkCount >= 1.0f)
         {
-            this.blink_count = 0.0f;
+            this.mBlinkCount = 0.0f;
         }
         else
         {
-            this.blink_count += 0.025f;
+            this.mBlinkCount += 0.025f;
         }
-
-        this.blink_color.r = this.blink_color.g = this.blink_color.b = this.blink_count;
-        this.notice.color = this.blink_color;
+        this.mBlinkColor.r = this.mBlinkColor.g = this.mBlinkColor.b = this.mBlinkCount;
+        this.mNotice.color = this.mBlinkColor;
     }
 }
