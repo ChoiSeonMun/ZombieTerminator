@@ -16,9 +16,9 @@ public struct GameInfo
     public int BulletCur;
     public int BulletMax;
     public float DelayTimeByReload;
-    public bool BoolIsReloading;
+    public bool IsReloading;
     public int FeverGague;
-    public bool BoolFeverIsOn;
+    public bool IsFeverOn;
 }
 
 // Game scene 을 총괄하는 클래스
@@ -124,7 +124,7 @@ public class GameManager : MonoBehaviour
         this.mTScore.text = gi.Score.ToString();
 
         // 장전 중일 경우 잔여시간을 갱신한다
-        if (gi.BoolIsReloading)
+        if (gi.IsReloading)
         {
             String delayTimeByReloadString = gi.DelayTimeByReload.ToString();
             // 소수점 아래 두 숫자까지 표시
@@ -139,7 +139,7 @@ public class GameManager : MonoBehaviour
         // Fever Gague의 너비(width)를 조절하여 게이지가 차 있는 정도를 표시한다
         mImageFeverGauge.rectTransform.sizeDelta = new Vector2(((float)(gi.FeverGague) / (float)(Fever.MAX_FEVER_COUNT)) * 920, 20);
 
-        mFeverText.gameObject.SetActive(gi.BoolFeverIsOn);
+        mFeverText.gameObject.SetActive(gi.IsFeverOn);
     }
 
     public void EndGame()

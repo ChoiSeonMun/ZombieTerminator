@@ -29,7 +29,7 @@ public class Gun : MonoBehaviour
     // 총의 대미지를 저장하는 변수
     private int mDamage = -1;
     // 현재 재장전 중인지를 저장하는 변수
-    public bool mbIsReloading { get; private set; }
+    public bool IsReloading { get; private set; }
     // 재장전 딜레이에 도달했는지를 저장하는 타이머 변수
     private float mReloadTime = float.NaN;
     // 재장전 딜레이를 저장하는 변수
@@ -50,7 +50,7 @@ public class Gun : MonoBehaviour
             return;
         }
         // 재장전 중일 경우 함수를 종료
-        else if(mbIsReloading)
+        else if(IsReloading)
         {
             return;
         }
@@ -81,12 +81,12 @@ public class Gun : MonoBehaviour
     public void Reload()
     {
         // 재장전 도중에는 재장전을 할 수 없다
-        if (this.mbIsReloading == false)
+        if (this.IsReloading == false)
         {
             this.mReloadTime = this.mSceneTimer;
             // 잔여 탄수를 최대로 채운다
             this.mBulletCur = this.mBulletMax;
-            this.mbIsReloading = true;
+            this.IsReloading = true;
         }
     }
 
@@ -95,7 +95,7 @@ public class Gun : MonoBehaviour
         this.mBulletCur = 30;
         this.mBulletMax = 30;
         this.mDamage = 35;
-        this.mbIsReloading = false;
+        this.IsReloading = false;
         this.mReloadTime = 0.0f;
         this.mReloadDelay = 1.0f;
         this.mFireDelay = 0.2f;
@@ -119,11 +119,11 @@ public class Gun : MonoBehaviour
     {
         if (GetDelayTimeByReload() > 0)
         {
-            mbIsReloading = true;
+            IsReloading = true;
         }
         else
         {
-            mbIsReloading = false;
+            IsReloading = false;
         }
     }
 
