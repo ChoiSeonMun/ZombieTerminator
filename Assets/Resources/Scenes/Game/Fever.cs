@@ -5,7 +5,7 @@ using UnityEngine;
 public class Fever : MonoBehaviour
 {
     // 처치한 좀비 수를 기록하는 변수
-    private int feverCount = 0;
+    public int feverCount { get; private set; }
     // fever가 시작된 시간을 기록하는 변수
     private float feverTimeCurr = float.NaN;
     // fever 객체의 시간을 기록하는 변수
@@ -16,7 +16,7 @@ public class Fever : MonoBehaviour
     // fever의 최대치를 기록하는 상수
     public const int maxFeverCount = 10;
     // fever 상태의 On/Off를 기록하는 변수
-    private bool isFeverOn = false;
+    public bool isFeverOn { get; private set; }
     // Gun 시스템에 접근하기 위한 변수
     private Gun gunSys = null;
 
@@ -89,10 +89,5 @@ public class Fever : MonoBehaviour
     {
         // fever객체의 타이머의 시간을 증가시킨다
         this.feverTimer = this.feverTimer + Time.deltaTime;
-    }
-
-    public bool GetIsFeverOn()
-    {
-        return isFeverOn;
     }
 }

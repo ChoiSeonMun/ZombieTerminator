@@ -75,7 +75,7 @@ public class Gun : MonoBehaviour
 
     public float GetDelayTimeByReload()
     {
-        return (this.mReloadDelay - (this.mSceneTimer - this.mReloadTime));
+        return (mReloadDelay - (mSceneTimer - mReloadTime));
     }
 
     public void Reload()

@@ -176,7 +176,7 @@ public class GameManager : MonoBehaviour
             this.mBTargets[i] = this.mTargets[i].GetComponent<ButtonExtension>();
         }
         this.mPStart = GameObject.Find("Canvas/PanelStart");
-        this.mStartImage = this.mPStart.GetComponent<Image>();
+        mStartImage = this.mPStart.GetComponent<Image>();
         this.mPStart.SetActive(false);
         this.mBMenu = GameObject.Find("Canvas/PanelSub/Menu").GetComponent<ButtonExtension>();
         this.mPDialog = GameObject.Find("Canvas/PanelDialog");
@@ -192,9 +192,9 @@ public class GameManager : MonoBehaviour
         this.mBBomb = GameObject.Find("Canvas/PanelSub/Bomb").GetComponent<ButtonExtension>();
         this.mTBomb = GameObject.Find("Canvas/PanelSub/Bomb/Text").GetComponent<Text>();
         this.mTScore = GameObject.Find("Canvas/PanelMain/Score").GetComponent<Text>();
-        this.mTDelayTimeByReload = GameObject.Find("Canvas/PanelSub/Reload/DelayByReload/Text").GetComponent<Text>();
-        this.mImageFeverGauge = GameObject.Find("Canvas/PanelSub/Fever/Image").GetComponent<Image>();
-        this.mTFever = GameObject.Find("Canvas/PanelSub/Fever/Text").GetComponent<Text>();
+        mTDelayTimeByReload = GameObject.Find("Canvas/PanelSub/Reload/DelayByReload/Text").GetComponent<Text>();
+        mImageFeverGauge = GameObject.Find("Canvas/PanelSub/Fever/Image").GetComponent<Image>();
+        mTFever = GameObject.Find("Canvas/PanelSub/Fever/Text").GetComponent<Text>();
 
         this.mUpdates = new Dictionary<EState, Action>();
         this.mUpdates.Add(EState.READY, this.UpdateReady);
