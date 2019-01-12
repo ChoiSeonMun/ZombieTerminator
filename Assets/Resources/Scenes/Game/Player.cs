@@ -53,10 +53,6 @@ public class Player : MonoBehaviour
     {
         this.mLife -= 1;
         this.mFever.ResetFeverCount();
-        if(this.mLife <= 0)
-        {
-            this.mManager.EndGame();
-        }
     }
 
     #endregion
@@ -82,5 +78,10 @@ public class Player : MonoBehaviour
         gi.bulletCur = this.mGun.BulletCur;
         gi.bulletMax = this.mGun.BulletMax;
         this.mManager.RefreshUI(gi);
+
+        if (mLife <= 0)
+        {
+            mManager.EndGame();
+        }
     }
 }
