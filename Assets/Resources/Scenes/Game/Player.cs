@@ -72,15 +72,15 @@ public class Player : MonoBehaviour
     internal void Update()
     {
         GameInfo gi;
-        gi.life = this.mLife;
-        gi.bomb = this.mBomb;
-        gi.score = this.mScore;
-        gi.bulletCur = this.mGun.BulletCur;
-        gi.bulletMax = this.mGun.BulletMax;
-        gi.bReloading = mGun.mbIsReloading;
-        gi.delayTimeByReload = mGun.GetDelayTimeByReload();
-        gi.feverGague = mFever.FeverCount;
-        gi.bFeverIsOn = mFever.IsFeverOn;
+        gi.Life = this.mLife;
+        gi.Bomb = this.mBomb;
+        gi.Score = this.mScore;
+        gi.BulletCur = this.mGun.BulletCur;
+        gi.BulletMax = this.mGun.BulletMax;
+        gi.BoolIsReloading = mGun.mbIsReloading;
+        gi.DelayTimeByReload = mGun.GetDelayTimeByReload();
+        gi.FeverGague = mFever.FeverCount;
+        gi.BoolFeverIsOn = mFever.IsFeverOn;
         this.mManager.RefreshUI(gi);
 
         if (mLife <= 0)
