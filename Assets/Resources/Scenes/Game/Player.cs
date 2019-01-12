@@ -77,6 +77,10 @@ public class Player : MonoBehaviour
         gi.score = this.mScore;
         gi.bulletCur = this.mGun.BulletCur;
         gi.bulletMax = this.mGun.BulletMax;
+        gi.bReloading = this.mGun.mbReloading;
+        gi.delayTimeByReload = this.mGun.GetDelayTimeByReload();
+        gi.feverGague = mFever.GetFeverCount();
+        gi.bFeverIsOn = mFever.GetIsFeverOn();
         this.mManager.RefreshUI(gi);
 
         if (mLife <= 0)

@@ -29,7 +29,7 @@ public class Gun : MonoBehaviour
     // 총의 대미지를 저장하는 변수
     private int mDamage = -1;
     // 현재 재장전 중인지를 저장하는 변수
-    private bool mbReloading = false;
+    public bool mbReloading { get; private set; }
     // 재장전 딜레이에 도달했는지를 저장하는 타이머 변수
     private float mReloadTime = float.NaN;
     // 재장전 딜레이를 저장하는 변수
@@ -50,7 +50,7 @@ public class Gun : MonoBehaviour
             return;
         }
         // 재장전 중일 경우 함수를 종료
-        else if ((this.mSceneTimer - this.mReloadTime) < this.mReloadDelay)
+        else if(mbReloading)
         {
             return;
         }
@@ -73,6 +73,11 @@ public class Gun : MonoBehaviour
         }
     }
 
+    public float GetDelayTimeByReload()
+    {
+        return (this.mReloadDelay - (this.mSceneTimer - this.mReloadTime));
+    }
+
     public void Reload()
     {
         // 재장전 도중에는 재장전을 할 수 없다
@@ -81,6 +86,7 @@ public class Gun : MonoBehaviour
             this.mReloadTime = this.mSceneTimer;
             // 잔여 탄수를 최대로 채운다
             this.mBulletCur = this.mBulletMax;
+            this.mbReloading = true;
         }
     }
 
@@ -95,17 +101,30 @@ public class Gun : MonoBehaviour
         this.mFireDelay = 0.2f;
         this.mShootTimeLast = 0.0f;
         this.mShootTimeCurr = 0.0f;
-        this.mSceneTimer = 0.0f;
+        this.mSceneTimer = 1.0f;
     }
 
     internal void Update()
     {
         this.UpdateSceneTimer();
+        this.UpdateReloadingStatus();
     }
 
     private void UpdateSceneTimer()
     {
         this.mSceneTimer += Time.deltaTime;
+    }
+
+    private void UpdateReloadingStatus()
+    {
+        if (GetDelayTimeByReload() > 0)
+        {
+            mbReloading = true;
+        }
+        else
+        {
+            mbReloading = false;
+        }
     }
 
     public void SetFever(bool isFeverOn)

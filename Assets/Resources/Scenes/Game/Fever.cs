@@ -13,6 +13,8 @@ public class Fever : MonoBehaviour
     // fever 상태의 지속시간을 기록하는 변수
     private float feverBuffTime = float.NaN;
 
+    // fever의 최대치를 기록하는 상수
+    public const int maxFeverCount = 10;
     // fever 상태의 On/Off를 기록하는 변수
     private bool isFeverOn = false;
     // Gun 시스템에 접근하기 위한 변수
@@ -32,7 +34,7 @@ public class Fever : MonoBehaviour
         this.UpdateFeverTimer();
 
         // 피버 카운트가 10 이상이면 fever를 킨다
-        if (this.feverCount == 10)
+        if (this.feverCount == maxFeverCount)
         {
             this.feverCount = 0;
             this.SetFeverOn();
@@ -55,6 +57,11 @@ public class Fever : MonoBehaviour
         {
             this.feverCount++;
         }
+    }
+
+    public int GetFeverCount()
+    {
+        return feverCount;
     }
 
     public void ResetFeverCount()
@@ -82,5 +89,10 @@ public class Fever : MonoBehaviour
     {
         // fever객체의 타이머의 시간을 증가시킨다
         this.feverTimer = this.feverTimer + Time.deltaTime;
+    }
+
+    public bool GetIsFeverOn()
+    {
+        return isFeverOn;
     }
 }

@@ -15,6 +15,10 @@ public struct GameInfo
     public int score;
     public int bulletCur;
     public int bulletMax;
+    public float delayTimeByReload;
+    public bool bReloading;
+    public int feverGague;
+    public bool bFeverIsOn;
 }
 
 // Game scene 을 총괄하는 클래스
@@ -64,6 +68,12 @@ public class GameManager : MonoBehaviour
     private Text mTBomb = null;
     // 현재 점수를 출력하기 위한 Text
     private Text mTScore = null;
+    // 장전으로 인한 총기 사용 불가 딜레이를 표시하는 Text
+    private Text mTDelayTimeByReload = null;
+    // Fever게이지를 표시할 Image
+    private Image mImageFeverGauge = null;
+    // Fever 활성여부를 표시할 Text
+    private Text mTFever = null;
 
     // 게임 상태에 따른 업데이트 함수를 저장하는 map
     private Dictionary<EState, Action> mUpdates = null;
@@ -112,6 +122,28 @@ public class GameManager : MonoBehaviour
         this.mTBomb.text = "X " + gi.bomb.ToString();
         this.mTBullet.text = gi.bulletCur.ToString() + " / " + gi.bulletMax.ToString();
         this.mTScore.text = gi.score.ToString();
+
+        if (gi.bReloading)
+        {
+            String mSDelayTimeByReload;
+            mSDelayTimeByReload = gi.delayTimeByReload.ToString();
+            mTDelayTimeByReload.text = mSDelayTimeByReload.Substring(0, mSDelayTimeByReload.IndexOf('.') + 2) + " Sec";
+        }
+        else
+        {
+            mTDelayTimeByReload.text = " ";
+        }
+
+        if (gi.feverGague == 0)
+        {
+            mImageFeverGauge.rectTransform.sizeDelta = new Vector2(0, 0);
+        }
+        else
+        {
+            mImageFeverGauge.rectTransform.sizeDelta = new Vector2(((float)(gi.feverGague) / (float)(Fever.maxFeverCount)) * 920, 20);
+        }
+
+        mTFever.gameObject.SetActive(gi.bFeverIsOn);
     }
 
     public void EndGame()
@@ -144,7 +176,7 @@ public class GameManager : MonoBehaviour
             this.mBTargets[i] = this.mTargets[i].GetComponent<ButtonExtension>();
         }
         this.mPStart = GameObject.Find("Canvas/PanelStart");
-        mStartImage = this.mPStart.GetComponent<Image>();
+        this.mStartImage = this.mPStart.GetComponent<Image>();
         this.mPStart.SetActive(false);
         this.mBMenu = GameObject.Find("Canvas/PanelSub/Menu").GetComponent<ButtonExtension>();
         this.mPDialog = GameObject.Find("Canvas/PanelDialog");
@@ -160,6 +192,9 @@ public class GameManager : MonoBehaviour
         this.mBBomb = GameObject.Find("Canvas/PanelSub/Bomb").GetComponent<ButtonExtension>();
         this.mTBomb = GameObject.Find("Canvas/PanelSub/Bomb/Text").GetComponent<Text>();
         this.mTScore = GameObject.Find("Canvas/PanelMain/Score").GetComponent<Text>();
+        this.mTDelayTimeByReload = GameObject.Find("Canvas/PanelSub/Reload/DelayByReload/Text").GetComponent<Text>();
+        this.mImageFeverGauge = GameObject.Find("Canvas/PanelSub/Fever/Image").GetComponent<Image>();
+        this.mTFever = GameObject.Find("Canvas/PanelSub/Fever/Text").GetComponent<Text>();
 
         this.mUpdates = new Dictionary<EState, Action>();
         this.mUpdates.Add(EState.READY, this.UpdateReady);
