@@ -32,14 +32,17 @@ public class Player : MonoBehaviour
     // 자신이 폭탄을 사용할 수 있다면, 폭탄 개수를 감소시킨 뒤 true 반환
     public bool CanBomb()
     {
-        bool retVal = this.mBomb > 0;
-        this.mBomb -= 1;
-        return retVal;
+        return this.mBomb > 0;
     }
 
     public void GainBomb()
     {
         this.mBomb += 1;
+    }
+
+    public void LoseBomb()
+    {
+        mBomb -= 1;
     }
 
     public void GainScore(int score)

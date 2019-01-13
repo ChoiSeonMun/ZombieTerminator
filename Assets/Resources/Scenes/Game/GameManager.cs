@@ -41,6 +41,10 @@ public class GameManager : MonoBehaviour
     private Player mSPlayer = null;
     // Instantiate() 에서 사용하기 위한 좀비 Prefab
     private UnityEngine.Object mOZombie = null;
+    // 폭탄 애니메이션 Prefab
+    private UnityEngine.Object mBombAnimation = null;
+    // PanelMain 의 GameObject
+    private GameObject mPanelMain = null;
     // target 객체들과 각 target 의 ButtonExtension
     private GameObject[] mTargets = null;
     private ButtonExtension[] mBTargets = null;
@@ -153,67 +157,67 @@ public class GameManager : MonoBehaviour
 
     internal void Awake()
     {
-        this.mPlayer = GameObject.Find("Player");
-        this.mSPlayer = this.mPlayer.GetComponent<Player>();
-        this.mPlayer.SetActive(false);
-
-        this.mOZombie = Resources.Load("Prefabs/Zombie");
-
-        this.mTargets = GameObject.FindGameObjectsWithTag("Target");
+        mPlayer = GameObject.Find("Player");
+        mSPlayer = mPlayer.GetComponent<Player>();
+        mPlayer.SetActive(false);
+        mOZombie = Resources.Load("Prefabs/Zombie");
+        mBombAnimation = Resources.Load("Prefabs/BombAnimation");
+        mPanelMain = GameObject.Find("Canvas/PanelMain");
+        mTargets = GameObject.FindGameObjectsWithTag("Target");
         // T0 부터 T8 까지 순서대로 정렬하기 위한 Sort
-        Array.Sort(this.mTargets, delegate (GameObject _1, GameObject _2)
+        Array.Sort(mTargets, delegate (GameObject _1, GameObject _2)
         {
             return _1.name.CompareTo(_2.name);
         });
-        this.mBTargets = new ButtonExtension[this.mTargets.Length];
+        mBTargets = new ButtonExtension[mTargets.Length];
         // 각 target 마다의 ButtonExtension 을 대응시켜준다
-        for(int i = 0; i < this.mBTargets.Length; ++i)
+        for(int i = 0; i < mBTargets.Length; ++i)
         {
-            this.mBTargets[i] = this.mTargets[i].GetComponent<ButtonExtension>();
+            mBTargets[i] = mTargets[i].GetComponent<ButtonExtension>();
         }
-        this.mPStart = GameObject.Find("Canvas/PanelStart");
-        mStartImage = this.mPStart.GetComponent<Image>();
-        this.mPStart.SetActive(false);
-        this.mBMenu = GameObject.Find("Canvas/PanelSub/Menu").GetComponent<ButtonExtension>();
-        this.mPDialog = GameObject.Find("Canvas/PanelDialog");
-        this.mBYes = GameObject.Find("Canvas/PanelDialog/YES").GetComponent<ButtonExtension>();
-        this.mBNo = GameObject.Find("Canvas/PanelDialog/NO").GetComponent<ButtonExtension>();
-        this.mPDialog.SetActive(false);
-        this.mTLife = GameObject.Find("Canvas/PanelSub/Life/Text").GetComponent<Text>();
-        this.mTBullet = GameObject.Find("Canvas/PanelSub/Bullet").GetComponent<Text>();
-        this.mPEnd = GameObject.Find("Canvas/PanelEnd");
-        this.mBOk = GameObject.Find("Canvas/PanelEnd/OK").GetComponent<ButtonExtension>();
-        this.mPEnd.SetActive(false);
-        this.mBReload = GameObject.Find("Canvas/PanelSub/Reload").GetComponent<ButtonExtension>();
-        this.mBBomb = GameObject.Find("Canvas/PanelSub/Bomb").GetComponent<ButtonExtension>();
-        this.mTBomb = GameObject.Find("Canvas/PanelSub/Bomb/Text").GetComponent<Text>();
-        this.mTScore = GameObject.Find("Canvas/PanelMain/Score").GetComponent<Text>();
+        mPStart = GameObject.Find("Canvas/PanelStart");
+        mStartImage = mPStart.GetComponent<Image>();
+        mPStart.SetActive(false);
+        mBMenu = GameObject.Find("Canvas/PanelSub/Menu").GetComponent<ButtonExtension>();
+        mPDialog = GameObject.Find("Canvas/PanelDialog");
+        mBYes = GameObject.Find("Canvas/PanelDialog/YES").GetComponent<ButtonExtension>();
+        mBNo = GameObject.Find("Canvas/PanelDialog/NO").GetComponent<ButtonExtension>();
+        mPDialog.SetActive(false);
+        mTLife = GameObject.Find("Canvas/PanelSub/Life/Text").GetComponent<Text>();
+        mTBullet = GameObject.Find("Canvas/PanelSub/Bullet").GetComponent<Text>();
+        mPEnd = GameObject.Find("Canvas/PanelEnd");
+        mBOk = GameObject.Find("Canvas/PanelEnd/OK").GetComponent<ButtonExtension>();
+        mPEnd.SetActive(false);
+        mBReload = GameObject.Find("Canvas/PanelSub/Reload").GetComponent<ButtonExtension>();
+        mBBomb = GameObject.Find("Canvas/PanelSub/Bomb").GetComponent<ButtonExtension>();
+        mTBomb = GameObject.Find("Canvas/PanelSub/Bomb/Text").GetComponent<Text>();
+        mTScore = GameObject.Find("Canvas/PanelMain/Score").GetComponent<Text>();
         mDelayTimeByReloadText = GameObject.Find("Canvas/PanelSub/Reload/DelayByReload/Text").GetComponent<Text>();
         mImageFeverGauge = GameObject.Find("Canvas/PanelSub/Fever/Image").GetComponent<Image>();
         mFeverText = GameObject.Find("Canvas/PanelSub/Fever/Text").GetComponent<Text>();
 
-        this.mUpdates = new Dictionary<EState, Action>();
-        this.mUpdates.Add(EState.READY, this.UpdateReady);
-        this.mUpdates.Add(EState.PLAYING, this.UpdatePlaying);
-        this.mUpdates.Add(EState.PAUSED, this.UpdatePaused);
-        this.mUpdates.Add(EState.GAMEOVER, this.UpdateGameover);
-        this.mStarts = new Dictionary<EState, Action>();
-        this.mStarts.Add(EState.READY, this.OnStartReady);
-        this.mStarts.Add(EState.PLAYING, this.OnStartPlaying);
-        this.mStarts.Add(EState.PAUSED, this.OnStartPaused);
-        this.mStarts.Add(EState.GAMEOVER, this.OnStartGameover);
-        this.mEnds = new Dictionary<EState, Action>();
-        this.mEnds.Add(EState.UNDEFINED, this.OnEndUndefined);
-        this.mEnds.Add(EState.READY, this.OnEndReady);
-        this.mEnds.Add(EState.PLAYING, this.OnEndPlaying);
-        this.mEnds.Add(EState.PAUSED, this.OnEndPaused);
-        this.mEnds.Add(EState.GAMEOVER, this.OnEndGameover);
-        this.mState = EState.READY;
+        mUpdates = new Dictionary<EState, Action>();
+        mUpdates.Add(EState.READY, UpdateReady);
+        mUpdates.Add(EState.PLAYING, UpdatePlaying);
+        mUpdates.Add(EState.PAUSED, UpdatePaused);
+        mUpdates.Add(EState.GAMEOVER, UpdateGameover);
+        mStarts = new Dictionary<EState, Action>();
+        mStarts.Add(EState.READY, OnStartReady);
+        mStarts.Add(EState.PLAYING, OnStartPlaying);
+        mStarts.Add(EState.PAUSED, OnStartPaused);
+        mStarts.Add(EState.GAMEOVER, OnStartGameover);
+        mEnds = new Dictionary<EState, Action>();
+        mEnds.Add(EState.UNDEFINED, OnEndUndefined);
+        mEnds.Add(EState.READY, OnEndReady);
+        mEnds.Add(EState.PLAYING, OnEndPlaying);
+        mEnds.Add(EState.PAUSED, OnEndPaused);
+        mEnds.Add(EState.GAMEOVER, OnEndGameover);
+        mState = EState.READY;
 
-        this.mCooldownSpawn = 2.0f;
-        this.mTimerSpawn = 0.0f;
-        this.mCountSpawn = 0;
-        this.mRand = new System.Random();
+        mCooldownSpawn = 2.0f;
+        mTimerSpawn = 0.0f;
+        mCountSpawn = 0;
+        mRand = new System.Random();
     }
 
     internal void Update()
@@ -341,6 +345,12 @@ public class GameManager : MonoBehaviour
 
     private void UseBomb()
     {
+        // 플레리어의 폭탄 개수를 줄인다
+        mSPlayer.LoseBomb();
+        // 폭탄 애니메이션을 생성하고, 이 애니메이션을 0.25 초 뒤에 삭제한다
+        GameObject obj = Instantiate(mBombAnimation, mPanelMain.transform) as GameObject;
+        obj.transform.SetParent(mPanelMain.transform);
+        Destroy(obj, 0.25f);
         // 좀비를 가지고 있는 target 을 순회하면서, 각 좀비를 죽인다
         foreach (GameObject target in this.mTargets)
         {
