@@ -36,18 +36,17 @@ public class GameManager : MonoBehaviour
         GAMEOVER
     };
 
-    // 플레이어 객체와 플레이어 스크립트
-    private GameObject mPlayer = null;
-    private Player mSPlayer = null;
+    // 플레이어 스크립트
+    private Player mPlayer = null;
     // Instantiate() 에서 사용하기 위한 좀비 Prefab
-    private UnityEngine.Object mOZombie = null;
+    private UnityEngine.Object mZombie = null;
     // 폭탄 애니메이션 Prefab
     private UnityEngine.Object mBombAnimation = null;
     // PanelMain 의 GameObject
     private GameObject mPanelMain = null;
     // target 객체들과 각 target 의 ButtonExtension
-    private GameObject[] mTargets = null;
-    private ButtonExtension[] mBTargets = null;
+    private GameObject[] mZombiePanels = null;
+    private ButtonExtension[] mZombieButtons = null;
     // PanelStart 객체 및 Image 컴포넌트
     private GameObject mPStart = null;
     private Image mStartImage = null;
@@ -157,23 +156,21 @@ public class GameManager : MonoBehaviour
 
     internal void Awake()
     {
-        mPlayer = GameObject.Find("Player");
-        mSPlayer = mPlayer.GetComponent<Player>();
-        mPlayer.SetActive(false);
-        mOZombie = Resources.Load("Prefabs/Zombie");
+        mPlayer = GameObject.Find("Player").GetComponent<Player>();
+        mZombie = Resources.Load("Prefabs/Zombie");
         mBombAnimation = Resources.Load("Prefabs/BombAnimation");
         mPanelMain = GameObject.Find("Canvas/PanelMain");
-        mTargets = GameObject.FindGameObjectsWithTag("Target");
+        mZombiePanels = GameObject.FindGameObjectsWithTag("Target");
         // T0 부터 T8 까지 순서대로 정렬하기 위한 Sort
-        Array.Sort(mTargets, delegate (GameObject _1, GameObject _2)
+        Array.Sort(mZombiePanels, delegate (GameObject _1, GameObject _2)
         {
             return _1.name.CompareTo(_2.name);
         });
-        mBTargets = new ButtonExtension[mTargets.Length];
+        mZombieButtons = new ButtonExtension[mZombiePanels.Length];
         // 각 target 마다의 ButtonExtension 을 대응시켜준다
-        for(int i = 0; i < mBTargets.Length; ++i)
+        for(int i = 0; i < mZombieButtons.Length; ++i)
         {
-            mBTargets[i] = mTargets[i].GetComponent<ButtonExtension>();
+            mZombieButtons[i] = mZombiePanels[i].GetComponent<ButtonExtension>();
         }
         mPStart = GameObject.Find("Canvas/PanelStart");
         mStartImage = mPStart.GetComponent<Image>();
@@ -250,12 +247,12 @@ public class GameManager : MonoBehaviour
         }
         if (this.mBReload.IsPressed)
         {
-            this.mSPlayer.Reload();
+            this.mPlayer.Reload();
         }
         // 폭탄 버튼이 눌렸고, 폭탄을 사용할 수 있다면 폭탄 기능을 수행한다
         if (this.mBBomb.IsPressed)
         {
-            if(this.mSPlayer.CanBomb())
+            if(this.mPlayer.CanBomb())
             {
                 this.UseBomb();
             }
@@ -268,18 +265,18 @@ public class GameManager : MonoBehaviour
 
     private void InputTarget()
     {
-        for (int i = 0; i < this.mBTargets.Length; ++i)
+        for (int i = 0; i < this.mZombieButtons.Length; ++i)
         {
             // target 이 눌렸다면, 해당 target 에 대해 사격한다
-            if (this.mBTargets[i].IsPressed)
+            if (this.mZombieButtons[i].IsPressed)
             {
-                this.mSPlayer.Shoot(this.mTargets[i]);
+                this.mPlayer.Shoot(this.mZombiePanels[i]);
             }
             // 그렇지않다면, 해당 target 의 색을 원래대로 돌린다
             // Color.white 로 설정하는 것은 모든 색을 통과시키는 마스킹을 하는 것과 같다
             else
             {
-                Image image = this.mTargets[i].GetComponent<Image>();
+                Image image = this.mZombiePanels[i].GetComponent<Image>();
                 image.color = Color.white;
             }
         }
@@ -315,19 +312,19 @@ public class GameManager : MonoBehaviour
         // 무작위의 순서대로 타겟들을 순회
         for (int i = 0; i < 9; ++i)
         {
-            GameObject target = this.mTargets[order[i]];
+            GameObject target = mZombiePanels[order[i]];
 
             // 타겟에 자식이 없다면 ( 좀비가 없다면 )
             if (target.transform.childCount == 0)
             {
                 // 좀비 객체를 생성하고 타겟의 자식으로 설정
-                GameObject zombie = Instantiate(this.mOZombie, target.transform) as GameObject;
+                GameObject zombie = Instantiate(mZombie, target.transform) as GameObject;
                 zombie.transform.SetParent(target.transform);
 
                 // 특수좀비 스폰카운터에 도달했을 경우
-                if (this.mCountSpawn == 3)
+                if (mCountSpawn == 3)
                 {
-                    this.mCountSpawn = 0;
+                    mCountSpawn = 0;
 
                     // 일반좀비와의 구분을 위해 이미지 변경 및 특수타입 설정
                     Image image = zombie.transform.GetComponent<Image>();
@@ -335,7 +332,7 @@ public class GameManager : MonoBehaviour
                     zombie.GetComponent<Zombie>().SetType(Zombie.EType.SPECIAL);
                 }
 
-                ++this.mCountSpawn;
+                ++mCountSpawn;
 
                 // 좀비를 스폰했으므로 함수 종료
                 break;
@@ -346,13 +343,13 @@ public class GameManager : MonoBehaviour
     private void UseBomb()
     {
         // 플레리어의 폭탄 개수를 줄인다
-        mSPlayer.LoseBomb();
+        mPlayer.LoseBomb();
         // 폭탄 애니메이션을 생성하고, 이 애니메이션을 0.25 초 뒤에 삭제한다
         GameObject obj = Instantiate(mBombAnimation, mPanelMain.transform) as GameObject;
         obj.transform.SetParent(mPanelMain.transform);
         Destroy(obj, 0.25f);
         // 좀비를 가지고 있는 target 을 순회하면서, 각 좀비를 죽인다
-        foreach (GameObject target in this.mTargets)
+        foreach (GameObject target in this.mZombiePanels)
         {
             if (target.transform.childCount > 0)
             {
@@ -426,7 +423,7 @@ public class GameManager : MonoBehaviour
     // 좀비들이 업데이트되는 것을 막기 위해 모두 비활성화
     private void StopTarget()
     {
-        foreach (GameObject target in this.mTargets)
+        foreach (GameObject target in this.mZombiePanels)
         {
             if (target.transform.childCount > 0)
             {
@@ -447,7 +444,7 @@ public class GameManager : MonoBehaviour
     // 좀비들이 다시 업데이트되도록 모두 활성화
     private void ResumeTarget()
     {
-        foreach (GameObject target in this.mTargets)
+        foreach (GameObject target in this.mZombiePanels)
         {
             if (target.transform.childCount > 0)
             {
