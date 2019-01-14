@@ -12,7 +12,7 @@ public class Zombie : MonoBehaviour
         SPECIAL
     };
 
-    private UnityEngine.Object mAnimHit = null;
+    private UnityEngine.Object mHitAnimation = null;
 
     // 플레이어 스크립트
     private Player mPlayer = null;
@@ -30,73 +30,68 @@ public class Zombie : MonoBehaviour
 
     public void SetType(EType type)
     {
-        this.mType = type;
+        mType = type;
     }
 
     public void Hit(int damage)
     {
         // 좀비의 생명력을 대미지만큼 감소시키고, 생명력이 0 에 도달했을 경우 죽는다
-        this.mLife = this.mLife - damage;
-        if (this.mLife <= 0.0f)
-        {
-            this.Die();
-        }
+        mLife = mLife - damage;
     }
 
     internal void Awake()
     {
-        mAnimHit = Resources.Load("Prefabs/AnimHit");
+        mHitAnimation = Resources.Load("Prefabs/HitAnimation");
 
-        this.mPlayer = GameObject.Find("Player").GetComponent<Player>();
-        this.mFever = GameObject.Find("Player").GetComponent<Fever>();
+        mPlayer = GameObject.Find("Player").GetComponent<Player>();
+        mFever = GameObject.Find("Player").GetComponent<Fever>();
 
-        this.mType = EType.NORMAL;
-        this.mLife = 100;
-        this.mLifetime = 3.0f;
-        this.mRuntime = 0.0f;
+        mType = EType.NORMAL;
+        mLife = 100;
+        mLifetime = 3.0f;
+        mRuntime = 0.0f;
     }
 
     internal void Update()
     {
-        // 좀비의 생존시간을 증가시키고, 수명이 다했을 경우 플레이어를 공격한 뒤 죽는다
-        this.mRuntime += Time.deltaTime;
-        if (this.mRuntime >= this.mLifetime)
+        // 좀비의 생존시간을 증가시킨다
+        mRuntime += Time.deltaTime;
+        // 수명이 다했거나 생명력이 0 이하로 떨어진 경우, 좀비가 죽는다
+        if ((mRuntime >= mLifetime) || (mLife <= 0.0f))
         {
-            this.Attack();
-
-            this.Die();
+            Destroy(gameObject);
         }
     }
 
     internal void OnDestroy()
     {
         // 좀비가 공격을 당해 죽었을 경우 점수를 얻는다
-        if (this.mRuntime < this.mLifetime)
+        if (mRuntime < mLifetime)
         {
-            this.mFever.GainFeverCount();
-            this.mPlayer.GainScore(10);
+            mFever.GainFeverCount();
+            mPlayer.GainScore(10);
 
             // 이 좀비가 특수좀비일 경우 폭탄 아이템을 증가시킨다
-            if (this.mType == EType.SPECIAL)
+            if (mType == EType.SPECIAL)
             {
-                this.mPlayer.GainBomb();
+                mPlayer.GainBomb();
             }
+        }
+        // 수명이 다할 때까지 살아남았다면
+        else
+        {
+            Attack();
         }
     }
 
     private void Attack()
     {
-        // 좀비가 공격하는 애니메이션을 생성하고, 이 애니메이션을 0.5 초 뒤에 삭제한다
-        GameObject obj = Instantiate(mAnimHit, this.transform) as GameObject;
-        obj.transform.SetParent(this.transform.parent);
-        Destroy(obj, 0.5f);
+        // 좀비가 공격하는 애니메이션을 생성하고, 이 애니메이션을 0.25 초 뒤에 삭제한다
+        GameObject obj = Instantiate(mHitAnimation, transform) as GameObject;
+        obj.transform.SetParent(transform.parent);
+        Destroy(obj, 0.25f);
 
         // 플레이어를 공격한다
         mPlayer.Hit();
-    }
-
-    private void Die()
-    {
-        Destroy(this.gameObject);
     }
 }
