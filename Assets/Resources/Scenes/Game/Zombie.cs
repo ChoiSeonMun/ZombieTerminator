@@ -40,7 +40,7 @@ public class Zombie : MonoBehaviour
     {
         if(mAttackAnimator == null)
         {
-            // 좀비가 공격받는 애니메이션을 생성하고, 부모의 자식으로 삼는다 (자신과 동일한 계층에 둔다)
+            // 좀비가 공격받는 애니메이션을 생성한다
             GameObject obj = Instantiate(mAttackAnimation, transform) as GameObject;
             obj.transform.SetParent(transform.parent);
 
@@ -88,7 +88,7 @@ public class Zombie : MonoBehaviour
 
     internal void OnDestroy()
     {
-        // 좀비가 공격받는 애니메이션을 일정시간 후에 제거한다
+        // 좀비가 공격받는 애니메이션을 제거한다
         if (mAttackAnimator != null)
         {
             Destroy(mAttackAnimator.gameObject, 0.3f);
