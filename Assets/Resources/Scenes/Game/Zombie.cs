@@ -13,6 +13,9 @@ public class Zombie : MonoBehaviour
     };
 
     private UnityEngine.Object mHitAnimation = null;
+    private UnityEngine.Object mAttackAnimation = null;
+    private Animator mAttackAnimator = null;
+    private float mAttackNormalizedTime = float.NaN;
 
     // 플레이어 스크립트
     private Player mPlayer = null;
@@ -35,6 +38,25 @@ public class Zombie : MonoBehaviour
 
     public void Hit(int damage)
     {
+        if(mAttackAnimator == null)
+        {
+            // 좀비가 공격받는 애니메이션을 생성하고, 부모의 자식으로 삼는다 (자신과 동일한 계층에 둔다)
+            GameObject obj = Instantiate(mAttackAnimation, transform) as GameObject;
+            obj.transform.SetParent(transform.parent);
+
+            // 애니메이션을 첫번째 프레임으로 고정한다
+            mAttackAnimator = obj.GetComponent<Animator>();
+            mAttackAnimator.speed = 0.0f;
+            mAttackNormalizedTime = 0.0f;
+            mAttackAnimator.Play("AttackAnimation", 0, mAttackNormalizedTime);
+        }
+        else
+        {
+            // 애니메이션을 다음 프레임으로 넘긴다
+            mAttackNormalizedTime += 0.33f;
+            mAttackAnimator.Play("AttackAnimation", 0, mAttackNormalizedTime);
+        }
+
         // 좀비의 생명력을 대미지만큼 감소시키고, 생명력이 0 에 도달했을 경우 죽는다
         mLife = mLife - damage;
     }
@@ -42,6 +64,7 @@ public class Zombie : MonoBehaviour
     internal void Awake()
     {
         mHitAnimation = Resources.Load("Prefabs/HitAnimation");
+        mAttackAnimation = Resources.Load("Prefabs/AttackAnimation");
 
         mPlayer = GameObject.Find("Player").GetComponent<Player>();
         mFever = GameObject.Find("Player").GetComponent<Fever>();
@@ -65,6 +88,12 @@ public class Zombie : MonoBehaviour
 
     internal void OnDestroy()
     {
+        // 좀비가 공격받는 애니메이션을 일정시간 후에 제거한다
+        if (mAttackAnimator != null)
+        {
+            Destroy(mAttackAnimator.gameObject, 0.3f);
+        }
+
         // 좀비가 공격을 당해 죽었을 경우 점수를 얻는다
         if (mRuntime < mLifetime)
         {
