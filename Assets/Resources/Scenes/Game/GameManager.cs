@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.Advertisements;
 
@@ -39,12 +38,13 @@ public class GameManager : MonoBehaviour
     // 플레이어 스크립트
     private Player mPlayer = null;
     // Instantiate() 에서 사용하기 위한 좀비 Prefab
-    private UnityEngine.Object mZombie = null;
+    private UnityEngine.Object mNormalZombie = null;
+    private UnityEngine.Object mSpecialZombie = null;
     // 폭탄 애니메이션 Prefab
     private UnityEngine.Object mBombAnimation = null;
     // PanelMain 의 GameObject
     private GameObject mPanelMain = null;
-    // target 객체들과 각 target 의 ButtonExtension
+    // 좀비타겟 객체들과 각 좀비타겟의 ButtonExtension
     private GameObject[] mZombiePanels = null;
     private ButtonExtension[] mZombieButtons = null;
     // PanelStart 객체 및 Image 컴포넌트
@@ -157,7 +157,8 @@ public class GameManager : MonoBehaviour
     internal void Awake()
     {
         mPlayer = GameObject.Find("Player").GetComponent<Player>();
-        mZombie = Resources.Load("Prefabs/Zombie");
+        mNormalZombie = Resources.Load("Prefabs/NormalZombie");
+        mSpecialZombie = Resources.Load("Prefabs/SpecialZombie");
         mBombAnimation = Resources.Load("Prefabs/BombAnimation");
         mPanelMain = GameObject.Find("Canvas/PanelMain");
         mZombiePanels = GameObject.FindGameObjectsWithTag("Target");
@@ -317,22 +318,26 @@ public class GameManager : MonoBehaviour
             // 타겟에 자식이 없다면 ( 좀비가 없다면 )
             if (target.transform.childCount == 0)
             {
-                // 좀비 객체를 생성하고 타겟의 자식으로 설정
-                GameObject zombie = Instantiate(mZombie, target.transform) as GameObject;
-                zombie.transform.SetParent(target.transform);
-
                 // 특수좀비 스폰카운터에 도달했을 경우
                 if (mCountSpawn == 3)
                 {
                     mCountSpawn = 0;
 
-                    // 일반좀비와의 구분을 위해 이미지 변경 및 특수타입 설정
-                    Image image = zombie.transform.GetComponent<Image>();
-                    image.color = Color.blue;
+                    // 특수좀비 객체를 생성하고 타겟의 자식으로 설정
+                    GameObject zombie = Instantiate(mSpecialZombie, target.transform) as GameObject;
+                    zombie.transform.SetParent(target.transform);
+
+                    // 일반좀비와의 구분을 위해 특수타입 설정
                     zombie.GetComponent<Zombie>().SetType(Zombie.EType.SPECIAL);
                 }
+                else
+                {
+                    ++mCountSpawn;
 
-                ++mCountSpawn;
+                    // 일반좀비 객체를 생성하고 타겟의 자식으로 설정
+                    GameObject zombie = Instantiate(mNormalZombie, target.transform) as GameObject;
+                    zombie.transform.SetParent(target.transform);
+                }
 
                 // 좀비를 스폰했으므로 함수 종료
                 break;
