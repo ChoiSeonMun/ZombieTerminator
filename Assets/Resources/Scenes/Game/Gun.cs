@@ -57,10 +57,6 @@ public class Gun : MonoBehaviour
         // 잔여 탄수가 있을 경우에만 발사
         else if (this.mBulletCur > 0)
         {
-            // Color.red 로 설정하는 것은 빨간 색만 통과시키는 마스킹을 하는 것과 같다
-            Image image = obj.GetComponent<Image>();
-            image.color = Color.red;
-
             // target 이 좀비를 가지고 있다면 대미지를 입힌다
             if (obj.transform.childCount > 0)
             {
