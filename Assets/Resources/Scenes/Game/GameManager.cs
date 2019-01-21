@@ -3,18 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.Advertisements;
 
 // 화면에 출력해야할 정보들을 전달하기 위해 사용할 구조체
 public struct GameInfo
 {
-    public int life;
-    public int bomb;
-    public int score;
-    public int bulletCur;
-    public int bulletMax;
+    public int Life;
+    public int Bomb;
+    public int Score;
+    public int BulletCur;
+    public int BulletMax;
+    public float DelayTimeByReload;
+    public bool IsReloading;
+    public int FeverGague;
+    public bool IsFeverOn;
 }
 
 // Game scene 을 총괄하는 클래스
@@ -32,14 +35,18 @@ public class GameManager : MonoBehaviour
         GAMEOVER
     };
 
-    // 플레이어 객체와 플레이어 스크립트
-    private GameObject mPlayer = null;
-    private Player mSPlayer = null;
+    // 플레이어 스크립트
+    private Player mPlayer = null;
     // Instantiate() 에서 사용하기 위한 좀비 Prefab
-    private UnityEngine.Object mOZombie = null;
-    // target 객체들과 각 target 의 ButtonExtension
-    private GameObject[] mTargets = null;
-    private ButtonExtension[] mBTargets = null;
+    private UnityEngine.Object mNormalZombie = null;
+    private UnityEngine.Object mSpecialZombie = null;
+    // 폭탄 애니메이션 Prefab
+    private UnityEngine.Object mBombAnimation = null;
+    // PanelMain 의 GameObject
+    private GameObject mPanelMain = null;
+    // 좀비타겟 객체들과 각 좀비타겟의 ButtonExtension
+    private GameObject[] mZombiePanels = null;
+    private ButtonExtension[] mZombieButtons = null;
     // PanelStart 객체 및 Image 컴포넌트
     private GameObject mPStart = null;
     private Image mStartImage = null;
@@ -64,6 +71,12 @@ public class GameManager : MonoBehaviour
     private Text mTBomb = null;
     // 현재 점수를 출력하기 위한 Text
     private Text mTScore = null;
+    // 장전으로 인한 총기 사용 불가 딜레이를 표시하는 Text
+    private Text mDelayTimeByReloadText = null;
+    // Fever게이지를 표시할 Image
+    private Image mImageFeverGauge = null;
+    // Fever 활성여부를 표시할 Text
+    private Text mFeverText = null;
 
     // 게임 상태에 따른 업데이트 함수를 저장하는 map
     private Dictionary<EState, Action> mUpdates = null;
@@ -108,10 +121,28 @@ public class GameManager : MonoBehaviour
     // 게임 정보를 구조체로 받아와 갱신
     public void RefreshUI(GameInfo gi)
     {
-        this.mTLife.text = "X " + gi.life.ToString();
-        this.mTBomb.text = "X " + gi.bomb.ToString();
-        this.mTBullet.text = gi.bulletCur.ToString() + " / " + gi.bulletMax.ToString();
-        this.mTScore.text = gi.score.ToString();
+        this.mTLife.text = "X " + gi.Life.ToString();
+        this.mTBomb.text = "X " + gi.Bomb.ToString();
+        this.mTBullet.text = gi.BulletCur.ToString() + " / " + gi.BulletMax.ToString();
+        this.mTScore.text = gi.Score.ToString();
+
+        // 장전 중일 경우 잔여시간을 갱신한다
+        if (gi.IsReloading)
+        {
+            String delayTimeByReloadString = gi.DelayTimeByReload.ToString();
+            // 소수점 아래 두 숫자까지 표시
+            mDelayTimeByReloadText.text = delayTimeByReloadString.Substring(0, delayTimeByReloadString.IndexOf('.') + 2) + " Sec";
+        }
+        else
+        {
+            // 장전 중이 아니면 표시하지 않는다
+            mDelayTimeByReloadText.text = " ";
+        }
+
+        // Fever Gague의 너비(width)를 조절하여 게이지가 차 있는 정도를 표시한다
+        mImageFeverGauge.rectTransform.sizeDelta = new Vector2(((float)(gi.FeverGague) / (float)(Fever.MAX_FEVER_COUNT)) * 920, 20);
+
+        mFeverText.gameObject.SetActive(gi.IsFeverOn);
     }
 
     public void EndGame()
@@ -125,64 +156,66 @@ public class GameManager : MonoBehaviour
 
     internal void Awake()
     {
-        this.mPlayer = GameObject.Find("Player");
-        this.mSPlayer = this.mPlayer.GetComponent<Player>();
-        this.mPlayer.SetActive(false);
-
-        this.mOZombie = Resources.Load("Prefabs/Zombie");
-
-        this.mTargets = GameObject.FindGameObjectsWithTag("Target");
+        mPlayer = GameObject.Find("Player").GetComponent<Player>();
+        mNormalZombie = Resources.Load("Prefabs/NormalZombie");
+        mSpecialZombie = Resources.Load("Prefabs/SpecialZombie");
+        mBombAnimation = Resources.Load("Prefabs/BombAnimation");
+        mPanelMain = GameObject.Find("Canvas/PanelMain");
+        mZombiePanels = GameObject.FindGameObjectsWithTag("Target");
         // T0 부터 T8 까지 순서대로 정렬하기 위한 Sort
-        Array.Sort(this.mTargets, delegate (GameObject _1, GameObject _2)
+        Array.Sort(mZombiePanels, delegate (GameObject _1, GameObject _2)
         {
             return _1.name.CompareTo(_2.name);
         });
-        this.mBTargets = new ButtonExtension[this.mTargets.Length];
+        mZombieButtons = new ButtonExtension[mZombiePanels.Length];
         // 각 target 마다의 ButtonExtension 을 대응시켜준다
-        for(int i = 0; i < this.mBTargets.Length; ++i)
+        for(int i = 0; i < mZombieButtons.Length; ++i)
         {
-            this.mBTargets[i] = this.mTargets[i].GetComponent<ButtonExtension>();
+            mZombieButtons[i] = mZombiePanels[i].GetComponent<ButtonExtension>();
         }
-        this.mPStart = GameObject.Find("Canvas/PanelStart");
-        mStartImage = this.mPStart.GetComponent<Image>();
-        this.mPStart.SetActive(false);
-        this.mBMenu = GameObject.Find("Canvas/PanelSub/Menu").GetComponent<ButtonExtension>();
-        this.mPDialog = GameObject.Find("Canvas/PanelDialog");
-        this.mBYes = GameObject.Find("Canvas/PanelDialog/YES").GetComponent<ButtonExtension>();
-        this.mBNo = GameObject.Find("Canvas/PanelDialog/NO").GetComponent<ButtonExtension>();
-        this.mPDialog.SetActive(false);
-        this.mTLife = GameObject.Find("Canvas/PanelSub/Life/Text").GetComponent<Text>();
-        this.mTBullet = GameObject.Find("Canvas/PanelSub/Bullet").GetComponent<Text>();
-        this.mPEnd = GameObject.Find("Canvas/PanelEnd");
-        this.mBOk = GameObject.Find("Canvas/PanelEnd/OK").GetComponent<ButtonExtension>();
-        this.mPEnd.SetActive(false);
-        this.mBReload = GameObject.Find("Canvas/PanelSub/Reload").GetComponent<ButtonExtension>();
-        this.mBBomb = GameObject.Find("Canvas/PanelSub/Bomb").GetComponent<ButtonExtension>();
-        this.mTBomb = GameObject.Find("Canvas/PanelSub/Bomb/Text").GetComponent<Text>();
-        this.mTScore = GameObject.Find("Canvas/PanelMain/Score").GetComponent<Text>();
+        mPStart = GameObject.Find("Canvas/PanelStart");
+        mStartImage = mPStart.GetComponent<Image>();
+        mPStart.SetActive(false);
+        mBMenu = GameObject.Find("Canvas/PanelSub/Menu").GetComponent<ButtonExtension>();
+        mPDialog = GameObject.Find("Canvas/PanelDialog");
+        mBYes = GameObject.Find("Canvas/PanelDialog/YES").GetComponent<ButtonExtension>();
+        mBNo = GameObject.Find("Canvas/PanelDialog/NO").GetComponent<ButtonExtension>();
+        mPDialog.SetActive(false);
+        mTLife = GameObject.Find("Canvas/PanelSub/Life/Text").GetComponent<Text>();
+        mTBullet = GameObject.Find("Canvas/PanelSub/Bullet").GetComponent<Text>();
+        mPEnd = GameObject.Find("Canvas/PanelEnd");
+        mBOk = GameObject.Find("Canvas/PanelEnd/OK").GetComponent<ButtonExtension>();
+        mPEnd.SetActive(false);
+        mBReload = GameObject.Find("Canvas/PanelSub/Reload").GetComponent<ButtonExtension>();
+        mBBomb = GameObject.Find("Canvas/PanelSub/Bomb").GetComponent<ButtonExtension>();
+        mTBomb = GameObject.Find("Canvas/PanelSub/Bomb/Text").GetComponent<Text>();
+        mTScore = GameObject.Find("Canvas/PanelMain/Score").GetComponent<Text>();
+        mDelayTimeByReloadText = GameObject.Find("Canvas/PanelSub/Reload/DelayByReload/Text").GetComponent<Text>();
+        mImageFeverGauge = GameObject.Find("Canvas/PanelSub/Fever/Image").GetComponent<Image>();
+        mFeverText = GameObject.Find("Canvas/PanelSub/Fever/Text").GetComponent<Text>();
 
-        this.mUpdates = new Dictionary<EState, Action>();
-        this.mUpdates.Add(EState.READY, this.UpdateReady);
-        this.mUpdates.Add(EState.PLAYING, this.UpdatePlaying);
-        this.mUpdates.Add(EState.PAUSED, this.UpdatePaused);
-        this.mUpdates.Add(EState.GAMEOVER, this.UpdateGameover);
-        this.mStarts = new Dictionary<EState, Action>();
-        this.mStarts.Add(EState.READY, this.OnStartReady);
-        this.mStarts.Add(EState.PLAYING, this.OnStartPlaying);
-        this.mStarts.Add(EState.PAUSED, this.OnStartPaused);
-        this.mStarts.Add(EState.GAMEOVER, this.OnStartGameover);
-        this.mEnds = new Dictionary<EState, Action>();
-        this.mEnds.Add(EState.UNDEFINED, this.OnEndUndefined);
-        this.mEnds.Add(EState.READY, this.OnEndReady);
-        this.mEnds.Add(EState.PLAYING, this.OnEndPlaying);
-        this.mEnds.Add(EState.PAUSED, this.OnEndPaused);
-        this.mEnds.Add(EState.GAMEOVER, this.OnEndGameover);
-        this.mState = EState.READY;
+        mUpdates = new Dictionary<EState, Action>();
+        mUpdates.Add(EState.READY, UpdateReady);
+        mUpdates.Add(EState.PLAYING, UpdatePlaying);
+        mUpdates.Add(EState.PAUSED, UpdatePaused);
+        mUpdates.Add(EState.GAMEOVER, UpdateGameover);
+        mStarts = new Dictionary<EState, Action>();
+        mStarts.Add(EState.READY, OnStartReady);
+        mStarts.Add(EState.PLAYING, OnStartPlaying);
+        mStarts.Add(EState.PAUSED, OnStartPaused);
+        mStarts.Add(EState.GAMEOVER, OnStartGameover);
+        mEnds = new Dictionary<EState, Action>();
+        mEnds.Add(EState.UNDEFINED, OnEndUndefined);
+        mEnds.Add(EState.READY, OnEndReady);
+        mEnds.Add(EState.PLAYING, OnEndPlaying);
+        mEnds.Add(EState.PAUSED, OnEndPaused);
+        mEnds.Add(EState.GAMEOVER, OnEndGameover);
+        mState = EState.READY;
 
-        this.mCooldownSpawn = 2.0f;
-        this.mTimerSpawn = 0.0f;
-        this.mCountSpawn = 0;
-        this.mRand = new System.Random();
+        mCooldownSpawn = 2.0f;
+        mTimerSpawn = 0.0f;
+        mCountSpawn = 0;
+        mRand = new System.Random();
     }
 
     internal void Update()
@@ -215,12 +248,12 @@ public class GameManager : MonoBehaviour
         }
         if (this.mBReload.IsPressed)
         {
-            this.mSPlayer.Reload();
+            this.mPlayer.Reload();
         }
         // 폭탄 버튼이 눌렸고, 폭탄을 사용할 수 있다면 폭탄 기능을 수행한다
         if (this.mBBomb.IsPressed)
         {
-            if(this.mSPlayer.CanBomb())
+            if(this.mPlayer.CanBomb())
             {
                 this.UseBomb();
             }
@@ -233,18 +266,18 @@ public class GameManager : MonoBehaviour
 
     private void InputTarget()
     {
-        for (int i = 0; i < this.mBTargets.Length; ++i)
+        for (int i = 0; i < this.mZombieButtons.Length; ++i)
         {
             // target 이 눌렸다면, 해당 target 에 대해 사격한다
-            if (this.mBTargets[i].IsPressed)
+            if (this.mZombieButtons[i].IsPressed)
             {
-                this.mSPlayer.Shoot(this.mTargets[i]);
+                this.mPlayer.Shoot(this.mZombiePanels[i]);
             }
             // 그렇지않다면, 해당 target 의 색을 원래대로 돌린다
             // Color.white 로 설정하는 것은 모든 색을 통과시키는 마스킹을 하는 것과 같다
             else
             {
-                Image image = this.mTargets[i].GetComponent<Image>();
+                Image image = this.mZombiePanels[i].GetComponent<Image>();
                 image.color = Color.white;
             }
         }
@@ -280,27 +313,31 @@ public class GameManager : MonoBehaviour
         // 무작위의 순서대로 타겟들을 순회
         for (int i = 0; i < 9; ++i)
         {
-            GameObject target = this.mTargets[order[i]];
+            GameObject target = mZombiePanels[order[i]];
 
             // 타겟에 자식이 없다면 ( 좀비가 없다면 )
             if (target.transform.childCount == 0)
             {
-                // 좀비 객체를 생성하고 타겟의 자식으로 설정
-                GameObject zombie = Instantiate(this.mOZombie, target.transform) as GameObject;
-                zombie.transform.SetParent(target.transform);
-
                 // 특수좀비 스폰카운터에 도달했을 경우
-                if (this.mCountSpawn == 3)
+                if (mCountSpawn == 3)
                 {
-                    this.mCountSpawn = 0;
+                    mCountSpawn = 0;
 
-                    // 일반좀비와의 구분을 위해 이미지 변경 및 특수타입 설정
-                    Image image = zombie.transform.GetComponent<Image>();
-                    image.color = Color.blue;
+                    // 특수좀비 객체를 생성하고 타겟의 자식으로 설정
+                    GameObject zombie = Instantiate(mSpecialZombie, target.transform) as GameObject;
+                    zombie.transform.SetParent(target.transform);
+
+                    // 일반좀비와의 구분을 위해 특수타입 설정
                     zombie.GetComponent<Zombie>().SetType(Zombie.EType.SPECIAL);
                 }
+                else
+                {
+                    ++mCountSpawn;
 
-                ++this.mCountSpawn;
+                    // 일반좀비 객체를 생성하고 타겟의 자식으로 설정
+                    GameObject zombie = Instantiate(mNormalZombie, target.transform) as GameObject;
+                    zombie.transform.SetParent(target.transform);
+                }
 
                 // 좀비를 스폰했으므로 함수 종료
                 break;
@@ -310,8 +347,14 @@ public class GameManager : MonoBehaviour
 
     private void UseBomb()
     {
+        // 플레리어의 폭탄 개수를 줄인다
+        mPlayer.LoseBomb();
+        // 폭탄 애니메이션을 생성하고, 이 애니메이션을 0.25 초 뒤에 삭제한다
+        GameObject obj = Instantiate(mBombAnimation, mPanelMain.transform) as GameObject;
+        obj.transform.SetParent(mPanelMain.transform);
+        Destroy(obj, 0.25f);
         // 좀비를 가지고 있는 target 을 순회하면서, 각 좀비를 죽인다
-        foreach (GameObject target in this.mTargets)
+        foreach (GameObject target in this.mZombiePanels)
         {
             if (target.transform.childCount > 0)
             {
@@ -385,7 +428,7 @@ public class GameManager : MonoBehaviour
     // 좀비들이 업데이트되는 것을 막기 위해 모두 비활성화
     private void StopTarget()
     {
-        foreach (GameObject target in this.mTargets)
+        foreach (GameObject target in this.mZombiePanels)
         {
             if (target.transform.childCount > 0)
             {
@@ -406,7 +449,7 @@ public class GameManager : MonoBehaviour
     // 좀비들이 다시 업데이트되도록 모두 활성화
     private void ResumeTarget()
     {
-        foreach (GameObject target in this.mTargets)
+        foreach (GameObject target in this.mZombiePanels)
         {
             if (target.transform.childCount > 0)
             {

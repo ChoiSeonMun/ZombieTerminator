@@ -29,7 +29,7 @@ public class Gun : MonoBehaviour
     // 총의 대미지를 저장하는 변수
     private int mDamage = -1;
     // 현재 재장전 중인지를 저장하는 변수
-    private bool mbReloading = false;
+    public bool IsReloading { get; private set; }
     // 재장전 딜레이에 도달했는지를 저장하는 타이머 변수
     private float mReloadTime = float.NaN;
     // 재장전 딜레이를 저장하는 변수
@@ -50,17 +50,13 @@ public class Gun : MonoBehaviour
             return;
         }
         // 재장전 중일 경우 함수를 종료
-        else if ((this.mSceneTimer - this.mReloadTime) < this.mReloadDelay)
+        else if(IsReloading)
         {
             return;
         }
         // 잔여 탄수가 있을 경우에만 발사
         else if (this.mBulletCur > 0)
         {
-            // Color.red 로 설정하는 것은 빨간 색만 통과시키는 마스킹을 하는 것과 같다
-            Image image = obj.GetComponent<Image>();
-            image.color = Color.red;
-
             // target 이 좀비를 가지고 있다면 대미지를 입힌다
             if (obj.transform.childCount > 0)
             {
@@ -73,14 +69,20 @@ public class Gun : MonoBehaviour
         }
     }
 
+    public float GetDelayTimeByReload()
+    {
+        return (mReloadDelay - (mSceneTimer - mReloadTime));
+    }
+
     public void Reload()
     {
         // 재장전 도중에는 재장전을 할 수 없다
-        if (this.mbReloading == false)
+        if (this.IsReloading == false)
         {
             this.mReloadTime = this.mSceneTimer;
             // 잔여 탄수를 최대로 채운다
             this.mBulletCur = this.mBulletMax;
+            this.IsReloading = true;
         }
     }
 
@@ -89,23 +91,36 @@ public class Gun : MonoBehaviour
         this.mBulletCur = 30;
         this.mBulletMax = 30;
         this.mDamage = 35;
-        this.mbReloading = false;
+        this.IsReloading = false;
         this.mReloadTime = 0.0f;
         this.mReloadDelay = 1.0f;
         this.mFireDelay = 0.2f;
         this.mShootTimeLast = 0.0f;
         this.mShootTimeCurr = 0.0f;
-        this.mSceneTimer = 0.0f;
+        this.mSceneTimer = 1.0f;
     }
 
     internal void Update()
     {
         this.UpdateSceneTimer();
+        this.UpdateReloadingStatus();
     }
 
     private void UpdateSceneTimer()
     {
         this.mSceneTimer += Time.deltaTime;
+    }
+
+    private void UpdateReloadingStatus()
+    {
+        if (GetDelayTimeByReload() > 0)
+        {
+            IsReloading = true;
+        }
+        else
+        {
+            IsReloading = false;
+        }
     }
 
     public void SetFever(bool isFeverOn)
