@@ -100,7 +100,7 @@ public class Player : MonoBehaviour
         gi.BulletMax = mGun.BulletMax;
         gi.IsReloading = mGun.IsReloading;
         gi.DelayTimeByReload = mGun.GetDelayTimeByReload();
-        gi.FeverGague = mFever.FeverCount;
+        gi.FeverGague = mFever.FeverGauge;
         mManager.RefreshUI(gi);
 
         if (mLife <= 0)
