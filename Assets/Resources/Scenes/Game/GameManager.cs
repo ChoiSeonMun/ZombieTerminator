@@ -17,7 +17,6 @@ public struct GameInfo
     public float DelayTimeByReload;
     public bool IsReloading;
     public int FeverGague;
-    public bool IsFeverOn;
 }
 
 // Game scene 을 총괄하는 클래스
@@ -36,47 +35,40 @@ public class GameManager : MonoBehaviour
     };
 
     // 플레이어 스크립트
-    private Player mPlayer = null;
-    // Instantiate() 에서 사용하기 위한 좀비 Prefab
-    private UnityEngine.Object mNormalZombie = null;
-    private UnityEngine.Object mSpecialZombie = null;
-    // 폭탄 애니메이션 Prefab
-    private UnityEngine.Object mBombAnimation = null;
-    // PanelMain 의 GameObject
-    private GameObject mPanelMain = null;
-    // 좀비타겟 객체들과 각 좀비타겟의 ButtonExtension
-    private GameObject[] mZombiePanels = null;
-    private ButtonExtension[] mZombieButtons = null;
-    // PanelStart 객체 및 Image 컴포넌트
-    private GameObject mPStart = null;
-    private Image mStartImage = null;
+    private Player mPlayerScript = null;
+    // Panel 의 GameObject
+    private GameObject mPanel = null;
     // EState.PLAYING 에서 클릭할 수 있는 메뉴 버튼
-    private ButtonExtension mBMenu = null;
-    // PanelDialog 객체 및 그 자식들의 ButtonExtension
-    private GameObject mPDialog = null;
-    private ButtonExtension mBYes = null;
-    private ButtonExtension mBNo = null;
+    private ButtonExtension mMenuButton = null;
     // 플레이어 체력을 출력하기 위한 Text
-    private Text mTLife = null;
+    private Text mLifeText = null;
     // 잔탄수를 출력하기 위한 Text
-    private Text mTBullet = null;
-    // PanelEnd 객체 및 그 자식의 ButtonExtension
-    private GameObject mPEnd = null;
-    private ButtonExtension mBOk = null;
+    private Text mBulletText = null;
     // EState.PLAYING 에서 클릭할 수 있는 장전 버튼
-    private ButtonExtension mBReload = null;
+    private ButtonExtension mReloadButton = null;
     // EState.PLAYING 에서 클릭할 수 있는 폭탄 버튼
-    private ButtonExtension mBBomb = null;
-    // 잔여 폭탄 개수를 출력하기 위한 Text
-    private Text mTBomb = null;
+    private ButtonExtension mBombButton = null;
     // 현재 점수를 출력하기 위한 Text
-    private Text mTScore = null;
+    private Text mScoreText = null;
     // 장전으로 인한 총기 사용 불가 딜레이를 표시하는 Text
     private Text mDelayTimeByReloadText = null;
-    // Fever게이지를 표시할 Image
-    private Image mImageFeverGauge = null;
-    // Fever 활성여부를 표시할 Text
-    private Text mFeverText = null;
+
+    // Instantiate() 에서 사용하기 위한 좀비 Prefab
+    private UnityEngine.Object mNormalZombieObject = null;
+    private UnityEngine.Object mSpecialZombieObject = null;
+    private GameObject[] mZombies = null;
+    private ButtonExtension[] mZombieButtonExtensions = null;
+    // 폭탄 애니메이션 Prefab
+    private UnityEngine.Object mBombAnimationObject = null;
+    // 시작시 띄우는 panel 의 Prefab
+    private UnityEngine.Object mStartPanelObject = null;
+    private GameObject mStartPanel = null;
+    // 메뉴 버튼을 눌렀을 때 띄우는 panel 의 Prefab
+    private UnityEngine.Object mMenuPanelObject = null;
+    private GameObject mMenuPanel = null;
+    // 게임 종료시 띄우는 panel 의 Prefab
+    private UnityEngine.Object mEndPanelObject = null;
+    private GameObject mEndPanel = null;
 
     // 게임 상태에 따른 업데이트 함수를 저장하는 map
     private Dictionary<EState, Action> mUpdates = null;
@@ -85,21 +77,21 @@ public class GameManager : MonoBehaviour
     // 기존 게임 상태에서 벗어날 때 실행되는 함수를 저장하는 map
     private Dictionary<EState, Action> mEnds = null;
     // 내부적으로 EState 를 저장하는 변수
-    private EState _state = EState.UNDEFINED;
+    private EState mStateInternal = EState.UNDEFINED;
     // EState 대입만으로 함수 호출을 자동화하기 위한 property
     private EState mState
     {
         get
         {
-            return this._state;
+            return mStateInternal;
         }
         set
         {
-            if (value != this._state)
+            if (value != mStateInternal)
             {
-                this.mEnds[this._state]();
-                this._state = value;
-                this.mStarts[this._state]();
+                mEnds[mStateInternal]();
+                mStateInternal = value;
+                mStarts[mStateInternal]();
             }
         }
     }
@@ -121,10 +113,16 @@ public class GameManager : MonoBehaviour
     // 게임 정보를 구조체로 받아와 갱신
     public void RefreshUI(GameInfo gi)
     {
-        this.mTLife.text = "X " + gi.Life.ToString();
-        this.mTBomb.text = "X " + gi.Bomb.ToString();
-        this.mTBullet.text = gi.BulletCur.ToString() + " / " + gi.BulletMax.ToString();
-        this.mTScore.text = gi.Score.ToString();
+        mLifeText.text = "X " + gi.Life.ToString();
+
+        Text bombText = mBombButton.transform.GetChild(2).GetComponent<Text>();
+        bombText.text = "X " + gi.Bomb.ToString();
+        // 폭탄의 개수에 따라 폭탄 버튼의 리소스를 결정한다
+        mBombButton.transform.GetChild(1).gameObject.SetActive(mPlayerScript.Bomb > 0);
+
+        mBulletText.text = gi.BulletCur.ToString() + " / " + gi.BulletMax.ToString();
+
+        mScoreText.text = gi.Score.ToString();
 
         // 장전 중일 경우 잔여시간을 갱신한다
         if (gi.IsReloading)
@@ -138,61 +136,53 @@ public class GameManager : MonoBehaviour
             // 장전 중이 아니면 표시하지 않는다
             mDelayTimeByReloadText.text = " ";
         }
-
-        // Fever Gague의 너비(width)를 조절하여 게이지가 차 있는 정도를 표시한다
-        mImageFeverGauge.rectTransform.sizeDelta = new Vector2(((float)(gi.FeverGague) / (float)(Fever.MAX_FEVER_COUNT)) * 920, 20);
-
-        mFeverText.gameObject.SetActive(gi.IsFeverOn);
     }
 
     public void EndGame()
     {
-        this.mState = EState.GAMEOVER;
+        mState = EState.GAMEOVER;
     }
 
     #endregion
 
     #region Unity Functions
 
-    internal void Awake()
+    void Awake()
     {
-        mPlayer = GameObject.Find("Player").GetComponent<Player>();
-        mNormalZombie = Resources.Load("Prefabs/NormalZombie");
-        mSpecialZombie = Resources.Load("Prefabs/SpecialZombie");
-        mBombAnimation = Resources.Load("Prefabs/BombAnimation");
-        mPanelMain = GameObject.Find("Canvas/PanelMain");
-        mZombiePanels = GameObject.FindGameObjectsWithTag("Target");
+        mPlayerScript = GameObject.Find("Player").GetComponent<Player>();
+        mPanel = GameObject.Find("Canvas/Panel");
+        mMenuButton = GameObject.Find("Canvas/Panel/Menu").GetComponent<ButtonExtension>();
+        mLifeText = GameObject.Find("Canvas/Panel/Life/Text").GetComponent<Text>();
+        mBulletText = GameObject.Find("Canvas/Panel/Bullet").GetComponent<Text>();
+        mReloadButton = GameObject.Find("Canvas/Panel/Reload").GetComponent<ButtonExtension>();
+        mBombButton = GameObject.Find("Canvas/Panel/Bomb").GetComponent<ButtonExtension>();
+        mScoreText = GameObject.Find("Canvas/Panel/Score").GetComponent<Text>();
+        mDelayTimeByReloadText = GameObject.Find("Canvas/Panel/Reload/DelayByReload/Text").GetComponent<Text>();
+
+        mNormalZombieObject = Resources.Load("Prefabs/NormalZombie");
+        mSpecialZombieObject = Resources.Load("Prefabs/SpecialZombie");
         // T0 부터 T8 까지 순서대로 정렬하기 위한 Sort
-        Array.Sort(mZombiePanels, delegate (GameObject _1, GameObject _2)
+        mZombies = GameObject.FindGameObjectsWithTag("Target");
+        Array.Sort(mZombies, delegate (GameObject _1, GameObject _2)
         {
             return _1.name.CompareTo(_2.name);
         });
-        mZombieButtons = new ButtonExtension[mZombiePanels.Length];
+        mZombieButtonExtensions = new ButtonExtension[mZombies.Length];
         // 각 target 마다의 ButtonExtension 을 대응시켜준다
-        for(int i = 0; i < mZombieButtons.Length; ++i)
+        for (int i = 0; i < mZombieButtonExtensions.Length; ++i)
         {
-            mZombieButtons[i] = mZombiePanels[i].GetComponent<ButtonExtension>();
+            mZombieButtonExtensions[i] = mZombies[i].GetComponent<ButtonExtension>();
         }
-        mPStart = GameObject.Find("Canvas/PanelStart");
-        mStartImage = mPStart.GetComponent<Image>();
-        mPStart.SetActive(false);
-        mBMenu = GameObject.Find("Canvas/PanelSub/Menu").GetComponent<ButtonExtension>();
-        mPDialog = GameObject.Find("Canvas/PanelDialog");
-        mBYes = GameObject.Find("Canvas/PanelDialog/YES").GetComponent<ButtonExtension>();
-        mBNo = GameObject.Find("Canvas/PanelDialog/NO").GetComponent<ButtonExtension>();
-        mPDialog.SetActive(false);
-        mTLife = GameObject.Find("Canvas/PanelSub/Life/Text").GetComponent<Text>();
-        mTBullet = GameObject.Find("Canvas/PanelSub/Bullet").GetComponent<Text>();
-        mPEnd = GameObject.Find("Canvas/PanelEnd");
-        mBOk = GameObject.Find("Canvas/PanelEnd/OK").GetComponent<ButtonExtension>();
-        mPEnd.SetActive(false);
-        mBReload = GameObject.Find("Canvas/PanelSub/Reload").GetComponent<ButtonExtension>();
-        mBBomb = GameObject.Find("Canvas/PanelSub/Bomb").GetComponent<ButtonExtension>();
-        mTBomb = GameObject.Find("Canvas/PanelSub/Bomb/Text").GetComponent<Text>();
-        mTScore = GameObject.Find("Canvas/PanelMain/Score").GetComponent<Text>();
-        mDelayTimeByReloadText = GameObject.Find("Canvas/PanelSub/Reload/DelayByReload/Text").GetComponent<Text>();
-        mImageFeverGauge = GameObject.Find("Canvas/PanelSub/Fever/Image").GetComponent<Image>();
-        mFeverText = GameObject.Find("Canvas/PanelSub/Fever/Text").GetComponent<Text>();
+        mBombAnimationObject = Resources.Load("Prefabs/BombAnimation");
+        mStartPanelObject = Resources.Load("Prefabs/StartPanel");
+        mStartPanel = Instantiate(mStartPanelObject, mPanel.transform) as GameObject;
+        mStartPanel.SetActive(false);
+        mMenuPanelObject = Resources.Load("Prefabs/MenuPanel");
+        mMenuPanel = Instantiate(mMenuPanelObject, mPanel.transform) as GameObject;
+        mMenuPanel.SetActive(false);
+        mEndPanelObject = Resources.Load("Prefabs/EndPanel");
+        mEndPanel = Instantiate(mEndPanelObject, mPanel.transform) as GameObject;
+        mEndPanel.SetActive(false);
 
         mUpdates = new Dictionary<EState, Action>();
         mUpdates.Add(EState.READY, UpdateReady);
@@ -218,9 +208,9 @@ public class GameManager : MonoBehaviour
         mRand = new System.Random();
     }
 
-    internal void Update()
+    void Update()
     {
-        this.mUpdates[this.mState]();
+        mUpdates[mState]();
     }
 
     #endregion
@@ -229,12 +219,14 @@ public class GameManager : MonoBehaviour
 
     private void UpdateReady()
     {
+        Image img = mStartPanel.GetComponent<Image>();
+
         // PanelStart 의 Image 를 업데이트마다 투명하게 만든다
         // 완전히 투명해졌을 경우 플레이를 시작한다
-        Color newColor = this.mStartImage.color;
+        Color newColor = img.color;
         newColor.a -= 0.01f;
-        mStartImage.color = newColor;
-        if (mStartImage.color.a <= 0.0f)
+        img.color = newColor;
+        if (img.color.a <= 0.0f)
         {
             mState = EState.PLAYING;
         }
@@ -242,42 +234,42 @@ public class GameManager : MonoBehaviour
 
     private void UpdatePlaying()
     {
-        if (this.mBMenu.IsPressed)
+        if (mMenuButton.IsReleased)
         {
-            this.mState = EState.PAUSED;
+            mState = EState.PAUSED;
         }
-        if (this.mBReload.IsPressed)
+        if (mReloadButton.IsReleased)
         {
-            this.mPlayer.Reload();
+            mPlayerScript.Reload();
         }
         // 폭탄 버튼이 눌렸고, 폭탄을 사용할 수 있다면 폭탄 기능을 수행한다
-        if (this.mBBomb.IsPressed)
+        if (mBombButton.IsReleased)
         {
-            if(this.mPlayer.CanBomb())
+            if(mPlayerScript.Bomb > 0)
             {
-                this.UseBomb();
+                UseBomb();
             }
         }
         // 각 target 에 대해 입력이 있는지 검사한다
-        this.InputTarget();
+        InputTarget();
         // Spawn 을 해야하는지 검사한다
-        this.CheckSpawn();
+        CheckSpawn();
     }
 
     private void InputTarget()
     {
-        for (int i = 0; i < this.mZombieButtons.Length; ++i)
+        for (int i = 0; i < mZombieButtonExtensions.Length; ++i)
         {
             // target 이 눌렸다면, 해당 target 에 대해 사격한다
-            if (this.mZombieButtons[i].IsPressed)
+            if (mZombieButtonExtensions[i].IsReleased)
             {
-                this.mPlayer.Shoot(this.mZombiePanels[i]);
+                mPlayerScript.Shoot(mZombies[i]);
             }
             // 그렇지않다면, 해당 target 의 색을 원래대로 돌린다
             // Color.white 로 설정하는 것은 모든 색을 통과시키는 마스킹을 하는 것과 같다
             else
             {
-                Image image = this.mZombiePanels[i].GetComponent<Image>();
+                Image image = mZombies[i].GetComponent<Image>();
                 image.color = Color.white;
             }
         }
@@ -286,11 +278,11 @@ public class GameManager : MonoBehaviour
     private void CheckSpawn()
     {
         // 타이머를 증가시키고, 지정했던 cooldown 에 도달했을 때 좀비를 Spawn 한다
-        this.mTimerSpawn += Time.deltaTime;
-        if (this.mTimerSpawn >= this.mCooldownSpawn)
+        mTimerSpawn += Time.deltaTime;
+        if (mTimerSpawn >= mCooldownSpawn)
         {
-            this.SpawnZombie();
-            this.mTimerSpawn = 0.0f;
+            SpawnZombie();
+            mTimerSpawn = 0.0f;
         }
     }
 
@@ -304,7 +296,7 @@ public class GameManager : MonoBehaviour
         }
         for (int i = 8; i >= 0; --i)
         {
-            int num = this.mRand.Next(i + 1);
+            int num = mRand.Next(i + 1);
             int temp = order[num];
             order[num] = order[i];
             order[i] = temp;
@@ -313,7 +305,7 @@ public class GameManager : MonoBehaviour
         // 무작위의 순서대로 타겟들을 순회
         for (int i = 0; i < 9; ++i)
         {
-            GameObject target = mZombiePanels[order[i]];
+            GameObject target = mZombies[order[i]];
 
             // 타겟에 자식이 없다면 ( 좀비가 없다면 )
             if (target.transform.childCount == 0)
@@ -324,7 +316,7 @@ public class GameManager : MonoBehaviour
                     mCountSpawn = 0;
 
                     // 특수좀비 객체를 생성하고 타겟의 자식으로 설정
-                    GameObject zombie = Instantiate(mSpecialZombie, target.transform) as GameObject;
+                    GameObject zombie = Instantiate(mSpecialZombieObject, target.transform) as GameObject;
                     zombie.transform.SetParent(target.transform);
 
                     // 일반좀비와의 구분을 위해 특수타입 설정
@@ -335,7 +327,7 @@ public class GameManager : MonoBehaviour
                     ++mCountSpawn;
 
                     // 일반좀비 객체를 생성하고 타겟의 자식으로 설정
-                    GameObject zombie = Instantiate(mNormalZombie, target.transform) as GameObject;
+                    GameObject zombie = Instantiate(mNormalZombieObject, target.transform) as GameObject;
                     zombie.transform.SetParent(target.transform);
                 }
 
@@ -348,13 +340,14 @@ public class GameManager : MonoBehaviour
     private void UseBomb()
     {
         // 플레리어의 폭탄 개수를 줄인다
-        mPlayer.LoseBomb();
+        mPlayerScript.LoseBomb();
+
         // 폭탄 애니메이션을 생성하고, 이 애니메이션을 0.25 초 뒤에 삭제한다
-        GameObject obj = Instantiate(mBombAnimation, mPanelMain.transform) as GameObject;
-        obj.transform.SetParent(mPanelMain.transform);
+        GameObject obj = Instantiate(mBombAnimationObject, mPanel.transform) as GameObject;
+        obj.transform.SetParent(mPanel.transform);
         Destroy(obj, 0.25f);
         // 좀비를 가지고 있는 target 을 순회하면서, 각 좀비를 죽인다
-        foreach (GameObject target in this.mZombiePanels)
+        foreach (GameObject target in mZombies)
         {
             if (target.transform.childCount > 0)
             {
@@ -365,19 +358,24 @@ public class GameManager : MonoBehaviour
 
     private void UpdatePaused()
     {
-        if (this.mBYes.IsPressed)
+        ButtonExtension yes = mMenuPanel.transform.GetChild(1).gameObject.GetComponent<ButtonExtension>();
+        ButtonExtension no = mMenuPanel.transform.GetChild(2).gameObject.GetComponent<ButtonExtension>();
+
+        if (yes.IsReleased)
         {
             SceneManager.LoadScene("Main");
         }
-        if (this.mBNo.IsPressed)
+        if (no.IsReleased)
         {
-            this.mState = EState.PLAYING;
+            mState = EState.PLAYING;
         }
     }
 
     private void UpdateGameover()
     {
-        if (this.mBOk.IsPressed)
+        ButtonExtension ok = mEndPanel.transform.GetChild(1).gameObject.GetComponent<ButtonExtension>();
+
+        if (ok.IsReleased)
         {
             SceneManager.LoadScene("Main");
         }
@@ -396,39 +394,40 @@ public class GameManager : MonoBehaviour
     // EState.READY 에 진입할 때 실행되는 함수
     private void OnStartReady()
     {
-        this.mPStart.SetActive(true);
+        mStartPanel.SetActive(true);
     }
 
     // EState.READY 에서 빠져나갈 때 실행되는 함수
     private void OnEndReady()
     {
-        this.mPStart.SetActive(false);
+        mStartPanel.SetActive(false);
     }
 
     // EState.PLAYING 에 진입할 때 실행되는 함수
     private void OnStartPlaying()
     {
-        this.mPlayer.SetActive(true);
+        mPlayerScript.SetActive(true);
     }
 
     // EState.PLAYING 에서 빠져나갈 때 실행되는 함수
     private void OnEndPlaying()
     {
-        this.mPlayer.SetActive(false);
+        mPlayerScript.SetActive(false);
     }
 
     // EState.PAUSED 에 진입할 때 실행되는 함수
     private void OnStartPaused()
     {
-        this.mPDialog.SetActive(true);
+        mMenuButton.transform.GetChild(1).gameObject.SetActive(false);
+        mMenuPanel.SetActive(true);
 
-        this.StopTarget();
+        StopTarget();
     }
 
     // 좀비들이 업데이트되는 것을 막기 위해 모두 비활성화
     private void StopTarget()
     {
-        foreach (GameObject target in this.mZombiePanels)
+        foreach (GameObject target in mZombies)
         {
             if (target.transform.childCount > 0)
             {
@@ -441,15 +440,16 @@ public class GameManager : MonoBehaviour
     // EState.PAUSED 에서 빠져나갈 때 실행되는 함수
     private void OnEndPaused()
     {
-        this.ResumeTarget();
+        ResumeTarget();
 
-        this.mPDialog.SetActive(false);
+        mMenuPanel.SetActive(false);
+        mMenuButton.transform.GetChild(1).gameObject.SetActive(true);
     }
 
     // 좀비들이 다시 업데이트되도록 모두 활성화
     private void ResumeTarget()
     {
-        foreach (GameObject target in this.mZombiePanels)
+        foreach (GameObject target in mZombies)
         {
             if (target.transform.childCount > 0)
             {
@@ -471,13 +471,13 @@ public class GameManager : MonoBehaviour
             mGameTrial = 0;
         }
 
-        this.mPEnd.SetActive(true);
+        mEndPanel.SetActive(true);
     }
 
     // EState.GAMEOVER 에서 빠져나갈 때 실행되는 함수
     private void OnEndGameover()
     {
-        this.mPEnd.SetActive(false);
+        mEndPanel.SetActive(false);
     }
 
     #endregion
