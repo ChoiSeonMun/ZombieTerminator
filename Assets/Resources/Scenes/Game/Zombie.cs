@@ -28,6 +28,7 @@ public class Zombie : MonoBehaviour
     private float mRuntime = float.NaN;
     // 좀비의 생명력을 저장하는 변수
     private int mLife = 0;
+    private int mLifeMax = 0;
     // 좀비의 종류를 저장하는 변수
     private EType mType = EType.UNDEFINED;
 
@@ -38,27 +39,25 @@ public class Zombie : MonoBehaviour
 
     public void Hit(int damage)
     {
-        if(mAttackAnimator == null)
+        // 좀비의 생명력을 대미지만큼 감소시키고, 생명력이 0 에 도달했을 경우 죽는다
+        mLife = mLife - damage;
+
+        if (mAttackAnimator == null)
         {
             // 좀비가 공격받는 애니메이션을 생성한다
             GameObject obj = Instantiate(mAttackAnimation, transform) as GameObject;
             obj.transform.SetParent(transform.parent);
 
-            // 애니메이션을 첫번째 프레임으로 고정한다
+            // 애니메이션을 시작한다
             mAttackAnimator = obj.GetComponent<Animator>();
             mAttackAnimator.speed = 0.0f;
-            mAttackNormalizedTime = 0.0f;
-            mAttackAnimator.Play("AttackAnimation", 0, mAttackNormalizedTime);
+            mAttackAnimator.Play("AttackAnimation", 0, (float)(mLifeMax - mLife) / (float)mLifeMax);
         }
         else
         {
             // 애니메이션을 다음 프레임으로 넘긴다
-            mAttackNormalizedTime += 0.33f;
-            mAttackAnimator.Play("AttackAnimation", 0, mAttackNormalizedTime);
+            mAttackAnimator.Play("AttackAnimation", 0, (float)(mLifeMax - mLife) / (float)mLifeMax);
         }
-
-        // 좀비의 생명력을 대미지만큼 감소시키고, 생명력이 0 에 도달했을 경우 죽는다
-        mLife = mLife - damage;
     }
 
     internal void Awake()
@@ -71,6 +70,7 @@ public class Zombie : MonoBehaviour
 
         mType = EType.NORMAL;
         mLife = 100;
+        mLifeMax = mLife;
         mLifetime = 3.0f;
         mRuntime = 0.0f;
     }

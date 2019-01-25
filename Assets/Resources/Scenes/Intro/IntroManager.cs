@@ -32,21 +32,21 @@ public class IntroManager : MonoBehaviour
 
     void Awake()
     {
-        this.mNotice = GameObject.Find("Canvas/Panel/Notice").GetComponent<Text>();
+        mNotice = GameObject.Find("Canvas/Panel/Notice").GetComponent<Text>();
     }
 
     void Update()
     {
-        this.ProcessInput();
+        ProcessInput();
 
-        this.BlinkNotice();
+        BlinkNotice();
     }
 
     private void ProcessInput()
     {
         if (Input.GetMouseButtonUp(0))
         {
-            this.LoadMain();
+            LoadMain();
         }
     }
 
@@ -60,15 +60,15 @@ public class IntroManager : MonoBehaviour
         // 카운터가 1.0 보다 커지면 == 문구가 흰색이 된다면
         // 카운터를 0.0 값으로 한다 == 문구를 검은색으로 한다
         // 그 외의 경우 카운터를 조금씩 증가시킨다 == 문구를 밝게 변화시킨다
-        if(this.mBlinkCount >= 1.0f)
+        if(mBlinkCount >= 1.0f)
         {
-            this.mBlinkCount = 0.0f;
+            mBlinkCount = 0.0f;
         }
         else
         {
-            this.mBlinkCount += 0.025f;
+            mBlinkCount += 0.025f;
         }
-        this.mBlinkColor.r = this.mBlinkColor.g = this.mBlinkColor.b = this.mBlinkCount;
-        this.mNotice.color = this.mBlinkColor;
+        mBlinkColor.r = mBlinkColor.g = mBlinkColor.b = mBlinkCount;
+        mNotice.color = mBlinkColor;
     }
 }
