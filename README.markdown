@@ -1,7 +1,7 @@
 # Zombie Terminator
 
 ### version
-- Unity `2018.3.0f2`
+- Unity `2018.2.17f1`
 
 ### members
 - programming team

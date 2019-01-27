@@ -58,7 +58,8 @@ public class Gun : MonoBehaviour
         else if (this.mBulletCur > 0)
         {
             // target 이 좀비를 가지고 있다면 대미지를 입힌다
-            if (obj.transform.childCount > 0)
+            if ((obj.transform.childCount > 0) &&
+                (obj.transform.GetChild(0).tag == "Zombie"))
             {
                 GameObject zombie = obj.transform.GetChild(0).gameObject;
                 zombie.GetComponent<Zombie>().Hit(this.mDamage);
