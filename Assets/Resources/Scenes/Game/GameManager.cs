@@ -96,12 +96,23 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private int mLevel;
+    // 레벨 업을 위한 시간 경과를 저장하는 변수
+    private float mLevelTimer = float.NaN;
+    // 다음 레벨 업까지의 시간 간격을 저장하는 변수
+    private float mLevelInterval = float.NaN;
+
     // Spawn Cooldown 시간값을 저장하는 변수
     private float mCooldownSpawn = float.NaN;
     // 이전 Spawn 으로부터 얼마나 시간이 지났는지를 저장하는 변수
     private float mTimerSpawn = float.NaN;
-    // 특수 좀비를 Spawn 하기 위해, 일반 좀비가 몇 번이나 Spawn 되었는지 저장하는 변수
-    private int mCountSpawn = -1;
+    // 특수 좀비를 Spawn할 확률을 조정하기 위해 일반 좀비와 특수 좀비의 스폰 수를 기록하는 변수들
+    private int mCountNormalSpawn = -1;
+    private int mCountSpecialSpawn = -1;
+    // 특수 좀비를 Spawn할 확률
+    private float mRateSpecialSpawn = float.NaN;
+    // 특수 좀비의 Spawn 확률을 보정하는 변수
+    private float mAmendRateSpecialSpawn = float.NaN;
     // 난수 생성을 위한 Random 객체
     private System.Random mRand = null;
     // 게임이 몇 번 종료되었는지 저장하는 변수
@@ -204,8 +215,16 @@ public class GameManager : MonoBehaviour
 
         mCooldownSpawn = 2.0f;
         mTimerSpawn = 0.0f;
-        mCountSpawn = 0;
+        mCountNormalSpawn = 0;
+        mCountSpecialSpawn = 0;
         mRand = new System.Random();
+
+        mLevel = 0;
+        mLevelTimer = 0.0f;
+        mLevelInterval = 10.0f;
+
+        mRateSpecialSpawn = 0.15f;
+        mAmendRateSpecialSpawn = 0.0f;
     }
 
     void Update()
@@ -254,6 +273,7 @@ public class GameManager : MonoBehaviour
         InputTarget();
         // Spawn 을 해야하는지 검사한다
         CheckSpawn();
+        CheckLevelUp();
     }
 
     private void InputTarget()
@@ -286,6 +306,23 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void CheckLevelUp()
+    {
+        mLevelTimer += Time.deltaTime;
+        if (mLevelTimer > mLevelInterval)
+        {
+            LevelUp();
+            mLevelTimer = 0.0f;
+        }
+    }
+
+    private void LevelUp()
+    {
+        mLevel++;
+        mCooldownSpawn *= 0.9f;
+        mLevelInterval *= 0.95f;
+    }
+
     private void SpawnZombie()
     {
         // Fisher-Yates 셔플 알고리듬
@@ -311,9 +348,9 @@ public class GameManager : MonoBehaviour
             if (target.transform.childCount == 0)
             {
                 // 특수좀비 스폰카운터에 도달했을 경우
-                if (mCountSpawn == 3)
+                if (DecideSpawnSpecial())
                 {
-                    mCountSpawn = 0;
+                    ++mCountSpecialSpawn;
 
                     // 특수좀비 객체를 생성하고 타겟의 자식으로 설정
                     GameObject zombie = Instantiate(mSpecialZombieObject, target.transform) as GameObject;
@@ -321,19 +358,49 @@ public class GameManager : MonoBehaviour
 
                     // 일반좀비와의 구분을 위해 특수타입 설정
                     zombie.GetComponent<Zombie>().SetType(Zombie.EType.SPECIAL);
+                    // 레벨에 따라 능력치 조정
+                    zombie.GetComponent<Zombie>().SetStatus(mLevel);
                 }
                 else
                 {
-                    ++mCountSpawn;
+                    ++mCountNormalSpawn;
 
                     // 일반좀비 객체를 생성하고 타겟의 자식으로 설정
                     GameObject zombie = Instantiate(mNormalZombieObject, target.transform) as GameObject;
                     zombie.transform.SetParent(target.transform);
+                    // 레벨에 따라 능력치 조정
+                    zombie.GetComponent<Zombie>().SetStatus(mLevel);
                 }
 
                 // 좀비를 스폰했으므로 함수 종료
                 break;
             }
+        }
+    }
+
+    private bool DecideSpawnSpecial()
+    {
+        float rateSpawnNow = (float)mCountSpecialSpawn / (float)(mCountSpecialSpawn + mCountNormalSpawn);
+
+        // 실제 확률이 기대 확률보다 크면 스폰 확률을 줄이기 위해 보정값을 줄인다
+        if (rateSpawnNow > mRateSpecialSpawn)
+        {
+            mAmendRateSpecialSpawn -= 0.1f;
+        }
+        // 반대로 실제 확률이 기대 확률보다 작으면 스폰 확률을 늘이기 위해 보정값을 늘인다
+        else if (rateSpawnNow < mRateSpecialSpawn)
+        {
+            mAmendRateSpecialSpawn += 0.1f;
+        }
+
+        // 난수를 생성하여 스폰할 것인지 정한다
+        if (mRand.NextDouble() < (mRateSpecialSpawn + mAmendRateSpecialSpawn))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 

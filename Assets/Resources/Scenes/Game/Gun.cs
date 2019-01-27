@@ -91,11 +91,11 @@ public class Gun : MonoBehaviour
     {
         this.mBulletCur = 30;
         this.mBulletMax = 30;
-        this.mDamage = 35;
+        this.mDamage = 40;
         this.IsReloading = false;
         this.mReloadTime = 0.0f;
         this.mReloadDelay = 1.0f;
-        this.mFireDelay = 0.2f;
+        this.mFireDelay = 0.15f;
         this.mShootTimeLast = 0.0f;
         this.mShootTimeCurr = 0.0f;
         this.mSceneTimer = 1.0f;
@@ -126,19 +126,19 @@ public class Gun : MonoBehaviour
 
     public void SetFever(bool isFeverOn)
     {
-        // 대미지가 증가하고 재장전 및 발사 딜레이를 무시한다
+        // 대미지가 2배로 증가하고 재장전 및 발사 딜레이를 무시한다
         if (isFeverOn)
         {
-            this.mDamage = 50;
+            this.mDamage = mDamage * 2;
             this.mReloadDelay = 0.0f;
             this.mFireDelay = 0.0f;
         }
         // 원래 상태로 복귀한다
         else
         {
-            this.mDamage = 35;
+            this.mDamage = 40;
             this.mReloadDelay = 1.0f;
-            this.mFireDelay = 0.2f;
+            this.mFireDelay = 0.15f;
         }
     }
 }
