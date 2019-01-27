@@ -11,8 +11,6 @@ public class IntroManager : MonoBehaviour
     public Text NoticeText;
     public float BlinkSpeed = 2.0f;
     
-    // touch to start 문구를 깜빡이게 하기 위한 변수들
-    private float mBlinkValue = 1.0f;
     private Color mBlinkColor = Color.white;
 
     void Start()
