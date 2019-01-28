@@ -4,6 +4,15 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    // 폭탄 개수에 대한 getter
+    public int Bomb
+    {
+        get
+        {
+            return mBomb;
+        }
+    }
+
     // GameManager 스크립트에 접근하기 위한 변수
     private GameManager mManager = null;
     // Player 객체에 접근하기 위한 변수
@@ -29,12 +38,6 @@ public class Player : MonoBehaviour
     public void Reload()
     {
         mGun.Reload();
-    }
-
-    // 자신이 폭탄을 사용할 수 있다면, 폭탄 개수를 감소시킨 뒤 true 반환
-    public bool CanBomb()
-    {
-        return mBomb > 0;
     }
 
     public void GainBomb()
@@ -74,7 +77,7 @@ public class Player : MonoBehaviour
 
     #endregion
 
-    internal void Awake()
+    void Awake()
     {
         mManager = GameObject.Find("Manager").GetComponent<GameManager>();
         mPlayer = GameObject.Find("Player");
@@ -87,7 +90,7 @@ public class Player : MonoBehaviour
     }
 
     // 매 업데이트마다 UI 에 필요한 정보를 전달한다
-    internal void Update()
+    void Update()
     {
         GameInfo gi;
         gi.Life = mLife;
@@ -98,7 +101,6 @@ public class Player : MonoBehaviour
         gi.IsReloading = mGun.IsReloading;
         gi.DelayTimeByReload = mGun.GetDelayTimeByReload();
         gi.FeverGague = mFever.FeverCount;
-        gi.IsFeverOn = mFever.IsFeverOn;
         mManager.RefreshUI(gi);
 
         if (mLife <= 0)

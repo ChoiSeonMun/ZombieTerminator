@@ -7,19 +7,44 @@ using UnityEngine.UI;
 public class MainManager : MonoBehaviour
 {
     // START 버튼
-    private Button mBStart = null;
+    private Button mStartButton = null;
+    private ButtonExtension mStartButtonExtension = null;
     // RANK 버튼
-    private Button mBRank = null;
+    private Button mRankButton = null;
+    private ButtonExtension mRankButtonExtension = null;
 
-    internal void Start()
+    void Awake()
     {
-        this.mBStart = GameObject.Find("Canvas/Panel/Start").GetComponent<Button>();
+        mStartButton = GameObject.Find("Canvas/Panel/Start").GetComponent<Button>();
         // START 버튼이 클릭되면 OnClickStart 함수를 실행하도록 설정
-        this.mBStart.onClick.AddListener(this.OnClickStart);
+        mStartButton.onClick.AddListener(OnClickStart);
+        mStartButtonExtension = mStartButton.gameObject.GetComponent<ButtonExtension>();
 
-        this.mBRank = GameObject.Find("Canvas/Panel/Rank").GetComponent<Button>();
+        mRankButton = GameObject.Find("Canvas/Panel/Rank").GetComponent<Button>();
         // RANK 버튼이 클릭되면 OnClickRank 함수를 실행하도록 설정
-        this.mBRank.onClick.AddListener(this.OnClickRank);
+        mRankButton.onClick.AddListener(OnClickRank);
+        mRankButtonExtension = mRankButton.gameObject.GetComponent<ButtonExtension>();
+    }
+
+    void Update()
+    {
+        if(mStartButtonExtension.IsPressed)
+        {
+            mStartButton.transform.GetChild(1).gameObject.SetActive(false);
+        }
+        else
+        {
+            mStartButton.transform.GetChild(1).gameObject.SetActive(true);
+        }
+
+        if(mRankButtonExtension.IsPressed)
+        {
+            mRankButton.transform.GetChild(1).gameObject.SetActive(false);
+        }
+        else
+        {
+            mRankButton.transform.GetChild(1).gameObject.SetActive(true);
+        }
     }
 
     private void OnClickStart()
