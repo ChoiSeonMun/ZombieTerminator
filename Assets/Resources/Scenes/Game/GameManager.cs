@@ -36,6 +36,8 @@ public class GameManager : MonoBehaviour
 
     // 플레이어 스크립트
     private Player mPlayerScript = null;
+    // Fever Script
+    private Fever mFever = null;
     // Panel 의 GameObject
     private GameObject mPanel = null;
     // EState.PLAYING 에서 클릭할 수 있는 메뉴 버튼
@@ -104,6 +106,8 @@ public class GameManager : MonoBehaviour
 
     // Spawn Cooldown 시간값을 저장하는 변수
     private float mCooldownSpawn = float.NaN;
+    // Fever 현재 쿨다운을 임시적으로 기록할 변수
+    private float mCooldownSpawnTemp = float.NaN;
     // 이전 Spawn 으로부터 얼마나 시간이 지났는지를 저장하는 변수
     private float mTimerSpawn = float.NaN;
     // 특수 좀비를 Spawn할 확률을 조정하기 위해 일반 좀비와 특수 좀비의 스폰 수를 기록하는 변수들
@@ -154,6 +158,26 @@ public class GameManager : MonoBehaviour
         mState = EState.GAMEOVER;
     }
 
+    public void SetFever(bool isFeverOn)
+    {
+        if (isFeverOn)
+        {
+            mCooldownSpawnTemp = mCooldownSpawn;
+            mCooldownSpawn = 0.1f;
+        }
+        else
+        {
+            mCooldownSpawn = mCooldownSpawnTemp;
+            foreach (GameObject target in mZombies)
+            {
+                if (target.transform.childCount > 0)
+                {
+                    Destroy(target.gameObject.transform.GetChild(0).gameObject);
+                }
+            }
+        }
+    }
+
     #endregion
 
     #region Unity Functions
@@ -161,6 +185,7 @@ public class GameManager : MonoBehaviour
     void Awake()
     {
         mPlayerScript = GameObject.Find("Player").GetComponent<Player>();
+        mFever = GameObject.Find("Player").GetComponent<Fever>();
         mPanel = GameObject.Find("Canvas/Panel");
         mMenuButton = GameObject.Find("Canvas/Panel/Menu").GetComponent<ButtonExtension>();
         mLifeText = GameObject.Find("Canvas/Panel/Life/Text").GetComponent<Text>();
@@ -214,6 +239,7 @@ public class GameManager : MonoBehaviour
         mState = EState.READY;
 
         mCooldownSpawn = 2.0f;
+        mCooldownSpawnTemp = 0.0f;
         mTimerSpawn = 0.0f;
         mCountNormalSpawn = 0;
         mCountSpecialSpawn = 0;
@@ -273,7 +299,8 @@ public class GameManager : MonoBehaviour
         InputTarget();
         // Spawn 을 해야하는지 검사한다
         CheckSpawn();
-        CheckLevelUp();
+        // Fever 상태가 아닐 때 레벨업을 체크한다
+        if(!mFever.IsFeverOn) CheckLevelUp();
     }
 
     private void InputTarget()
@@ -308,12 +335,12 @@ public class GameManager : MonoBehaviour
 
     private void CheckLevelUp()
     {
-        mLevelTimer += Time.deltaTime;
-        if (mLevelTimer > mLevelInterval)
-        {
+         mLevelTimer += Time.deltaTime;
+         if (mLevelTimer > mLevelInterval)
+         {
             LevelUp();
             mLevelTimer = 0.0f;
-        }
+         }
     }
 
     private void LevelUp()
