@@ -35,9 +35,9 @@ public class GameManager : MonoBehaviour
     };
 
     // 플레이어 스크립트
-    private Player mPlayerScript = null;
+    public Player mPlayerScript = null;
     // Fever Script
-    private Fever mFever = null;
+    public Fever mFever = null;
     // Panel 의 GameObject
     private GameObject mPanel = null;
     // EState.PLAYING 에서 클릭할 수 있는 메뉴 버튼
@@ -111,12 +111,12 @@ public class GameManager : MonoBehaviour
     // 이전 Spawn 으로부터 얼마나 시간이 지났는지를 저장하는 변수
     private float mTimerSpawn = float.NaN;
     // 특수 좀비를 Spawn할 확률을 조정하기 위해 일반 좀비와 특수 좀비의 스폰 수를 기록하는 변수들
-    private int mCountNormalSpawn = -1;
-    private int mCountSpecialSpawn = -1;
+    private int mNormalSpawnCount = -1;
+    private int mSpecialSpawnCount = -1;
     // 특수 좀비를 Spawn할 확률
-    private float mRateSpecialSpawn = float.NaN;
+    private float mSpecialSpawnRate = float.NaN;
     // 특수 좀비의 Spawn 확률을 보정하는 변수
-    private float mAmendRateSpecialSpawn = float.NaN;
+    private float mRateSpecialSpawnAmend = float.NaN;
     // 난수 생성을 위한 Random 객체
     private System.Random mRand = null;
     // 게임이 몇 번 종료되었는지 저장하는 변수
@@ -241,16 +241,16 @@ public class GameManager : MonoBehaviour
         mCooldownSpawn = 2.0f;
         mCooldownSpawnTemp = 0.0f;
         mTimerSpawn = 0.0f;
-        mCountNormalSpawn = 0;
-        mCountSpecialSpawn = 0;
+        mNormalSpawnCount = 0;
+        mSpecialSpawnCount = 0;
         mRand = new System.Random();
 
         mLevel = 0;
         mLevelTimer = 0.0f;
         mLevelInterval = 10.0f;
 
-        mRateSpecialSpawn = 0.15f;
-        mAmendRateSpecialSpawn = 0.0f;
+        mSpecialSpawnRate = 0.15f;
+        mRateSpecialSpawnAmend = 0.0f;
     }
 
     void Update()
@@ -298,9 +298,11 @@ public class GameManager : MonoBehaviour
         // 각 target 에 대해 입력이 있는지 검사한다
         InputTarget();
         // Spawn 을 해야하는지 검사한다
-        CheckSpawn();
+        checkSpawn();
         // Fever 상태가 아닐 때 레벨업을 체크한다
-        if(!mFever.IsFeverOn) CheckLevelUp();
+        if (!mFever.IsFeverOn) {
+            checkLevelUp();
+        }
     }
 
     private void InputTarget()
@@ -322,35 +324,35 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void CheckSpawn()
+    private void checkSpawn()
     {
         // 타이머를 증가시키고, 지정했던 cooldown 에 도달했을 때 좀비를 Spawn 한다
         mTimerSpawn += Time.deltaTime;
         if (mTimerSpawn >= mCooldownSpawn)
         {
-            SpawnZombie();
+            spawnZombie();
             mTimerSpawn = 0.0f;
         }
     }
 
-    private void CheckLevelUp()
+    private void checkLevelUp()
     {
          mLevelTimer += Time.deltaTime;
          if (mLevelTimer > mLevelInterval)
          {
-            LevelUp();
+            levelUp();
             mLevelTimer = 0.0f;
          }
     }
 
-    private void LevelUp()
+    private void levelUp()
     {
         mLevel++;
         mCooldownSpawn *= 0.9f;
         mLevelInterval *= 0.95f;
     }
 
-    private void SpawnZombie()
+    private void spawnZombie()
     {
         // Fisher-Yates 셔플 알고리듬
         int[] order = new int[9];
@@ -375,9 +377,9 @@ public class GameManager : MonoBehaviour
             if (target.transform.childCount == 0)
             {
                 // 특수좀비 스폰카운터에 도달했을 경우
-                if (DecideSpawnSpecial())
+                if (canSpawnSpecialZombie())
                 {
-                    ++mCountSpecialSpawn;
+                    ++mSpecialSpawnCount;
 
                     // 특수좀비 객체를 생성하고 타겟의 자식으로 설정
                     GameObject zombie = Instantiate(mSpecialZombieObject, target.transform) as GameObject;
@@ -390,7 +392,7 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
-                    ++mCountNormalSpawn;
+                    ++mNormalSpawnCount;
 
                     // 일반좀비 객체를 생성하고 타겟의 자식으로 설정
                     GameObject zombie = Instantiate(mNormalZombieObject, target.transform) as GameObject;
@@ -405,23 +407,23 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private bool DecideSpawnSpecial()
+    private bool canSpawnSpecialZombie()
     {
-        float rateSpawnNow = (float)mCountSpecialSpawn / (float)(mCountSpecialSpawn + mCountNormalSpawn);
+        float rateSpawnNow = (float)mSpecialSpawnCount / (float)(mSpecialSpawnCount + mNormalSpawnCount);
 
         // 실제 확률이 기대 확률보다 크면 스폰 확률을 줄이기 위해 보정값을 줄인다
-        if (rateSpawnNow > mRateSpecialSpawn)
+        if (rateSpawnNow > mSpecialSpawnRate)
         {
-            mAmendRateSpecialSpawn -= 0.1f;
+            mRateSpecialSpawnAmend -= 0.1f;
         }
         // 반대로 실제 확률이 기대 확률보다 작으면 스폰 확률을 늘이기 위해 보정값을 늘인다
-        else if (rateSpawnNow < mRateSpecialSpawn)
+        else if (rateSpawnNow < mSpecialSpawnRate)
         {
-            mAmendRateSpecialSpawn += 0.1f;
+            mRateSpecialSpawnAmend += 0.1f;
         }
 
         // 난수를 생성하여 스폰할 것인지 정한다
-        if (mRand.NextDouble() < (mRateSpecialSpawn + mAmendRateSpecialSpawn))
+        if (mRand.NextDouble() < (mSpecialSpawnRate + mRateSpecialSpawnAmend))
         {
             return true;
         }

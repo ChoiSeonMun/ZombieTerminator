@@ -2127,6 +2127,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41d455e09f9511e4a800fa01a73f6b71, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mPlayerScript: {fileID: 1580132888}
+  mFever: {fileID: 1580132891}
 --- !u!4 &1005551065
 Transform:
   m_ObjectHideFlags: 0
@@ -2745,6 +2747,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69b7b9c6eadb5804cadf7b257599f104, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mGun: {fileID: 1580132890}
+  mGameManager: {fileID: 1005551064}
 --- !u!1 &1588268149
 GameObject:
   m_ObjectHideFlags: 0

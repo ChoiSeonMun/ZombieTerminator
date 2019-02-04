@@ -19,10 +19,10 @@ public class Fever : MonoBehaviour
     private float mFeverBuffTime = float.NaN;
 
     // Gun 시스템에 접근하기 위한 변수
-    private Gun mGun = null;
+    public Gun mGun = null;
 
     // GameManager에 접근하기 위한 변수
-    private GameManager mGameManager = null;
+    public GameManager mGameManager = null;
 
     // 배경에 대한 panel 의 GameObject
     private GameObject mBackgroundPanel = null;
