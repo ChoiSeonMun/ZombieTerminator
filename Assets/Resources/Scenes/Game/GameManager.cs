@@ -35,7 +35,9 @@ public class GameManager : MonoBehaviour
     };
 
     // 플레이어 스크립트
-    private Player mPlayerScript = null;
+    public Player mPlayerScript = null;
+    // Fever Script
+    public Fever mFever = null;
     // Panel 의 GameObject
     private GameObject mPanel = null;
     // EState.PLAYING 에서 클릭할 수 있는 메뉴 버튼
@@ -96,12 +98,25 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private int mLevel;
+    // 레벨 업을 위한 시간 경과를 저장하는 변수
+    private float mLevelTimer = float.NaN;
+    // 다음 레벨 업까지의 시간 간격을 저장하는 변수
+    private float mLevelInterval = float.NaN;
+
     // Spawn Cooldown 시간값을 저장하는 변수
     private float mCooldownSpawn = float.NaN;
+    // Fever 현재 쿨다운을 임시적으로 기록할 변수
+    private float mCooldownSpawnTemp = float.NaN;
     // 이전 Spawn 으로부터 얼마나 시간이 지났는지를 저장하는 변수
     private float mTimerSpawn = float.NaN;
-    // 특수 좀비를 Spawn 하기 위해, 일반 좀비가 몇 번이나 Spawn 되었는지 저장하는 변수
-    private int mCountSpawn = -1;
+    // 특수 좀비를 Spawn할 확률을 조정하기 위해 일반 좀비와 특수 좀비의 스폰 수를 기록하는 변수들
+    private int mNormalSpawnCount = -1;
+    private int mSpecialSpawnCount = -1;
+    // 특수 좀비를 Spawn할 확률
+    private float mSpecialSpawnRate = float.NaN;
+    // 특수 좀비의 Spawn 확률을 보정하는 변수
+    private float mRateSpecialSpawnAmend = float.NaN;
     // 난수 생성을 위한 Random 객체
     private System.Random mRand = null;
     // 게임이 몇 번 종료되었는지 저장하는 변수
@@ -143,6 +158,26 @@ public class GameManager : MonoBehaviour
         mState = EState.GAMEOVER;
     }
 
+    public void SetFever(bool isFeverOn)
+    {
+        if (isFeverOn)
+        {
+            mCooldownSpawnTemp = mCooldownSpawn;
+            mCooldownSpawn = 0.1f;
+        }
+        else
+        {
+            mCooldownSpawn = mCooldownSpawnTemp;
+            foreach (GameObject target in mZombies)
+            {
+                if (target.transform.childCount > 0)
+                {
+                    Destroy(target.gameObject.transform.GetChild(0).gameObject);
+                }
+            }
+        }
+    }
+
     #endregion
 
     #region Unity Functions
@@ -150,6 +185,7 @@ public class GameManager : MonoBehaviour
     void Awake()
     {
         mPlayerScript = GameObject.Find("Player").GetComponent<Player>();
+        mFever = GameObject.Find("Player").GetComponent<Fever>();
         mPanel = GameObject.Find("Canvas/Panel");
         mMenuButton = GameObject.Find("Canvas/Panel/Menu").GetComponent<ButtonExtension>();
         mLifeText = GameObject.Find("Canvas/Panel/Life/Text").GetComponent<Text>();
@@ -203,9 +239,18 @@ public class GameManager : MonoBehaviour
         mState = EState.READY;
 
         mCooldownSpawn = 2.0f;
+        mCooldownSpawnTemp = 0.0f;
         mTimerSpawn = 0.0f;
-        mCountSpawn = 0;
+        mNormalSpawnCount = 0;
+        mSpecialSpawnCount = 0;
         mRand = new System.Random();
+
+        mLevel = 0;
+        mLevelTimer = 0.0f;
+        mLevelInterval = 10.0f;
+
+        mSpecialSpawnRate = 0.15f;
+        mRateSpecialSpawnAmend = 0.0f;
     }
 
     void Update()
@@ -253,7 +298,11 @@ public class GameManager : MonoBehaviour
         // 각 target 에 대해 입력이 있는지 검사한다
         InputTarget();
         // Spawn 을 해야하는지 검사한다
-        CheckSpawn();
+        checkSpawn();
+        // Fever 상태가 아닐 때 레벨업을 체크한다
+        if (!mFever.IsFeverOn) {
+            checkLevelUp();
+        }
     }
 
     private void InputTarget()
@@ -275,18 +324,35 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void CheckSpawn()
+    private void checkSpawn()
     {
         // 타이머를 증가시키고, 지정했던 cooldown 에 도달했을 때 좀비를 Spawn 한다
         mTimerSpawn += Time.deltaTime;
         if (mTimerSpawn >= mCooldownSpawn)
         {
-            SpawnZombie();
+            spawnZombie();
             mTimerSpawn = 0.0f;
         }
     }
 
-    private void SpawnZombie()
+    private void checkLevelUp()
+    {
+         mLevelTimer += Time.deltaTime;
+         if (mLevelTimer > mLevelInterval)
+         {
+            levelUp();
+            mLevelTimer = 0.0f;
+         }
+    }
+
+    private void levelUp()
+    {
+        mLevel++;
+        mCooldownSpawn *= 0.9f;
+        mLevelInterval *= 0.95f;
+    }
+
+    private void spawnZombie()
     {
         // Fisher-Yates 셔플 알고리듬
         int[] order = new int[9];
@@ -311,9 +377,9 @@ public class GameManager : MonoBehaviour
             if (target.transform.childCount == 0)
             {
                 // 특수좀비 스폰카운터에 도달했을 경우
-                if (mCountSpawn == 3)
+                if (canSpawnSpecialZombie())
                 {
-                    mCountSpawn = 0;
+                    ++mSpecialSpawnCount;
 
                     // 특수좀비 객체를 생성하고 타겟의 자식으로 설정
                     GameObject zombie = Instantiate(mSpecialZombieObject, target.transform) as GameObject;
@@ -321,19 +387,49 @@ public class GameManager : MonoBehaviour
 
                     // 일반좀비와의 구분을 위해 특수타입 설정
                     zombie.GetComponent<Zombie>().SetType(Zombie.EType.SPECIAL);
+                    // 레벨에 따라 능력치 조정
+                    zombie.GetComponent<Zombie>().SetStatus(mLevel);
                 }
                 else
                 {
-                    ++mCountSpawn;
+                    ++mNormalSpawnCount;
 
                     // 일반좀비 객체를 생성하고 타겟의 자식으로 설정
                     GameObject zombie = Instantiate(mNormalZombieObject, target.transform) as GameObject;
                     zombie.transform.SetParent(target.transform);
+                    // 레벨에 따라 능력치 조정
+                    zombie.GetComponent<Zombie>().SetStatus(mLevel);
                 }
 
                 // 좀비를 스폰했으므로 함수 종료
                 break;
             }
+        }
+    }
+
+    private bool canSpawnSpecialZombie()
+    {
+        float rateSpawnNow = (float)mSpecialSpawnCount / (float)(mSpecialSpawnCount + mNormalSpawnCount);
+
+        // 실제 확률이 기대 확률보다 크면 스폰 확률을 줄이기 위해 보정값을 줄인다
+        if (rateSpawnNow > mSpecialSpawnRate)
+        {
+            mRateSpecialSpawnAmend -= 0.1f;
+        }
+        // 반대로 실제 확률이 기대 확률보다 작으면 스폰 확률을 늘이기 위해 보정값을 늘인다
+        else if (rateSpawnNow < mSpecialSpawnRate)
+        {
+            mRateSpecialSpawnAmend += 0.1f;
+        }
+
+        // 난수를 생성하여 스폰할 것인지 정한다
+        if (mRand.NextDouble() < (mSpecialSpawnRate + mRateSpecialSpawnAmend))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 

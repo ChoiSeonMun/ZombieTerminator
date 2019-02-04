@@ -19,7 +19,10 @@ public class Fever : MonoBehaviour
     private float mFeverBuffTime = float.NaN;
 
     // Gun 시스템에 접근하기 위한 변수
-    private Gun mGunSys = null;
+    public Gun mGun = null;
+
+    // GameManager에 접근하기 위한 변수
+    public GameManager mGameManager = null;
 
     // 배경에 대한 panel 의 GameObject
     private GameObject mBackgroundPanel = null;
@@ -57,7 +60,8 @@ public class Fever : MonoBehaviour
         // fever를 활성화 시키고, fever 시작 시간을 기록한다
         IsFeverOn = true;
         mFeverTimeCurr = mFeverTimer;
-        mGunSys.SetFever(IsFeverOn);
+        mGun.SetFever(IsFeverOn);
+        mGameManager.SetFever(IsFeverOn);
     }
 
     public void SetFeverOff()
@@ -70,7 +74,8 @@ public class Fever : MonoBehaviour
 
         // fever를 비활성화 시킨다
         IsFeverOn = false;
-        mGunSys.SetFever(IsFeverOn);
+        mGun.SetFever(IsFeverOn);
+        mGameManager.SetFever(IsFeverOn);
     }
 
     #endregion
@@ -79,7 +84,8 @@ public class Fever : MonoBehaviour
 
     void Awake()
     {
-        mGunSys = GameObject.Find("Player").GetComponent<Gun>();
+        mGameManager = GameObject.Find("Manager").GetComponent<GameManager>();
+        mGun = GameObject.Find("Player").GetComponent<Gun>();
         FeverCount = 0;
         mFeverTimeCurr = 0.0f;
         mFeverTimer = 0.0f;

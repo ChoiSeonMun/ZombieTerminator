@@ -37,6 +37,21 @@ public class Zombie : MonoBehaviour
         mType = type;
     }
 
+    public void SetStatus(int level)
+    {
+        // level에 따른 Status 조정 (HP, Lifetime 조정은 잠시 미뤄둠)
+        if (mType == EType.NORMAL)
+        {
+            mLife = mLifeMax + 5 * level;
+            // mLifetime = mLifetime - (1 - 1 / level);
+        }
+        else if (mType == EType.SPECIAL)
+        {
+            mLife = mLifeMax + 10 * level;
+            //mLifetime = mLifetime - (1 - 1 / level);
+        }
+    }
+
     public void Hit(int damage)
     {
         // 좀비의 생명력을 대미지만큼 감소시키고, 생명력이 0 에 도달했을 경우 죽는다
@@ -69,8 +84,8 @@ public class Zombie : MonoBehaviour
         mFever = GameObject.Find("Player").GetComponent<Fever>();
 
         mType = EType.NORMAL;
-        mLife = 100;
-        mLifeMax = mLife;
+        mLifeMax = 100;
+        mLife = mLifeMax;
         mLifetime = 3.0f;
         mRuntime = 0.0f;
     }
