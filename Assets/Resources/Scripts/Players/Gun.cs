@@ -5,12 +5,15 @@ using UnityEngine.UI;
 
 public class Gun : MonoBehaviour
 {
+    public Text BulletText = null;
+    public Text ReloadDelayText = null;
+
     // 잔여 탄수의 getter property
     public int BulletCur
     {
         get
         {
-            return this.mBulletCur;
+            return mBulletCur;
         }
     }
     // 최대 탄수의 getter property
@@ -18,9 +21,11 @@ public class Gun : MonoBehaviour
     {
         get
         {
-            return this.mBulletMax;
+            return mBulletMax;
         }
     }
+    // 현재 재장전 중인지를 저장하는 변수
+    public bool IsReloading { get; private set; }
 
     // 현재 잔여 탄수를 저장하는 변수
     private int mBulletCur = -1;
@@ -28,8 +33,6 @@ public class Gun : MonoBehaviour
     private int mBulletMax = -1;
     // 총의 대미지를 저장하는 변수
     private int mDamage = -1;
-    // 현재 재장전 중인지를 저장하는 변수
-    public bool IsReloading { get; private set; }
     // 재장전 딜레이에 도달했는지를 저장하는 타이머 변수
     private float mReloadTime = float.NaN;
     // 재장전 딜레이를 저장하는 변수
@@ -41,11 +44,22 @@ public class Gun : MonoBehaviour
     private float mShootTimeCurr = float.NaN;
     private float mSceneTimer = float.NaN;
 
+    public void OnClickReload()
+    {
+        if (IsReloading == false)
+        {
+            mReloadTime = mSceneTimer;
+            // 잔여 탄수를 최대로 채운다
+            mBulletCur = mBulletMax;
+            IsReloading = true;
+        }
+    }
+
     public void Fire(GameObject obj)
     {
-        this.mShootTimeCurr = this.mSceneTimer;
+        mShootTimeCurr = mSceneTimer;
         // 발사 딜레이에 도달하지 않았다면 함수를 종료
-        if ((this.mShootTimeCurr - this.mShootTimeLast) < this.mFireDelay)
+        if ((mShootTimeCurr - mShootTimeLast) < mFireDelay)
         {
             return;
         }
@@ -55,7 +69,7 @@ public class Gun : MonoBehaviour
             return;
         }
         // 잔여 탄수가 있을 경우에만 발사
-        else if (this.mBulletCur > 0)
+        else if (mBulletCur > 0)
         {
             // target 이 좀비를 가지고 있다면 대미지를 입힌다
             if ((obj.transform.childCount > 0) &&
@@ -65,8 +79,8 @@ public class Gun : MonoBehaviour
                 zombie.GetComponent<Zombie>().Hit(this.mDamage);
             }
 
-            --this.mBulletCur;
-            this.mShootTimeLast = this.mSceneTimer;
+            mBulletCur -= 1;
+            mShootTimeLast = mSceneTimer;
         }
     }
 
@@ -75,44 +89,61 @@ public class Gun : MonoBehaviour
         return (mReloadDelay - (mSceneTimer - mReloadTime));
     }
 
-    public void Reload()
+    public void SetFever(bool isFeverOn)
     {
-        // 재장전 도중에는 재장전을 할 수 없다
-        if (this.IsReloading == false)
+        // 대미지가 2배로 증가하고 재장전 및 발사 딜레이를 무시한다
+        if (isFeverOn)
         {
-            this.mReloadTime = this.mSceneTimer;
-            // 잔여 탄수를 최대로 채운다
-            this.mBulletCur = this.mBulletMax;
-            this.IsReloading = true;
+            mDamage = mDamage * 2;
+            mReloadDelay = 0.0f;
+            mFireDelay = 0.0f;
+        }
+        // 원래 상태로 복귀한다
+        else
+        {
+            mDamage = 35;
+            mReloadDelay = 1.0f;
+            mFireDelay = 0.15f;
         }
     }
 
-    internal void Awake()
+    void Awake()
     {
-        this.mBulletCur = 30;
-        this.mBulletMax = 30;
-        this.mDamage = 40;
-        this.IsReloading = false;
-        this.mReloadTime = 0.0f;
-        this.mReloadDelay = 1.0f;
-        this.mFireDelay = 0.15f;
-        this.mShootTimeLast = 0.0f;
-        this.mShootTimeCurr = 0.0f;
-        this.mSceneTimer = 1.0f;
+        mBulletCur = 30;
+        mBulletMax = 30;
+        mDamage = 35;
+        IsReloading = false;
+        mReloadTime = 0.0f;
+        mReloadDelay = 1.0f;
+        mFireDelay = 0.15f;
+        mShootTimeLast = 0.0f;
+        mShootTimeCurr = 0.0f;
+        mSceneTimer = 1.0f;
     }
 
-    internal void Update()
+    void Update()
     {
-        this.UpdateSceneTimer();
-        this.UpdateReloadingStatus();
+        BulletText.text = BulletCur.ToString() + " / " + BulletMax.ToString();
+        if (IsReloading)
+        {
+            string delayTime = (mReloadDelay - (mSceneTimer - mReloadTime)).ToString();
+            ReloadDelayText.text = delayTime.Substring(0, delayTime.IndexOf('.') + 2) + " Sec";
+        }
+        else
+        {
+            ReloadDelayText.text = "";
+        }
+
+        updateSceneTimer();
+        updateReloadingStatus();
     }
 
-    private void UpdateSceneTimer()
+    private void updateSceneTimer()
     {
-        this.mSceneTimer += Time.deltaTime;
+        mSceneTimer += Time.deltaTime;
     }
 
-    private void UpdateReloadingStatus()
+    private void updateReloadingStatus()
     {
         if (GetDelayTimeByReload() > 0)
         {
@@ -121,24 +152,6 @@ public class Gun : MonoBehaviour
         else
         {
             IsReloading = false;
-        }
-    }
-
-    public void SetFever(bool isFeverOn)
-    {
-        // 대미지가 2배로 증가하고 재장전 및 발사 딜레이를 무시한다
-        if (isFeverOn)
-        {
-            this.mDamage = mDamage * 2;
-            this.mReloadDelay = 0.0f;
-            this.mFireDelay = 0.0f;
-        }
-        // 원래 상태로 복귀한다
-        else
-        {
-            this.mDamage = 40;
-            this.mReloadDelay = 1.0f;
-            this.mFireDelay = 0.15f;
         }
     }
 }

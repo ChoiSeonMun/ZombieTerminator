@@ -12,15 +12,13 @@ public class Zombie : MonoBehaviour
         SPECIAL
     };
 
-    private UnityEngine.Object mHitAnimation = null;
-    private UnityEngine.Object mAttackAnimation = null;
-    private Animator mAttackAnimator = null;
-    private float mAttackNormalizedTime = float.NaN;
-
-    // 플레이어 스크립트
     private Player mPlayer = null;
-    // 피버 스크립트
     private Fever mFever = null;
+    private Object mHitAnimation = null;
+    private Object mAttackAnimation = null;
+    private Animator mAttackAnimator = null;
+
+    private float mAttackNormalizedTime = float.NaN;
 
     // 좀비가 최대로 생존해있을 수 있는 시간을 저장하는 변수
     private float mLifetime = float.NaN;
@@ -75,13 +73,12 @@ public class Zombie : MonoBehaviour
         }
     }
 
-    internal void Awake()
+    void Awake()
     {
-        mHitAnimation = Resources.Load("Prefabs/HitAnimation");
-        mAttackAnimation = Resources.Load("Prefabs/AttackAnimation");
-
         mPlayer = GameObject.Find("Player").GetComponent<Player>();
         mFever = GameObject.Find("Player").GetComponent<Fever>();
+        mHitAnimation = Resources.Load("Prefabs/HitAnimation");
+        mAttackAnimation = Resources.Load("Prefabs/AttackAnimation");
 
         mType = EType.NORMAL;
         mLifeMax = 100;
@@ -90,7 +87,7 @@ public class Zombie : MonoBehaviour
         mRuntime = 0.0f;
     }
 
-    internal void Update()
+    void Update()
     {
         // 좀비의 생존시간을 증가시킨다
         mRuntime += Time.deltaTime;
@@ -101,7 +98,7 @@ public class Zombie : MonoBehaviour
         }
     }
 
-    internal void OnDestroy()
+    void OnDestroy()
     {
         // 좀비가 공격받는 애니메이션을 제거한다
         if (mAttackAnimator != null)
@@ -118,17 +115,17 @@ public class Zombie : MonoBehaviour
             // 이 좀비가 특수좀비일 경우 폭탄 아이템을 증가시킨다
             if (mType == EType.SPECIAL)
             {
-                mPlayer.GainBomb();
+                mPlayer.GetComponent<Bomb>().AddBomb();
             }
         }
         // 수명이 다할 때까지 살아남았다면
         else
         {
-            Attack();
+            attack();
         }
     }
 
-    private void Attack()
+    private void attack()
     {
         // 좀비가 공격하는 애니메이션을 생성하고, 이 애니메이션을 0.25 초 뒤에 삭제한다
         GameObject obj = Instantiate(mHitAnimation, transform) as GameObject;
