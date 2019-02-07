@@ -1665,7 +1665,17 @@ Prefab:
     - target: {fileID: 224685545147208572, guid: 3df5f4f8e21102b46af3a0bda2186355,
         type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: -8.500153
+      value: -8.500122
+      objectReference: {fileID: 0}
+    - target: {fileID: 114331446241648002, guid: 3df5f4f8e21102b46af3a0bda2186355,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: LoadMain
+      objectReference: {fileID: 0}
+    - target: {fileID: 114984388437575268, guid: 3df5f4f8e21102b46af3a0bda2186355,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ChangeToPlaying
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3df5f4f8e21102b46af3a0bda2186355, type: 2}
@@ -2289,6 +2299,7 @@ GameObject:
   - component: {fileID: 1005551065}
   - component: {fileID: 1005551064}
   - component: {fileID: 1005551066}
+  - component: {fileID: 1005551067}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Untagged
@@ -2307,7 +2318,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41d455e09f9511e4a800fa01a73f6b71, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TargetManager: {fileID: 1005551066}
+  SpawnManager: {fileID: 1005551066}
   Player: {fileID: 1580132888}
   Fever: {fileID: 1580132891}
   MenuButton: {fileID: 1829583970}
@@ -2338,6 +2349,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c04bb0e7d021834eb0c2c3260fbe0c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  LevelManager: {fileID: 1005551067}
+  Fever: {fileID: 1580132891}
   TargetButtons:
   - {fileID: 665348746}
   - {fileID: 918422537}
@@ -2353,6 +2366,33 @@ MonoBehaviour:
     type: 2}
   SpecialZombieObject: {fileID: 1062128306954058, guid: 43bf5bfdbe3a0b84dbfb0576858b1741,
     type: 2}
+--- !u!114 &1005551067
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1005551063}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66da99a01e0460e44941b5f27b4421f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LevelUpEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1005551066}
+        m_MethodName: onLevelUp
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!1 &1007983610 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1841391590965950, guid: 3df5f4f8e21102b46af3a0bda2186355,
@@ -2554,7 +2594,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1005551064}
-        m_MethodName: OnClickOk
+        m_MethodName: LoadMain
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3068,6 +3108,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 945aa0e032ce1754d9e3c62e3682bccc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Fever: {fileID: 1580132891}
   BulletText: {fileID: 1818074921}
   ReloadDelayText: {fileID: 1453960734}
 --- !u!114 &1580132891
@@ -3081,12 +3122,66 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69b7b9c6eadb5804cadf7b257599f104, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  FeverOnEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1580132890}
+        m_MethodName: onFeverOn
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1005551066}
+        m_MethodName: onFeverOn
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  FeverOffEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1580132890}
+        m_MethodName: onFeverOff
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1005551066}
+        m_MethodName: onFeverOff
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   BackgroundPanel: {fileID: 1171821971}
   NormalBackground: {fileID: 21300000, guid: 98b066fd832212b40b82d0763cce50c1, type: 3}
   FeverBackground: {fileID: 21300000, guid: 02e2cc5e4f603804c8c188b2968c1a6c, type: 3}
   FeverPanel: {fileID: 416712453}
   Gun: {fileID: 1580132890}
-  TargetManager: {fileID: 1005551066}
+  SpawnManager: {fileID: 0}
 --- !u!114 &1580132892
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3409,7 +3504,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1005551064}
-        m_MethodName: OnClickMenu
+        m_MethodName: ChangeToPaused
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

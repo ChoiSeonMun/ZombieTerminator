@@ -3,8 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TargetManager : MonoBehaviour
+public class SpawnManager : MonoBehaviour
 {
+    public LevelManager LevelManager = null;
+    public Fever Fever = null;
     public ButtonExtension[] TargetButtons = null;
     public Player Player = null;
     public UnityEngine.Object NormalZombieObject = null;
@@ -12,9 +14,9 @@ public class TargetManager : MonoBehaviour
 
     private System.Random mRand = null;
     // Spawn Cooldown 시간값을 저장하는 변수
-    private float mCooldownSpawn = float.NaN;
+    private float mSpawnCooldown = float.NaN;
     // Fever 현재 쿨다운을 임시적으로 기록할 변수
-    private float mCooldownSpawnTemp = float.NaN;
+    private float mSpawnCooldownTemp = float.NaN;
     // 이전 Spawn 으로부터 얼마나 시간이 지났는지를 저장하는 변수
     private float mSpawnTimer = float.NaN;
     // 특수 좀비를 Spawn할 확률을 조정하기 위해 일반 좀비와 특수 좀비의 스폰 수를 기록하는 변수들
@@ -24,34 +26,36 @@ public class TargetManager : MonoBehaviour
     private float mSpecialSpawnRate = float.NaN;
     // 특수 좀비의 Spawn 확률을 보정하는 변수
     private float mRateSpecialSpawnAmend = float.NaN;
-    private int mLevel;
-    // 레벨 업을 위한 시간 경과를 저장하는 변수
-    private float mLevelTimer = float.NaN;
-    // 다음 레벨 업까지의 시간 간격을 저장하는 변수
-    private float mLevelInterval = float.NaN;
+    // 게임이 중단되는 것을 저장하기 위한 변수
+    private bool mIsStopped = false;
 
-    public void SetFever(bool isFeverOn)
+    public void onLevelUp()
     {
-        if (isFeverOn)
+        mSpawnCooldown *= 0.9f;
+    }
+
+    public void onFeverOn()
+    {
+        mSpawnCooldownTemp = mSpawnCooldown;
+        mSpawnCooldown = 0.1f;
+    }
+
+    public void onFeverOff()
+    {
+        mSpawnCooldown = mSpawnCooldownTemp;
+        foreach (ButtonExtension target in TargetButtons)
         {
-            mCooldownSpawnTemp = mCooldownSpawn;
-            mCooldownSpawn = 0.1f;
-        }
-        else
-        {
-            mCooldownSpawn = mCooldownSpawnTemp;
-            foreach (ButtonExtension target in TargetButtons)
+            if (target.transform.childCount > 0)
             {
-                if (target.transform.childCount > 0)
-                {
-                    Destroy(target.gameObject.transform.GetChild(0).gameObject);
-                }
+                Destroy(target.gameObject.transform.GetChild(0).gameObject);
             }
         }
     }
 
     public void StopTarget()
     {
+        mIsStopped = true;
+
         foreach (ButtonExtension target in TargetButtons)
         {
             if (target.transform.childCount > 0)
@@ -64,6 +68,8 @@ public class TargetManager : MonoBehaviour
 
     public void ResumeTarget()
     {
+        mIsStopped = false;
+
         foreach (ButtonExtension target in TargetButtons)
         {
             if (target.transform.childCount > 0)
@@ -77,23 +83,22 @@ public class TargetManager : MonoBehaviour
     void Awake()
     {
         mRand = new System.Random();
-        mCooldownSpawn = 2.0f;
-        mCooldownSpawnTemp = 0.0f;
+        mSpawnCooldown = 2.0f;
+        mSpawnCooldownTemp = 0.0f;
         mSpawnTimer = 0.0f;
         mNormalSpawnCount = 0;
         mSpecialSpawnCount = 0;
-        mLevel = 0;
-        mLevelTimer = 0.0f;
-        mLevelInterval = 10.0f;
         mSpecialSpawnRate = 0.15f;
         mRateSpecialSpawnAmend = 0.0f;
     }
 
     void Update()
     {
-        inputTarget();
-        checkSpawn();
-        checkLevelUp();
+        if (mIsStopped == false)
+        {
+            inputTarget();
+            checkSpawn();
+        }
     }
 
     private void inputTarget()
@@ -111,7 +116,7 @@ public class TargetManager : MonoBehaviour
     private void checkSpawn()
     {
         mSpawnTimer += Time.deltaTime;
-        if (mSpawnTimer >= mCooldownSpawn)
+        if (mSpawnTimer >= mSpawnCooldown)
         {
             spawnZombie();
             mSpawnTimer = 0.0f;
@@ -154,7 +159,7 @@ public class TargetManager : MonoBehaviour
                     // 일반좀비와의 구분을 위해 특수타입 설정
                     zombie.GetComponent<Zombie>().SetType(Zombie.EType.SPECIAL);
                     // 레벨에 따라 능력치 조정
-                    zombie.GetComponent<Zombie>().SetStatus(mLevel);
+                    zombie.GetComponent<Zombie>().SetStatus(LevelManager.Level);
                 }
                 else
                 {
@@ -164,7 +169,7 @@ public class TargetManager : MonoBehaviour
                     GameObject zombie = Instantiate(NormalZombieObject, target.transform) as GameObject;
                     zombie.transform.SetParent(target.transform);
                     // 레벨에 따라 능력치 조정
-                    zombie.GetComponent<Zombie>().SetStatus(mLevel);
+                    zombie.GetComponent<Zombie>().SetStatus(LevelManager.Level);
                 }
 
                 // 좀비를 스폰했으므로 함수 종료
@@ -197,22 +202,5 @@ public class TargetManager : MonoBehaviour
         {
             return false;
         }
-    }
-
-    private void checkLevelUp()
-    {
-        mLevelTimer += Time.deltaTime;
-        if (mLevelTimer > mLevelInterval)
-        {
-            levelUp();
-            mLevelTimer = 0.0f;
-        }
-    }
-
-    private void levelUp()
-    {
-        mLevel++;
-        mCooldownSpawn *= 0.9f;
-        mLevelInterval *= 0.95f;
     }
 }

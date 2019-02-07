@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour
         PAUSED,
         GAMEOVER
     };
-    public TargetManager TargetManager = null;
+    public SpawnManager SpawnManager = null;
     public Player Player = null;
     public Fever Fever = null;
     public Button MenuButton = null;
@@ -28,76 +28,53 @@ public class GameManager : MonoBehaviour
     public GameObject StartPanel = null;
     public GameObject EndPanel = null;
 
-    // 게임 상태에 따른 업데이트 함수를 저장하는 map
-    private Dictionary<EState, Action> mUpdates = null;
-    // 새로운 게임 상태로 전환될 때 실행되는 함수를 저장하는 map
-    private Dictionary<EState, Action> mStarts = null;
-    // 기존 게임 상태에서 벗어날 때 실행되는 함수를 저장하는 map
-    private Dictionary<EState, Action> mEnds = null;
-    // 내부적으로 EState 를 저장하는 변수
-    private EState mStateInternal = EState.UNDEFINED;
-    // EState 대입만으로 함수 호출을 자동화하기 위한 property
-    private EState mState
+    private EState mState = EState.UNDEFINED;
+    private event EventHandler<StateArgs> mStarts = null;
+    private event EventHandler<StateArgs> mUpdates = null;
+    private event EventHandler<StateArgs> mEnds = null;
+    private class StateArgs : EventArgs
     {
-        get
+        public StateArgs(EState state)
         {
-            return mStateInternal;
+            State = state;
         }
-        set
-        {
-            if (value != mStateInternal)
-            {
-                mEnds[mStateInternal]();
-                mStateInternal = value;
-                mStarts[mStateInternal]();
-            }
-        }
+
+        public EState State = EState.UNDEFINED;
     }
+
     // 게임이 몇 번 종료되었는지 저장하는 변수
     // Game scene 이 여러 번 시작되고 종료되어도 그 값을 유지하기 위해 static
     private static int mGameTrial = 0;
 
-    #region OnClick Functions
+    #region Public Functions
 
-    public void OnClickMenu()
+    public void ChangeToPaused()
     {
         if (mState == EState.PLAYING)
         {
-            mState = EState.PAUSED;
+            changeState(EState.PAUSED);
         }
     }
 
-    public void OnClickYes()
+    public void LoadMain()
     {
-        if (mState == EState.PAUSED)
+        if ((mState == EState.PAUSED) || (mState == EState.GAMEOVER))
         {
             SceneManager.LoadScene("Main");
         }
     }
 
-    public void OnClickNo()
+    public void ChangeToPlaying()
     {
         if (mState == EState.PAUSED)
         {
-            mState = EState.PLAYING;
+            changeState(EState.PLAYING);
         }
     }
-
-    public void OnClickOk()
-    {
-        if(mState == EState.GAMEOVER)
-        {
-            SceneManager.LoadScene("Main");
-        }
-    }
-
-    #endregion
-
-    #region Public Functions
 
     public void EndGame()
     {
-        mState = EState.GAMEOVER;
+        changeState(EState.GAMEOVER);
     }
 
     #endregion
@@ -106,130 +83,117 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        mUpdates = new Dictionary<EState, Action>();
-        mUpdates.Add(EState.READY, updateReady);
-        mUpdates.Add(EState.PLAYING, updatePlaying);
-        mUpdates.Add(EState.PAUSED, updatePaused);
-        mUpdates.Add(EState.GAMEOVER, updateGameover);
-        mStarts = new Dictionary<EState, Action>();
-        mStarts.Add(EState.READY, onStartReady);
-        mStarts.Add(EState.PLAYING, onStartPlaying);
-        mStarts.Add(EState.PAUSED, onStartPaused);
-        mStarts.Add(EState.GAMEOVER, onStartGameover);
-        mEnds = new Dictionary<EState, Action>();
-        mEnds.Add(EState.UNDEFINED, onEndUndefined);
-        mEnds.Add(EState.READY, onEndReady);
-        mEnds.Add(EState.PLAYING, onEndPlaying);
-        mEnds.Add(EState.PAUSED, onEndPaused);
-        mEnds.Add(EState.GAMEOVER, onEndGameover);
-        mState = EState.READY;
+        mStarts = onStarts;
+        mUpdates = onUpdates;
+        mEnds = onEnds;
+        changeState(EState.READY);
     }
 
     void Update()
     {
-        mUpdates[mState]();
-    }
-
-    #endregion
-
-    #region Scene Update
-
-    private void updateReady()
-    {
-        Image img = StartPanel.GetComponent<Image>();
-
-        // PanelStart 의 Image 를 업데이트마다 투명하게 만든다
-        // 완전히 투명해졌을 경우 플레이를 시작한다
-        Color newColor = img.color;
-        newColor.a -= 0.01f;
-        img.color = newColor;
-        if (img.color.a <= 0.0f)
-        {
-            mState = EState.PLAYING;
-        }
-    }
-
-    private void updatePlaying()
-    {
-        ;
-    }
-
-    private void updatePaused()
-    {
-        ;
-    }
-
-    private void updateGameover()
-    {
-        ;
+        mUpdates(this, new StateArgs(mState));
     }
 
     #endregion
 
     #region Scene Change
 
-    // NullException 을 방지하기 위해 형식상 만들어둔 함수
-    private void onEndUndefined()
+    private void changeState(EState state)
     {
-        ;
+        mEnds(this, new StateArgs(mState));
+        mState = state;
+        mStarts(this, new StateArgs(mState));
     }
 
-    // EState.READY 에 진입할 때 실행되는 함수
-    private void onStartReady()
+    private void onStarts(object sender, StateArgs args)
     {
-        StartPanel.SetActive(true);
-    }
-
-    // EState.READY 에서 빠져나갈 때 실행되는 함수
-    private void onEndReady()
-    {
-        StartPanel.SetActive(false);
-    }
-
-    // EState.PLAYING 에 진입할 때 실행되는 함수
-    private void onStartPlaying()
-    {
-        Player.SetActive(true);
-    }
-
-    // EState.PLAYING 에서 빠져나갈 때 실행되는 함수
-    private void onEndPlaying()
-    {
-        Player.SetActive(false);
-    }
-
-    // EState.PAUSED 에 진입할 때 실행되는 함수
-    private void onStartPaused()
-    {
-        MenuPanel.SetActive(true);
-        TargetManager.StopTarget();
-    }
-
-    private void onEndPaused()
-    {
-        TargetManager.ResumeTarget();
-        MenuPanel.SetActive(false);
-    }
-
-    // EState.GAMEOVER 에 진입할 때 실행되는 함수
-    private void onStartGameover()
-    {
-        // 게임이 끝나면, 게임 시도 횟수를 증가한다.
-        ++mGameTrial;
-        // 게임을 5번 플레이 했다면, 광고를 시청하게 한다
-        if (mGameTrial == 5)
+        switch(args.State)
         {
-            Advertisement.Show();
-            mGameTrial = 0;
-        }
+            case EState.UNDEFINED:
+                break;
 
-        EndPanel.SetActive(true);
+            case EState.READY:
+                StartPanel.SetActive(true);
+                break;
+
+            case EState.PLAYING:
+                Player.SetActive(true);
+                break;
+
+            case EState.PAUSED:
+                MenuPanel.SetActive(true);
+                SpawnManager.StopTarget();
+                break;
+
+            case EState.GAMEOVER:
+                // 게임이 끝나면, 게임 시도 횟수를 증가한다.
+                ++mGameTrial;
+                // 게임을 5번 플레이 했다면, 광고를 시청하게 한다
+                if (mGameTrial == 5)
+                {
+                    Advertisement.Show();
+                    mGameTrial = 0;
+                }
+                EndPanel.SetActive(true);
+                break;
+        }
     }
 
-    // EState.GAMEOVER 에서 빠져나갈 때 실행되는 함수
-    private void onEndGameover()
+    private void onUpdates(object sender, StateArgs args)
     {
-        EndPanel.SetActive(false);
+        switch (args.State)
+        {
+            case EState.UNDEFINED:
+                break;
+
+            case EState.READY:
+                Image img = StartPanel.GetComponent<Image>();
+                // PanelStart 의 Image 를 업데이트마다 투명하게 만든다
+                // 완전히 투명해졌을 경우 플레이를 시작한다
+                Color newColor = img.color;
+                newColor.a -= 0.01f;
+                img.color = newColor;
+                if (img.color.a <= 0.0f)
+                {
+                    changeState(EState.PLAYING);
+                }
+                break;
+
+            case EState.PLAYING:
+                break;
+
+            case EState.PAUSED:
+                break;
+
+            case EState.GAMEOVER:
+                break;
+        }
+    }
+
+    private void onEnds(object sender, StateArgs args)
+    {
+        switch (args.State)
+        {
+            case EState.UNDEFINED:
+                break;
+
+            case EState.READY:
+                StartPanel.SetActive(false);
+                break;
+
+            case EState.PLAYING:
+                Player.SetActive(false);
+                break;
+
+            case EState.PAUSED:
+                SpawnManager.ResumeTarget();
+                MenuPanel.SetActive(false);
+                break;
+
+            case EState.GAMEOVER:
+                EndPanel.SetActive(false);
+                break;
+        }
     }
 
     #endregion

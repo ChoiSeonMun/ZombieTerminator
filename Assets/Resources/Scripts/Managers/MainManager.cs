@@ -6,17 +6,15 @@ using UnityEngine.UI;
 
 public class MainManager : MonoBehaviour
 {
-    // START 버튼
     public Button StartButton = null;
-    // RANK 버튼
     public Button RankButton = null;
 
-    public void OnClickStart()
+    public void LoadGame()
     {
         SceneManager.LoadScene("Game");
     }
 
-    public void OnClickRank()
+    public void LoadRank()
     {
         SceneManager.LoadScene("Rank");
     }

@@ -14,6 +14,7 @@ public class Zombie : MonoBehaviour
 
     private Player mPlayer = null;
     private Fever mFever = null;
+    private Animator mZombieAnimator = null;
     private Object mHitAnimation = null;
     private Object mAttackAnimation = null;
     private Animator mAttackAnimator = null;
@@ -77,6 +78,8 @@ public class Zombie : MonoBehaviour
     {
         mPlayer = GameObject.Find("Player").GetComponent<Player>();
         mFever = GameObject.Find("Player").GetComponent<Fever>();
+        mZombieAnimator = this.GetComponent<Animator>();
+        mZombieAnimator.speed = 0.0f;
         mHitAnimation = Resources.Load("Prefabs/HitAnimation");
         mAttackAnimation = Resources.Load("Prefabs/AttackAnimation");
 
@@ -89,6 +92,9 @@ public class Zombie : MonoBehaviour
 
     void Update()
     {
+        string stateName = (mType == EType.NORMAL) ? "NormalZombieAnimation" : "SpecialZombieAnimation";
+        mZombieAnimator.Play(stateName, 0, (float)(mRuntime) / (float)(mLifetime));
+
         // 좀비의 생존시간을 증가시킨다
         mRuntime += Time.deltaTime;
         // 수명이 다했거나 생명력이 0 이하로 떨어진 경우, 좀비가 죽는다
@@ -115,7 +121,10 @@ public class Zombie : MonoBehaviour
             // 이 좀비가 특수좀비일 경우 폭탄 아이템을 증가시킨다
             if (mType == EType.SPECIAL)
             {
-                mPlayer.GetComponent<Bomb>().AddBomb();
+                if(mPlayer != null)
+                {
+                    mPlayer.GetComponent<Bomb>().AddBomb();
+                }
             }
         }
         // 수명이 다할 때까지 살아남았다면

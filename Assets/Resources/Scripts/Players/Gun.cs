@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class Gun : MonoBehaviour
 {
+    public Fever Fever = null;
     public Text BulletText = null;
     public Text ReloadDelayText = null;
 
@@ -43,6 +44,20 @@ public class Gun : MonoBehaviour
     private float mShootTimeLast = float.NaN;
     private float mShootTimeCurr = float.NaN;
     private float mSceneTimer = float.NaN;
+
+    public void onFeverOn()
+    {
+        mDamage = mDamage * 2;
+        mReloadDelay = 0.0f;
+        mFireDelay = 0.0f;
+    }
+
+    public void onFeverOff()
+    {
+        mDamage = 35;
+        mReloadDelay = 1.0f;
+        mFireDelay = 0.15f;
+    }
 
     public void OnClickReload()
     {
@@ -87,24 +102,6 @@ public class Gun : MonoBehaviour
     public float GetDelayTimeByReload()
     {
         return (mReloadDelay - (mSceneTimer - mReloadTime));
-    }
-
-    public void SetFever(bool isFeverOn)
-    {
-        // 대미지가 2배로 증가하고 재장전 및 발사 딜레이를 무시한다
-        if (isFeverOn)
-        {
-            mDamage = mDamage * 2;
-            mReloadDelay = 0.0f;
-            mFireDelay = 0.0f;
-        }
-        // 원래 상태로 복귀한다
-        else
-        {
-            mDamage = 35;
-            mReloadDelay = 1.0f;
-            mFireDelay = 0.15f;
-        }
     }
 
     void Awake()

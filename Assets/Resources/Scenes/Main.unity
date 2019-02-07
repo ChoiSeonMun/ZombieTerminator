@@ -372,7 +372,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.4283545}
   m_AnchorMax: {x: 1, y: 0.946103}
-  m_AnchoredPosition: {x: -3.0000226, y: -5.5000305}
+  m_AnchoredPosition: {x: -3, y: -5.5000305}
   m_SizeDelta: {x: -48.19995, y: -14.400024}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1330768350
@@ -486,7 +486,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1034068591}
-        m_MethodName: OnClickStart
+        m_MethodName: LoadGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -813,7 +813,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1034068591}
-        m_MethodName: OnClickRank
+        m_MethodName: LoadRank
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

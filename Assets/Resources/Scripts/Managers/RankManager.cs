@@ -6,10 +6,9 @@ using UnityEngine.UI;
 
 public class RankManager : MonoBehaviour
 {
-    // BACK 버튼
     public Button BackButton = null;
 
-    public void OnClickBack()
+    public void LoadMain()
     {
         SceneManager.LoadScene("Main");
     }

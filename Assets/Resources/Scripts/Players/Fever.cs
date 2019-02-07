@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 
 public class Fever : MonoBehaviour
 {
+    public UnityEvent FeverOnEvent = null;
+    public UnityEvent FeverOffEvent = null;
     // 배경 이미지와 스프라이트 리소스
     public Image BackgroundPanel = null;
     public Sprite NormalBackground = null;
@@ -13,7 +16,7 @@ public class Fever : MonoBehaviour
     public GameObject FeverPanel = null;
 
     public Gun Gun = null;
-    public TargetManager TargetManager = null;
+    public SpawnManager SpawnManager = null;
 
     // fever의 최대치를 기록하는 상수
     public const int MAX_FEVER_COUNT = 10;
@@ -56,8 +59,7 @@ public class Fever : MonoBehaviour
         // fever를 활성화 시키고, fever 시작 시간을 기록한다
         IsFeverOn = true;
         mFeverTimeCurr = mFeverTimer;
-        Gun.SetFever(IsFeverOn);
-        TargetManager.SetFever(IsFeverOn);
+        FeverOnEvent.Invoke();
     }
 
     public void SetFeverOff()
@@ -70,8 +72,7 @@ public class Fever : MonoBehaviour
 
         // fever를 비활성화 시킨다
         IsFeverOn = false;
-        Gun.SetFever(IsFeverOn);
-        TargetManager.SetFever(IsFeverOn);
+        FeverOffEvent.Invoke();
     }
 
     #endregion
