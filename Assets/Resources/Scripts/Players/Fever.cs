@@ -1,9 +1,22 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.Events;
 
 public class Fever : MonoBehaviour
 {
+    public UnityEvent FeverOnEvent = null;
+    public UnityEvent FeverOffEvent = null;
+    // 배경 이미지와 스프라이트 리소스
+    public Image BackgroundPanel = null;
+    public Sprite NormalBackground = null;
+    public Sprite FeverBackground = null;
+    // 피버 리소스들
+    public GameObject FeverPanel = null;
+
+    public Gun Gun = null;
+    public SpawnManager SpawnManager = null;
 
     // fever의 최대치를 기록하는 상수
     public const int MAX_FEVER_COUNT = 10;
@@ -17,20 +30,6 @@ public class Fever : MonoBehaviour
     private float mFeverTimer = float.NaN;
     // fever 상태의 지속시간을 기록하는 변수
     private float mFeverBuffTime = float.NaN;
-
-    // Gun 시스템에 접근하기 위한 변수
-    public Gun mGun = null;
-
-    // GameManager에 접근하기 위한 변수
-    public GameManager mGameManager = null;
-
-    // 배경에 대한 panel 의 GameObject
-    private GameObject mBackgroundPanel = null;
-    // 피버 리소스에 대한 panel 의 GameObject
-    private GameObject mFeverPanel = null;
-    // 피버 애니메이션에 대한 Prefab
-    private UnityEngine.Object mFeverAnimationObject = null;
-    private GameObject mFeverAnimation = null;
 
     #region Public Functions
 
@@ -52,30 +51,28 @@ public class Fever : MonoBehaviour
     public void SetFeverOn()
     {
         // 피버 리소스 변경
-        mBackgroundPanel.transform.GetChild(1).gameObject.SetActive(false);
-        mFeverPanel.transform.GetChild(1).gameObject.SetActive(false);
-        mFeverPanel.transform.GetChild(2).gameObject.SetActive(true);
-        mFeverPanel.transform.GetChild(3).gameObject.SetActive(true);
+        BackgroundPanel.sprite = FeverBackground;
+        FeverPanel.transform.GetChild(1).gameObject.SetActive(false);
+        FeverPanel.transform.GetChild(2).gameObject.SetActive(true);
+        FeverPanel.transform.GetChild(3).gameObject.SetActive(true);
 
         // fever를 활성화 시키고, fever 시작 시간을 기록한다
         IsFeverOn = true;
         mFeverTimeCurr = mFeverTimer;
-        mGun.SetFever(IsFeverOn);
-        mGameManager.SetFever(IsFeverOn);
+        FeverOnEvent.Invoke();
     }
 
     public void SetFeverOff()
     {
         // 피버 리소스 복구
-        mBackgroundPanel.transform.GetChild(1).gameObject.SetActive(true);
-        mFeverPanel.transform.GetChild(1).gameObject.SetActive(true);
-        mFeverPanel.transform.GetChild(2).gameObject.SetActive(false);
-        mFeverPanel.transform.GetChild(3).gameObject.SetActive(false);
+        BackgroundPanel.sprite = NormalBackground;
+        FeverPanel.transform.GetChild(1).gameObject.SetActive(true);
+        FeverPanel.transform.GetChild(2).gameObject.SetActive(false);
+        FeverPanel.transform.GetChild(3).gameObject.SetActive(false);
 
         // fever를 비활성화 시킨다
         IsFeverOn = false;
-        mGun.SetFever(IsFeverOn);
-        mGameManager.SetFever(IsFeverOn);
+        FeverOffEvent.Invoke();
     }
 
     #endregion
@@ -84,22 +81,16 @@ public class Fever : MonoBehaviour
 
     void Awake()
     {
-        mGameManager = GameObject.Find("Manager").GetComponent<GameManager>();
-        mGun = GameObject.Find("Player").GetComponent<Gun>();
         FeverCount = 0;
         mFeverTimeCurr = 0.0f;
         mFeverTimer = 0.0f;
         mFeverBuffTime = 20.0f;
-
-        mBackgroundPanel = GameObject.Find("Canvas/Panel/Background");
-        mFeverPanel = GameObject.Find("Canvas/Panel/Fever");
-        mFeverPanel.transform.GetChild(2).gameObject.SetActive(false);
-        mFeverPanel.transform.GetChild(3).gameObject.SetActive(false);
     }
 
     void Update()
     {
-        UpdateFeverTimer();
+        // fever객체의 타이머의 시간을 증가시킨다
+        mFeverTimer = mFeverTimer + Time.deltaTime;
 
         // 피버 카운트가 10 이상이면 fever를 킨다
         if (FeverCount == MAX_FEVER_COUNT)
@@ -108,6 +99,13 @@ public class Fever : MonoBehaviour
             SetFeverOn();
         }
 
+        updateFeverGuage();
+    }
+
+    #endregion
+
+    private void updateFeverGuage()
+    {
         // (현재 시간-피버 시작 시간)이 피버 지속 시간보다 커지면 fever를 끈다
         if (IsFeverOn)
         {
@@ -119,22 +117,14 @@ public class Fever : MonoBehaviour
             }
 
             // 게이지 바 업데이트
-            RectTransform rect = mFeverPanel.transform.GetChild(2).GetComponent<RectTransform>();
+            RectTransform rect = FeverPanel.transform.GetChild(2).GetComponent<RectTransform>();
             rect.sizeDelta = new Vector2((1.0f - timeLapsed / mFeverBuffTime) * 950, 39);
         }
         else
         {
             // 게이지 바 업데이트
-            RectTransform rect = mFeverPanel.transform.GetChild(1).GetComponent<RectTransform>();
+            RectTransform rect = FeverPanel.transform.GetChild(1).GetComponent<RectTransform>();
             rect.sizeDelta = new Vector2(((float)(FeverCount) / (float)(Fever.MAX_FEVER_COUNT)) * 950, 39);
         }
-    }
-
-    #endregion
-
-    private void UpdateFeverTimer()
-    {
-        // fever객체의 타이머의 시간을 증가시킨다
-        mFeverTimer = mFeverTimer + Time.deltaTime;
     }
 }
