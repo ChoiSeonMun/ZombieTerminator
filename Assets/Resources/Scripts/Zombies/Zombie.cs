@@ -4,97 +4,61 @@ using UnityEngine;
 
 public class Zombie : MonoBehaviour
 {
-    // 좀비가 가질 수 있는 종류값들
-    public enum EType
-    {
-        UNDEFINED,
-        NORMAL,
-        SPECIAL
-    };
+    public Player Player = null;
+    public Fever Fever = null;
 
-    private Player mPlayer = null;
-    private Fever mFever = null;
-    private Animator mZombieAnimator = null;
-    private Object mHitAnimation = null;
-    private Object mAttackAnimation = null;
-    private Animator mAttackAnimator = null;
+    public Object ClawAnimationObject = null;
+    public Object CrackAnimationObject = null;
 
-    private float mAttackNormalizedTime = float.NaN;
+    public Animator CrackAnimator = null;
+    public Animator ZombieAnimator = null;
 
-    // 좀비가 최대로 생존해있을 수 있는 시간을 저장하는 변수
-    private float mLifetime = float.NaN;
+    public int mLife = 0;
+    public int mLifeMax = 0;
     // 좀비가 얼마나 생존해있는지 저장하는 변수
-    private float mRuntime = float.NaN;
-    // 좀비의 생명력을 저장하는 변수
-    private int mLife = 0;
-    private int mLifeMax = 0;
-    // 좀비의 종류를 저장하는 변수
-    private EType mType = EType.UNDEFINED;
-
-    public void SetType(EType type)
-    {
-        mType = type;
-    }
-
-    public void SetStatus(int level)
-    {
-        // level에 따른 Status 조정 (HP, Lifetime 조정은 잠시 미뤄둠)
-        if (mType == EType.NORMAL)
-        {
-            mLife = mLifeMax + 5 * level;
-            // mLifetime = mLifetime - (1 - 1 / level);
-        }
-        else if (mType == EType.SPECIAL)
-        {
-            mLife = mLifeMax + 10 * level;
-            //mLifetime = mLifetime - (1 - 1 / level);
-        }
-    }
+    public float mRuntime = float.NaN;
+    // 좀비가 최대로 생존해있을 수 있는 시간을 저장하는 변수
+    public float mLifetime = float.NaN;
 
     public void Hit(int damage)
     {
-        // 좀비의 생명력을 대미지만큼 감소시키고, 생명력이 0 에 도달했을 경우 죽는다
+        // 좀비의 생명력을 대미지만큼 감소시킨다
         mLife = mLife - damage;
 
-        if (mAttackAnimator == null)
+        if (CrackAnimator == null)
         {
             // 좀비가 공격받는 애니메이션을 생성한다
-            GameObject obj = Instantiate(mAttackAnimation, transform) as GameObject;
+            GameObject obj = Instantiate(CrackAnimationObject, transform) as GameObject;
             obj.transform.SetParent(transform.parent);
-
             // 애니메이션을 시작한다
-            mAttackAnimator = obj.GetComponent<Animator>();
-            mAttackAnimator.speed = 0.0f;
-            mAttackAnimator.Play("AttackAnimation", 0, (float)(mLifeMax - mLife) / (float)mLifeMax);
+            CrackAnimator = obj.GetComponent<Animator>();
+            // 크랙 애니메이션이 mLife에 의해서만 조절될 수 있도록 하기 위함
+            CrackAnimator.speed = 0.0f;
+            CrackAnimator.Play("AttackAnimation", 0, (float)(mLifeMax - mLife) / (float)mLifeMax);
         }
         else
         {
             // 애니메이션을 다음 프레임으로 넘긴다
-            mAttackAnimator.Play("AttackAnimation", 0, (float)(mLifeMax - mLife) / (float)mLifeMax);
+            CrackAnimator.Play("AttackAnimation", 0, (float)(mLifeMax - mLife) / (float)mLifeMax);
         }
     }
 
-    void Awake()
+    protected void initialize()
     {
-        mPlayer = GameObject.Find("Player").GetComponent<Player>();
-        mFever = GameObject.Find("Player").GetComponent<Fever>();
-        mZombieAnimator = this.GetComponent<Animator>();
-        mZombieAnimator.speed = 0.0f;
-        mHitAnimation = Resources.Load("Prefabs/HitAnimation");
-        mAttackAnimation = Resources.Load("Prefabs/AttackAnimation");
+        GameObject playerGO = GameObject.Find("Player");
+        Player = playerGO.GetComponent<Player>();
+        Fever = playerGO.GetComponent<Fever>();
 
-        mType = EType.NORMAL;
-        mLifeMax = 100;
-        mLife = mLifeMax;
-        mLifetime = 3.0f;
-        mRuntime = 0.0f;
+        ClawAnimationObject = Resources.Load("Prefabs/HitAnimation");
+        CrackAnimationObject = Resources.Load("Prefabs/AttackAnimation");
+
+        ZombieAnimator = this.GetComponent<Animator>();
+        // 좀비 애니메이션이 mRuntime에 의해서만 조절될 수 있도록 하기 위함
+        ZombieAnimator.speed = 0.0f;
     }
 
-    void Update()
+    protected void checkAlive()
     {
-        string stateName = (mType == EType.NORMAL) ? "NormalZombieAnimation" : "SpecialZombieAnimation";
-        mZombieAnimator.Play(stateName, 0, (float)(mRuntime) / (float)(mLifetime));
-
         // 좀비의 생존시간을 증가시킨다
         mRuntime += Time.deltaTime;
         // 수명이 다했거나 생명력이 0 이하로 떨어진 경우, 좀비가 죽는다
@@ -104,28 +68,19 @@ public class Zombie : MonoBehaviour
         }
     }
 
-    void OnDestroy()
+    protected void die()
     {
         // 좀비가 공격받는 애니메이션을 제거한다
-        if (mAttackAnimator != null)
+        if (CrackAnimator != null)
         {
-            Destroy(mAttackAnimator.gameObject, 0.3f);
+            Destroy(CrackAnimator.gameObject, 0.3f);
         }
 
         // 좀비가 공격을 당해 죽었을 경우 점수를 얻는다
         if (mRuntime < mLifetime)
         {
-            mFever.GainFeverCount();
-            mPlayer.GainScore(10);
-
-            // 이 좀비가 특수좀비일 경우 폭탄 아이템을 증가시킨다
-            if (mType == EType.SPECIAL)
-            {
-                if(mPlayer != null)
-                {
-                    mPlayer.GetComponent<Bomb>().AddBomb();
-                }
-            }
+            Fever.GainFeverCount();
+            Player.GainScore(10);
         }
         // 수명이 다할 때까지 살아남았다면
         else
@@ -137,11 +92,11 @@ public class Zombie : MonoBehaviour
     private void attack()
     {
         // 좀비가 공격하는 애니메이션을 생성하고, 이 애니메이션을 0.25 초 뒤에 삭제한다
-        GameObject obj = Instantiate(mHitAnimation, transform) as GameObject;
+        GameObject obj = Instantiate(ClawAnimationObject, transform) as GameObject;
         obj.transform.SetParent(transform.parent);
         Destroy(obj, 0.25f);
 
         // 플레이어를 공격한다
-        mPlayer.Hit();
+        Player.Hit();
     }
 }

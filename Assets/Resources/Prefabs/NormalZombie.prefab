@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 222730237047909386}
   - component: {fileID: 114180205489520420}
   - component: {fileID: 95663733608422616}
-  - component: {fileID: 114241241588772844}
+  - component: {fileID: 114121629787005148}
   m_Layer: 5
   m_Name: NormalZombie
   m_TagString: Zombie
@@ -48,6 +48,28 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &114121629787005148
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1835741875122816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e825ad5792fc83e4091340dc578fe277, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Player: {fileID: 0}
+  Fever: {fileID: 0}
+  LevelManager: {fileID: 0}
+  ClawAnimationObject: {fileID: 0}
+  CrackAnimationObject: {fileID: 0}
+  CrackAnimator: {fileID: 0}
+  ZombieAnimator: {fileID: 0}
+  mLife: 0
+  mLifeMax: 0
+  mRuntime: NaN
+  mLifetime: NaN
 --- !u!114 &114180205489520420
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -75,17 +97,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114241241588772844
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1835741875122816}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 051c4997f361a314bb72ad86dd94c8cf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!222 &222730237047909386
 CanvasRenderer:
   m_ObjectHideFlags: 1

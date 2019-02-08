@@ -155,11 +155,6 @@ public class SpawnManager : MonoBehaviour
                     // 특수좀비 객체를 생성하고 타겟의 자식으로 설정
                     GameObject zombie = Instantiate(SpecialZombieObject, target.transform) as GameObject;
                     zombie.transform.SetParent(target.transform);
-
-                    // 일반좀비와의 구분을 위해 특수타입 설정
-                    zombie.GetComponent<Zombie>().SetType(Zombie.EType.SPECIAL);
-                    // 레벨에 따라 능력치 조정
-                    zombie.GetComponent<Zombie>().SetStatus(LevelManager.Level);
                 }
                 else
                 {
@@ -168,8 +163,6 @@ public class SpawnManager : MonoBehaviour
                     // 일반좀비 객체를 생성하고 타겟의 자식으로 설정
                     GameObject zombie = Instantiate(NormalZombieObject, target.transform) as GameObject;
                     zombie.transform.SetParent(target.transform);
-                    // 레벨에 따라 능력치 조정
-                    zombie.GetComponent<Zombie>().SetStatus(LevelManager.Level);
                 }
 
                 // 좀비를 스폰했으므로 함수 종료
