@@ -8,17 +8,17 @@ public class NormalZombie : Zombie
     {
         base.initialize();
 
-        mLifeMax = 100;
-        mLife = mLifeMax;
-        mLifetime = 3.0f;
-        mRuntime = 0.0f;
+        LifeMax = 100;
+        Life = LifeMax;
+        Lifetime = 3.0f;
+        Runtime = 0.0f;
     }
 
     void Update()
     {
         base.checkAlive();
 
-        ZombieAnimator.Play("NormalZombieAnimation", 0, (float)(mRuntime) / (float)(mLifetime));
+        base.updateAnimation();
     }
 
     void OnDestroy()

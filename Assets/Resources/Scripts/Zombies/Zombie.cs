@@ -13,17 +13,17 @@ public class Zombie : MonoBehaviour
     public Animator CrackAnimator = null;
     public Animator ZombieAnimator = null;
 
-    public int mLife = 0;
-    public int mLifeMax = 0;
+    public int Life = 0;
+    public int LifeMax = 0;
     // 좀비가 얼마나 생존해있는지 저장하는 변수
-    public float mRuntime = float.NaN;
+    public float Runtime = float.NaN;
     // 좀비가 최대로 생존해있을 수 있는 시간을 저장하는 변수
-    public float mLifetime = float.NaN;
+    public float Lifetime = float.NaN;
 
     public void Hit(int damage)
     {
         // 좀비의 생명력을 대미지만큼 감소시킨다
-        mLife = mLife - damage;
+        Life = Life - damage;
 
         if (CrackAnimator == null)
         {
@@ -32,14 +32,14 @@ public class Zombie : MonoBehaviour
             obj.transform.SetParent(transform.parent);
             // 애니메이션을 시작한다
             CrackAnimator = obj.GetComponent<Animator>();
-            // 크랙 애니메이션이 mLife에 의해서만 조절될 수 있도록 하기 위함
+            // 크랙 애니메이션이 Life에 의해서만 조절될 수 있도록 하기 위함
             CrackAnimator.speed = 0.0f;
-            CrackAnimator.Play("AttackAnimation", 0, (float)(mLifeMax - mLife) / (float)mLifeMax);
+            CrackAnimator.Play("Target", 0, (float)(LifeMax - Life) / (float)LifeMax);
         }
         else
         {
             // 애니메이션을 다음 프레임으로 넘긴다
-            CrackAnimator.Play("AttackAnimation", 0, (float)(mLifeMax - mLife) / (float)mLifeMax);
+            CrackAnimator.Play("Target", 0, (float)(LifeMax - Life) / (float)LifeMax);
         }
     }
 
@@ -49,23 +49,28 @@ public class Zombie : MonoBehaviour
         Player = playerGO.GetComponent<Player>();
         Fever = playerGO.GetComponent<Fever>();
 
-        ClawAnimationObject = Resources.Load("Prefabs/HitAnimation");
-        CrackAnimationObject = Resources.Load("Prefabs/AttackAnimation");
+        ClawAnimationObject = Resources.Load("Prefabs/ClawAnimation");
+        CrackAnimationObject = Resources.Load("Prefabs/CrackAnimation");
 
         ZombieAnimator = this.GetComponent<Animator>();
-        // 좀비 애니메이션이 mRuntime에 의해서만 조절될 수 있도록 하기 위함
+        // 좀비 애니메이션이 Runtime에 의해서만 조절될 수 있도록 하기 위함
         ZombieAnimator.speed = 0.0f;
     }
 
     protected void checkAlive()
     {
         // 좀비의 생존시간을 증가시킨다
-        mRuntime += Time.deltaTime;
+        Runtime += Time.deltaTime;
         // 수명이 다했거나 생명력이 0 이하로 떨어진 경우, 좀비가 죽는다
-        if ((mRuntime >= mLifetime) || (mLife <= 0.0f))
+        if ((Runtime >= Lifetime) || (Life <= 0.0f))
         {
             Destroy(gameObject);
         }
+    }
+
+    protected void updateAnimation()
+    {
+        ZombieAnimator.Play("Target", 0, (float)(Runtime) / (float)(Lifetime));
     }
 
     protected void die()
@@ -77,7 +82,7 @@ public class Zombie : MonoBehaviour
         }
 
         // 좀비가 공격을 당해 죽었을 경우 점수를 얻는다
-        if (mRuntime < mLifetime)
+        if (Runtime < Lifetime)
         {
             Fever.GainFeverCount();
             Player.GainScore(10);
