@@ -9,36 +9,36 @@ Prefab:
     m_Modifications: []
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 0}
-  m_RootGameObject: {fileID: 1069355605873142}
+  m_RootGameObject: {fileID: 1837358854349778}
   m_IsPrefabAsset: 1
---- !u!1 &1069355605873142
+--- !u!1 &1837358854349778
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 224905531031264364}
-  - component: {fileID: 222183293125222118}
-  - component: {fileID: 114198669255380192}
-  - component: {fileID: 95817229865962548}
+  - component: {fileID: 224007270130452908}
+  - component: {fileID: 222719605298284568}
+  - component: {fileID: 114951370383037402}
+  - component: {fileID: 95861298189658112}
   m_Layer: 5
-  m_Name: AttackAnimation
+  m_Name: ClawAnimation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!95 &95817229865962548
+--- !u!95 &95861298189658112
 Animator:
   serializedVersion: 3
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1069355605873142}
+  m_GameObject: {fileID: 1837358854349778}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 759ee6c571ae5064282cdcc74c32d21e, type: 2}
+  m_Controller: {fileID: 9100000, guid: a6554106c0fc34d47b20f7a803a75dcf, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -47,12 +47,12 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &114198669255380192
+--- !u!114 &114951370383037402
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1069355605873142}
+  m_GameObject: {fileID: 1837358854349778}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
@@ -74,19 +74,19 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!222 &222183293125222118
+--- !u!222 &222719605298284568
 CanvasRenderer:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1069355605873142}
+  m_GameObject: {fileID: 1837358854349778}
   m_CullTransparentMesh: 0
---- !u!224 &224905531031264364
+--- !u!224 &224007270130452908
 RectTransform:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1069355605873142}
+  m_GameObject: {fileID: 1837358854349778}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -97,5 +97,5 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 250, y: 300}
+  m_SizeDelta: {x: 275, y: 350}
   m_Pivot: {x: 0.5, y: 0.5}
