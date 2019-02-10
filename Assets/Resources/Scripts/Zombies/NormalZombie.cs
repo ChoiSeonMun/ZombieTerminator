@@ -12,6 +12,8 @@ public class NormalZombie : Zombie
         Life = LifeMax;
         Lifetime = 3.0f;
         Runtime = 0.0f;
+
+        SoundManager.PlayOneShot("normal-zombie-spawn");
     }
 
     void Update()
@@ -24,5 +26,11 @@ public class NormalZombie : Zombie
     void OnDestroy()
     {
         base.die();
+
+        // 플레이어의 공격으로 죽었을시
+        if (Life <= 0.0f)
+        {
+            SoundManager.PlayOneShot("normal-zombie-die");
+        }
     }
 }

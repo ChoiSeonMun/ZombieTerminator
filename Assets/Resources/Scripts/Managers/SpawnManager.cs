@@ -43,11 +43,17 @@ public class SpawnManager : MonoBehaviour
     public void onFeverOff()
     {
         mSpawnCooldown = mSpawnCooldownTemp;
+        // 좀비를 가지고 있는 target 을 순회하면서, 각 좀비를 죽인다
         foreach (ButtonExtension target in TargetButtons)
         {
             if (target.transform.childCount > 0)
             {
-                Destroy(target.gameObject.transform.GetChild(0).gameObject);
+                Zombie zombie = target.transform.GetChild(0).GetComponent<Zombie>();
+
+                if (zombie != null)
+                {
+                    zombie.Hit(zombie.LifeMax);
+                }
             }
         }
     }

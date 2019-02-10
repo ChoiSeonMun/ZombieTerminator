@@ -12,6 +12,8 @@ public class SpecialZombie : Zombie
         Life = LifeMax;
         Lifetime = 3.0f;
         Runtime = 0.0f;
+
+        SoundManager.PlayOneShot("special-zombie-spawn");
     }
 
     void Update()
@@ -25,9 +27,10 @@ public class SpecialZombie : Zombie
     {
         base.die();
 
-        // 플레이어의 공격으로 죽었을시, 특수좀비이므로 폭탄 아이템을 증가시킨다
+        // 플레이어의 공격으로 죽었을시
         if (Life <= 0.0f)
         {
+            SoundManager.PlayOneShot("special-zombie-die");
             Player.GetComponent<Bomb>().AddBomb();
         }
     }

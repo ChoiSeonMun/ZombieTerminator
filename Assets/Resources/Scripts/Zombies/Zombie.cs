@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Zombie : MonoBehaviour
 {
+    public SoundManager SoundManager = null;
     public Player Player = null;
     public Fever Fever = null;
 
@@ -19,6 +20,7 @@ public class Zombie : MonoBehaviour
     public float Runtime = float.NaN;
     // 좀비가 최대로 생존해있을 수 있는 시간을 저장하는 변수
     public float Lifetime = float.NaN;
+
 
     public void Hit(int damage)
     {
@@ -45,6 +47,7 @@ public class Zombie : MonoBehaviour
 
     protected void initialize()
     {
+        SoundManager = SoundManager.Instance;
         GameObject playerGO = GameObject.Find("Player");
         Player = playerGO.GetComponent<Player>();
         Fever = playerGO.GetComponent<Fever>();
@@ -82,9 +85,14 @@ public class Zombie : MonoBehaviour
         }
 
         // 좀비가 공격을 당해 죽었을 경우 점수를 얻는다
-        if (Runtime < Lifetime)
+        if (Life <= 0.0f)
         {
-            Fever.GainFeverCount();
+            SoundManager.PlayOneShot("glass-crack");
+
+            if (Fever.IsFeverOn == false)
+            {
+                Fever.GainFeverCount();
+            }
             Player.GainScore(10);
         }
         // 수명이 다할 때까지 살아남았다면

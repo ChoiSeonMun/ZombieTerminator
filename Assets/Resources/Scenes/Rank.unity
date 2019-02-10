@@ -409,7 +409,18 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1465753106}
-        m_MethodName: OnClickBack
+        m_MethodName: LoadMain
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1465242371}
+        m_MethodName: ButtonClickSound
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -549,6 +560,54 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!1001 &1465242370
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4576564913498268, guid: d15a38ac054d1f547b05c4845110cee7, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 258.00494
+      objectReference: {fileID: 0}
+    - target: {fileID: 4576564913498268, guid: d15a38ac054d1f547b05c4845110cee7, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 460.58954
+      objectReference: {fileID: 0}
+    - target: {fileID: 4576564913498268, guid: d15a38ac054d1f547b05c4845110cee7, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4576564913498268, guid: d15a38ac054d1f547b05c4845110cee7, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4576564913498268, guid: d15a38ac054d1f547b05c4845110cee7, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4576564913498268, guid: d15a38ac054d1f547b05c4845110cee7, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4576564913498268, guid: d15a38ac054d1f547b05c4845110cee7, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4576564913498268, guid: d15a38ac054d1f547b05c4845110cee7, type: 2}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d15a38ac054d1f547b05c4845110cee7, type: 2}
+  m_IsPrefabAsset: 0
+--- !u!114 &1465242371 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 114223690114797328, guid: d15a38ac054d1f547b05c4845110cee7,
+    type: 2}
+  m_PrefabInternal: {fileID: 1465242370}
+  m_Script: {fileID: 11500000, guid: b5256778a886004499752799402374c9, type: 3}
 --- !u!1 &1465753105
 GameObject:
   m_ObjectHideFlags: 0
@@ -559,7 +618,7 @@ GameObject:
   - component: {fileID: 1465753107}
   - component: {fileID: 1465753106}
   m_Layer: 0
-  m_Name: Manager
+  m_Name: RankManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -576,7 +635,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f89ee08f00a3d63438cca2cb9c261235, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mBackButton: {fileID: 550581208}
+  BackButton: {fileID: 0}
 --- !u!4 &1465753107
 Transform:
   m_ObjectHideFlags: 0
