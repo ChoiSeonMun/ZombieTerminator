@@ -14,6 +14,8 @@ public class Player : MonoBehaviour
     private int mScore = -1;
     private int mLife = -1;
 
+    private SoundManager mSoundManager = null;
+
     #region Public Functions
 
     // Gun 으로 하여금 target 을 쏘도록 명령한다
@@ -46,6 +48,8 @@ public class Player : MonoBehaviour
     {
         if (Fever.IsFeverOn == false)
         {
+            mSoundManager.PlayOneShot("hit");
+
             mLife -= 1;
         }
 
@@ -58,6 +62,8 @@ public class Player : MonoBehaviour
     {
         mLife = 3;
         mScore = 0;
+
+        mSoundManager = SoundManager.Instance;
     }
 
     void Update()

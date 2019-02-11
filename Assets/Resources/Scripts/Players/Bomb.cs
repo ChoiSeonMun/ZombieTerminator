@@ -12,6 +12,8 @@ public class Bomb : MonoBehaviour
     public Object BombAnimationObject = null;
     public GameObject Panel = null;
 
+    private SoundManager mSoundManager = null;
+
     public float BombCount
     {
         get; private set;
@@ -21,6 +23,8 @@ public class Bomb : MonoBehaviour
     {
         if(BombCount > 0)
         {
+            mSoundManager.PlayOneShot("bomb-explosion");
+
             BombCount -= 1;
 
             // 폭탄 애니메이션을 생성하고, 이 애니메이션을 0.25 초 뒤에 삭제한다
@@ -33,7 +37,12 @@ public class Bomb : MonoBehaviour
             {
                 if (target.transform.childCount > 0)
                 {
-                    Destroy(target.gameObject.transform.GetChild(0).gameObject);
+                    Zombie zombie = target.transform.GetChild(0).GetComponent<Zombie>();
+
+                    if (zombie != null)
+                    {
+                        zombie.TakeDamage(zombie.LifeMax);
+                    }
                 }
             }
         }
@@ -41,12 +50,16 @@ public class Bomb : MonoBehaviour
 
     public void AddBomb()
     {
+        mSoundManager.PlayOneShot("bomb-get");
+
         BombCount += 1;
     }
 
     void Awake()
     {
         BombCount = 3;
+
+        mSoundManager = SoundManager.Instance;
     }
 
     void Update()

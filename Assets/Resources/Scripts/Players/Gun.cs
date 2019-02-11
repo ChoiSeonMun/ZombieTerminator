@@ -27,7 +27,6 @@ public class Gun : MonoBehaviour
     }
     // 현재 재장전 중인지를 저장하는 변수
     public bool IsReloading { get; private set; }
-
     // 현재 잔여 탄수를 저장하는 변수
     private int mBulletCur = -1;
     // 최대 잔여 탄수를 저장하는 변수
@@ -44,6 +43,8 @@ public class Gun : MonoBehaviour
     private float mShootTimeLast = float.NaN;
     private float mShootTimeCurr = float.NaN;
     private float mSceneTimer = float.NaN;
+
+    private SoundManager mSoundManager = null;
 
     public void onFeverOn()
     {
@@ -63,6 +64,8 @@ public class Gun : MonoBehaviour
     {
         if (IsReloading == false)
         {
+            mSoundManager.PlayOneShot("reload");
+
             mReloadTime = mSceneTimer;
             // 잔여 탄수를 최대로 채운다
             mBulletCur = mBulletMax;
@@ -86,16 +89,24 @@ public class Gun : MonoBehaviour
         // 잔여 탄수가 있을 경우에만 발사
         else if (mBulletCur > 0)
         {
-            // target 이 좀비를 가지고 있다면 대미지를 입힌다
-            if ((obj.transform.childCount > 0) &&
-                (obj.transform.GetChild(0).tag == "Zombie"))
+            mSoundManager.PlayOneShot("gun-fire");
+
+            if (obj.transform.childCount > 0)
             {
-                GameObject zombie = obj.transform.GetChild(0).gameObject;
-                zombie.GetComponent<Zombie>().Hit(this.mDamage);
+                Zombie zombie = obj.transform.GetChild(0).GetComponent<Zombie>();
+
+                if (zombie != null)
+                {
+                    zombie.TakeDamage(mDamage);
+                }
             }
 
             mBulletCur -= 1;
             mShootTimeLast = mSceneTimer;
+        }
+        else
+        {
+            mSoundManager.PlayOneShot("fire-fail");
         }
     }
 
@@ -116,6 +127,8 @@ public class Gun : MonoBehaviour
         mShootTimeLast = 0.0f;
         mShootTimeCurr = 0.0f;
         mSceneTimer = 1.0f;
+
+        mSoundManager = SoundManager.Instance;
     }
 
     void Update()

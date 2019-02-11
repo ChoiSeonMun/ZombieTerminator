@@ -113,6 +113,62 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &52694832
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 52694834}
+  - component: {fileID: 52694833}
+  m_Layer: 0
+  m_Name: LevelManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &52694833
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 52694832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66da99a01e0460e44941b5f27b4421f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LevelUpEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 205809099}
+        m_MethodName: onLevelUp
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+--- !u!4 &52694834
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 52694832}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 156.71841, y: 310.1505, z: -4.6875}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &88925647
 Prefab:
   m_ObjectHideFlags: 0
@@ -217,6 +273,63 @@ Prefab:
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 95fb232f720a24042a1500440eedf61f, type: 2}
   m_IsPrefabAsset: 0
+--- !u!1 &205809098
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 205809100}
+  - component: {fileID: 205809099}
+  m_Layer: 0
+  m_Name: SpawnManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &205809099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 205809098}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c04bb0e7d021834eb0c2c3260fbe0c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LevelManager: {fileID: 52694833}
+  Fever: {fileID: 1580132891}
+  TargetButtons:
+  - {fileID: 665348746}
+  - {fileID: 918422537}
+  - {fileID: 601119788}
+  - {fileID: 999790739}
+  - {fileID: 2124566115}
+  - {fileID: 291541992}
+  - {fileID: 1398366305}
+  - {fileID: 267993393}
+  - {fileID: 494815865}
+  Player: {fileID: 1580132888}
+  NormalZombieObject: {fileID: 1835741875122816, guid: 7850298066fa7f74f99c5e66d0391a3a,
+    type: 2}
+  SpecialZombieObject: {fileID: 1062128306954058, guid: 43bf5bfdbe3a0b84dbfb0576858b1741,
+    type: 2}
+--- !u!4 &205809100
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 205809098}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 156.71841, y: 310.1505, z: -4.6875}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &241442771
 GameObject:
   m_ObjectHideFlags: 0
@@ -1021,6 +1134,48 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 512360825}
   m_CullTransparentMesh: 0
+--- !u!1001 &592632986
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4576564913498268, guid: d15a38ac054d1f547b05c4845110cee7, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 258.00494
+      objectReference: {fileID: 0}
+    - target: {fileID: 4576564913498268, guid: d15a38ac054d1f547b05c4845110cee7, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 460.58954
+      objectReference: {fileID: 0}
+    - target: {fileID: 4576564913498268, guid: d15a38ac054d1f547b05c4845110cee7, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4576564913498268, guid: d15a38ac054d1f547b05c4845110cee7, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4576564913498268, guid: d15a38ac054d1f547b05c4845110cee7, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4576564913498268, guid: d15a38ac054d1f547b05c4845110cee7, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4576564913498268, guid: d15a38ac054d1f547b05c4845110cee7, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4576564913498268, guid: d15a38ac054d1f547b05c4845110cee7, type: 2}
+      propertyPath: m_RootOrder
+      value: 7
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d15a38ac054d1f547b05c4845110cee7, type: 2}
+  m_IsPrefabAsset: 0
 --- !u!1 &601119784
 GameObject:
   m_ObjectHideFlags: 0
@@ -2298,10 +2453,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1005551065}
   - component: {fileID: 1005551064}
-  - component: {fileID: 1005551066}
-  - component: {fileID: 1005551067}
   m_Layer: 0
-  m_Name: Manager
+  m_Name: GameManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2318,7 +2471,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41d455e09f9511e4a800fa01a73f6b71, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SpawnManager: {fileID: 1005551066}
+  SpawnManager: {fileID: 205809099}
   Player: {fileID: 1580132888}
   Fever: {fileID: 1580132891}
   MenuButton: {fileID: 1829583970}
@@ -2336,63 +2489,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1005551066
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1005551063}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9c04bb0e7d021834eb0c2c3260fbe0c0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  LevelManager: {fileID: 1005551067}
-  Fever: {fileID: 1580132891}
-  TargetButtons:
-  - {fileID: 665348746}
-  - {fileID: 918422537}
-  - {fileID: 601119788}
-  - {fileID: 999790739}
-  - {fileID: 2124566115}
-  - {fileID: 291541992}
-  - {fileID: 1398366305}
-  - {fileID: 267993393}
-  - {fileID: 494815865}
-  Player: {fileID: 1580132888}
-  NormalZombieObject: {fileID: 1835741875122816, guid: 7850298066fa7f74f99c5e66d0391a3a,
-    type: 2}
-  SpecialZombieObject: {fileID: 1062128306954058, guid: 43bf5bfdbe3a0b84dbfb0576858b1741,
-    type: 2}
---- !u!114 &1005551067
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1005551063}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66da99a01e0460e44941b5f27b4421f6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  LevelUpEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1005551066}
-        m_MethodName: onLevelUp
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
 --- !u!1 &1007983610 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1841391590965950, guid: 3df5f4f8e21102b46af3a0bda2186355,
@@ -3095,7 +3193,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1580132890
 MonoBehaviour:
@@ -3136,7 +3234,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1005551066}
+      - m_Target: {fileID: 205809099}
         m_MethodName: onFeverOn
         m_Mode: 1
         m_Arguments:
@@ -3163,7 +3261,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1005551066}
+      - m_Target: {fileID: 205809099}
         m_MethodName: onFeverOff
         m_Mode: 1
         m_Arguments:
@@ -3584,7 +3682,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.049814556, y: 0.84900004}
   m_AnchorMax: {x: 0.38329563, y: 0.95800006}
-  m_AnchoredPosition: {x: -84.26013, y: -12.5842285}
+  m_AnchoredPosition: {x: -84.260254, y: -12.5842285}
   m_SizeDelta: {x: -192, y: -40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1963849494

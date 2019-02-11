@@ -46,6 +46,8 @@ public class GameManager : MonoBehaviour
     // Game scene 이 여러 번 시작되고 종료되어도 그 값을 유지하기 위해 static
     private static int mGameTrial = 0;
 
+    private SoundManager mSoundManager = null;
+
     #region Public Functions
 
     public void ChangeToPaused()
@@ -87,11 +89,22 @@ public class GameManager : MonoBehaviour
         mUpdates = onUpdates;
         mEnds = onEnds;
         changeState(EState.READY);
+
+        mSoundManager = SoundManager.Instance;
+        mSoundManager.PlayLoop("in-game-normal");
     }
 
     void Update()
     {
         mUpdates(this, new StateArgs(mState));
+    }
+    void OnDestroy()
+    {
+        // 다른 scene으로 전환할 때 BGM을 교체하기 위함
+        if (mSoundManager != null)
+        {
+            mSoundManager.PlayLoop("out-game-normal");
+        }
     }
 
     #endregion
@@ -117,6 +130,7 @@ public class GameManager : MonoBehaviour
                 break;
 
             case EState.PLAYING:
+                mSoundManager.PlayOneShot("game-start");
                 Player.SetActive(true);
                 break;
 
@@ -126,6 +140,8 @@ public class GameManager : MonoBehaviour
                 break;
 
             case EState.GAMEOVER:
+                mSoundManager.PlayOneShot("game-over");
+                SpawnManager.StopTarget();
                 // 게임이 끝나면, 게임 시도 횟수를 증가한다.
                 ++mGameTrial;
                 // 게임을 5번 플레이 했다면, 광고를 시청하게 한다
@@ -151,7 +167,7 @@ public class GameManager : MonoBehaviour
                 // PanelStart 의 Image 를 업데이트마다 투명하게 만든다
                 // 완전히 투명해졌을 경우 플레이를 시작한다
                 Color newColor = img.color;
-                newColor.a -= 0.01f;
+                newColor.a -= (Time.deltaTime / 4.0f);
                 img.color = newColor;
                 if (img.color.a <= 0.0f)
                 {
