@@ -449,8 +449,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ce3fc224ecd839469674c16bd8e78f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NoticeText: {fileID: 397972569}
-  BlinkSpeed: 2
+  noticeText: {fileID: 397972569}
+  blinkSpeed: 2
+  authInfo: {fileID: 0}
 --- !u!4 &857178356
 Transform:
   m_ObjectHideFlags: 0

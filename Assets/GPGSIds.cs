@@ -24,7 +24,7 @@
 
 public static class GPGSIds
 {
-        public const string leaderboard_the_best_zombie_killer = "CgkI3_S5p6YCEAIQAA"; // <GPGSID>
+        public const string leaderboard_whos_the_best = "CgkItcrr5bIWEAIQAw"; // <GPGSID>
 
 }
 

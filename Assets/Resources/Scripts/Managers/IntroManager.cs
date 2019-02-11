@@ -8,19 +8,20 @@ using GooglePlayGames.BasicApi;
 
 public class IntroManager : MonoBehaviour
 {
-    public Text NoticeText;
-    public float BlinkSpeed = 2.0f;
+    public Text noticeText;
+    public float blinkSpeed = 2.0f;
 
     void Start()
     {
         // Google Play Games 활성화
-        PlayGamesClientConfiguration config = new PlayGamesClientConfiguration.Builder()
-            .Build();
-        PlayGamesPlatform.InitializeInstance(config);
+        PlayGamesClientConfiguration config = new PlayGamesClientConfiguration.Builder().Build();
         PlayGamesPlatform.DebugLogEnabled = true;
+        PlayGamesPlatform.InitializeInstance(config);
         PlayGamesPlatform.Activate();
 
-        NoticeText.text = "Touch to Start";
+        authenticate();
+
+        noticeText.text = "Touch to Start";
     }
 
     void Update()
@@ -28,10 +29,31 @@ public class IntroManager : MonoBehaviour
         // Main 씬 로드
         if (Input.GetMouseButtonUp(0))
         {
-            SceneManager.LoadScene("Main");
+            if (Social.localUser.authenticated)
+            {
+                SceneManager.LoadScene("Main");
+            }
+            else
+            {
+                // 대화상자를 띄운다.
+                Debug.Log("네트워크 환경을 확인해주세요.");
+                Debug.Log("[구글 플레이 게임에 로그인하기 버튼]");
+                Debug.Log("[취소버튼]");
+
+                // if (loginButton.isClicked)
+                //  authenticate();
+            }
         }
 
         // Notice Text를 깜빡인다.
-        NoticeText.color = Color.Lerp(Color.white, Color.black, Mathf.PingPong(Time.time * BlinkSpeed, 1));
+        noticeText.color = Color.Lerp(Color.white, Color.black, Mathf.PingPong(Time.time * blinkSpeed, 1));
+    }
+
+    private void authenticate()
+    {
+        Social.localUser.Authenticate(bSuccess =>
+        {
+            Debug.Log("Authentication: " + bSuccess);
+        });
     }
 }
