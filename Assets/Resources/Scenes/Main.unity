@@ -202,8 +202,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb90344aa19d8f14c989ba6d7c02637d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  StartButton: {fileID: 0}
-  RankButton: {fileID: 0}
+  startButton: {fileID: 0}
+  rankButton: {fileID: 0}
+  debugText: {fileID: 0}
 --- !u!1 &1034068590
 GameObject:
   m_ObjectHideFlags: 0
@@ -231,8 +232,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb90344aa19d8f14c989ba6d7c02637d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  StartButton: {fileID: 1470154792}
-  RankButton: {fileID: 1957908065}
+  startButton: {fileID: 1470154792}
+  rankButton: {fileID: 1957908065}
+  debugText: {fileID: 0}
 --- !u!4 &1034068592
 Transform:
   m_ObjectHideFlags: 0

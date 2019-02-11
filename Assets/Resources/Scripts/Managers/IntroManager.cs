@@ -8,8 +8,9 @@ using GooglePlayGames.BasicApi;
 
 public class IntroManager : MonoBehaviour
 {
-    public Text NoticeText;
-    public float BlinkSpeed = 2.0f;
+    public Text noticeText;
+    public float blinkSpeed = 2.0f;
+    public Text authInfo;
 
     void Start()
     {
@@ -20,7 +21,20 @@ public class IntroManager : MonoBehaviour
         PlayGamesPlatform.DebugLogEnabled = true;
         PlayGamesPlatform.Activate();
 
-        NoticeText.text = "Touch to Start";
+        Social.localUser.Authenticate(bSuccess =>
+        {
+            Debug.Log("Authentication: " + bSuccess);
+            if (bSuccess)
+            {
+                authInfo.text = "Welcome " + Social.localUser.userName;
+            }
+            else
+            {
+                authInfo.text = "Failed";
+            }
+        });
+
+        noticeText.text = "Touch to Start";
     }
 
     void Update()
@@ -28,10 +42,17 @@ public class IntroManager : MonoBehaviour
         // Main 씬 로드
         if (Input.GetMouseButtonUp(0))
         {
-            SceneManager.LoadScene("Main");
+            if (Social.localUser.authenticated)
+            {
+                SceneManager.LoadScene("Main");
+            }
+            else
+            {
+                // 알람메시지 띄움
+            }
         }
 
         // Notice Text를 깜빡인다.
-        NoticeText.color = Color.Lerp(Color.white, Color.black, Mathf.PingPong(Time.time * BlinkSpeed, 1));
+        noticeText.color = Color.Lerp(Color.white, Color.black, Mathf.PingPong(Time.time * blinkSpeed, 1));
     }
 }
