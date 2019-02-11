@@ -16,8 +16,8 @@ public class MainManager : MonoBehaviour
         SceneManager.LoadScene("Game");
     }
 
-    public void LoadRank()
+    public void ShowLeaderboard()
     {
-        SceneManager.LoadScene("Rank");
+        PlayGamesPlatform.Instance.ShowLeaderboardUI("CgkItcrr5bIWEAIQAw");
     }
 }
