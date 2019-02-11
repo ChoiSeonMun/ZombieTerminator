@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 222847371231130866}
   - component: {fileID: 114770166874763588}
   - component: {fileID: 95052427750716024}
-  - component: {fileID: 114017454559410838}
+  - component: {fileID: 114784645308803716}
   m_Layer: 5
   m_Name: SpecialZombie
   m_TagString: Zombie
@@ -48,17 +48,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &114017454559410838
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1062128306954058}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 051c4997f361a314bb72ad86dd94c8cf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114770166874763588
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -86,6 +75,28 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114784645308803716
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1062128306954058}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ba4d8decb30cdc46b31c96535322f4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Player: {fileID: 0}
+  Fever: {fileID: 0}
+  LevelManager: {fileID: 0}
+  ClawAnimationObject: {fileID: 0}
+  CrackAnimationObject: {fileID: 0}
+  CrackAnimator: {fileID: 0}
+  ZombieAnimator: {fileID: 0}
+  mLife: 0
+  mLifeMax: 0
+  mRuntime: NaN
+  mLifetime: NaN
 --- !u!222 &222847371231130866
 CanvasRenderer:
   m_ObjectHideFlags: 1

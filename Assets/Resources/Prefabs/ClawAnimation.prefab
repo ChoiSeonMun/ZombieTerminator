@@ -9,37 +9,36 @@ Prefab:
     m_Modifications: []
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 0}
-  m_RootGameObject: {fileID: 1835741875122816}
+  m_RootGameObject: {fileID: 1837358854349778}
   m_IsPrefabAsset: 1
---- !u!1 &1835741875122816
+--- !u!1 &1837358854349778
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 224756572875710304}
-  - component: {fileID: 222730237047909386}
-  - component: {fileID: 114180205489520420}
-  - component: {fileID: 95663733608422616}
-  - component: {fileID: 114121629787005148}
+  - component: {fileID: 224007270130452908}
+  - component: {fileID: 222719605298284568}
+  - component: {fileID: 114951370383037402}
+  - component: {fileID: 95861298189658112}
   m_Layer: 5
-  m_Name: NormalZombie
-  m_TagString: Zombie
+  m_Name: ClawAnimation
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!95 &95663733608422616
+--- !u!95 &95861298189658112
 Animator:
   serializedVersion: 3
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1835741875122816}
+  m_GameObject: {fileID: 1837358854349778}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 22b451ddde5206e42bacc6c3f4f76212, type: 2}
+  m_Controller: {fileID: 9100000, guid: a6554106c0fc34d47b20f7a803a75dcf, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -48,34 +47,12 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &114121629787005148
+--- !u!114 &114951370383037402
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1835741875122816}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e825ad5792fc83e4091340dc578fe277, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Player: {fileID: 0}
-  Fever: {fileID: 0}
-  LevelManager: {fileID: 0}
-  ClawAnimationObject: {fileID: 0}
-  CrackAnimationObject: {fileID: 0}
-  CrackAnimator: {fileID: 0}
-  ZombieAnimator: {fileID: 0}
-  mLife: 0
-  mLifeMax: 0
-  mRuntime: NaN
-  mLifetime: NaN
---- !u!114 &114180205489520420
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1835741875122816}
+  m_GameObject: {fileID: 1837358854349778}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
@@ -97,19 +74,19 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!222 &222730237047909386
+--- !u!222 &222719605298284568
 CanvasRenderer:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1835741875122816}
+  m_GameObject: {fileID: 1837358854349778}
   m_CullTransparentMesh: 0
---- !u!224 &224756572875710304
+--- !u!224 &224007270130452908
 RectTransform:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1835741875122816}
+  m_GameObject: {fileID: 1837358854349778}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -120,5 +97,5 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 225, y: 225}
+  m_SizeDelta: {x: 275, y: 350}
   m_Pivot: {x: 0.5, y: 0.5}
