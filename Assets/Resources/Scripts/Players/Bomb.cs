@@ -41,7 +41,7 @@ public class Bomb : MonoBehaviour
 
                     if (zombie != null)
                     {
-                        zombie.Hit(zombie.LifeMax);
+                        zombie.TakeDamage(zombie.LifeMax);
                     }
                 }
             }

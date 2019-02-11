@@ -22,7 +22,7 @@ public class Zombie : MonoBehaviour
     public float Lifetime = float.NaN;
 
 
-    public void Hit(int damage)
+    public void TakeDamage(int damage)
     {
         // 좀비의 생명력을 대미지만큼 감소시킨다
         Life = Life - damage;

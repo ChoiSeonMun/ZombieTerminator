@@ -91,12 +91,14 @@ public class Gun : MonoBehaviour
         {
             mSoundManager.PlayOneShot("gun-fire");
 
-            // target 이 좀비를 가지고 있다면 대미지를 입힌다
-            if ((obj.transform.childCount > 0) &&
-                (obj.transform.GetChild(0).tag == "Zombie"))
+            if (obj.transform.childCount > 0)
             {
-                GameObject zombie = obj.transform.GetChild(0).gameObject;
-                zombie.GetComponent<Zombie>().Hit(this.mDamage);
+                Zombie zombie = obj.transform.GetChild(0).GetComponent<Zombie>();
+
+                if (zombie != null)
+                {
+                    zombie.TakeDamage(mDamage);
+                }
             }
 
             mBulletCur -= 1;

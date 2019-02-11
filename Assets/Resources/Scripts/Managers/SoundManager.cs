@@ -6,7 +6,11 @@ using UnityEngine.Events;
 public class SoundManager : MonoBehaviour
 {
     // singleton을 위한 개체
-    public static SoundManager Instance = null;
+    public static SoundManager Instance
+    {
+        get;
+        private set;
+    }
 
     public AudioClip[] AudioClips = null;
     public AudioSource OneShotAudio = null;

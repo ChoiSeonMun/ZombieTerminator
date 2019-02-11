@@ -52,7 +52,7 @@ public class SpawnManager : MonoBehaviour
 
                 if (zombie != null)
                 {
-                    zombie.Hit(zombie.LifeMax);
+                    zombie.TakeDamage(zombie.LifeMax);
                 }
             }
         }
