@@ -14,7 +14,7 @@ public class LevelManager : MonoBehaviour
     // 레벨 업을 위한 시간 경과를 저장하는 변수
     private float mLevelTimer = float.NaN;
     // 다음 레벨 업까지의 시간 간격을 저장하는 변수
-    private float mLevelInterval = float.NaN;
+    public float mLevelInterval = float.NaN;
 
     void Awake()
     {
@@ -42,6 +42,6 @@ public class LevelManager : MonoBehaviour
     {
         Level++;
         LevelUpEvent.Invoke();
-        mLevelInterval *= 0.95f;
+        mLevelInterval = (mLevelInterval * 0.375f) + 5.0f;
     }
 }

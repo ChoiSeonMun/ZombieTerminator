@@ -14,7 +14,7 @@ public class SpawnManager : MonoBehaviour
 
     private System.Random mRand = null;
     // Spawn Cooldown 시간값을 저장하는 변수
-    private float mSpawnCooldown = float.NaN;
+    public float mSpawnCooldown = float.NaN;
     // Fever 현재 쿨다운을 임시적으로 기록할 변수
     private float mSpawnCooldownTemp = float.NaN;
     // 이전 Spawn 으로부터 얼마나 시간이 지났는지를 저장하는 변수
@@ -23,7 +23,7 @@ public class SpawnManager : MonoBehaviour
     private int mNormalSpawnCount = -1;
     private int mSpecialSpawnCount = -1;
     // 특수 좀비를 Spawn할 확률
-    private float mSpecialSpawnRate = float.NaN;
+    public float mSpecialSpawnRate = float.NaN;
     // 특수 좀비의 Spawn 확률을 보정하는 변수
     private float mRateSpecialSpawnAmend = float.NaN;
     // 게임이 중단되는 것을 저장하기 위한 변수
@@ -31,13 +31,14 @@ public class SpawnManager : MonoBehaviour
 
     public void onLevelUp()
     {
-        mSpawnCooldown *= 0.9f;
+        mSpawnCooldown = (mSpawnCooldown * 0.525f) + 0.66f;
     }
 
     public void onFeverOn()
     {
         mSpawnCooldownTemp = mSpawnCooldown;
-        mSpawnCooldown = 0.1f;
+        mSpawnCooldown = 0.05f;
+        mSpecialSpawnRate = 0.05f;
     }
 
     public void onFeverOff()
@@ -52,10 +53,12 @@ public class SpawnManager : MonoBehaviour
 
                 if (zombie != null)
                 {
-                    zombie.TakeDamage(zombie.LifeMax);
+                    zombie.TakeDamage(-zombie.LifeMax);
+                    Destroy(zombie.gameObject);
                 }
             }
         }
+        mSpecialSpawnRate = 0.10f;
     }
 
     public void StopTarget()
@@ -68,6 +71,7 @@ public class SpawnManager : MonoBehaviour
             {
                 GameObject zombie = target.transform.GetChild(0).gameObject;
                 zombie.SetActive(false);
+                // Destroy(zombie.gameObject, 0.01f);
             }
         }
     }
@@ -94,7 +98,7 @@ public class SpawnManager : MonoBehaviour
         mSpawnTimer = 0.0f;
         mNormalSpawnCount = 0;
         mSpecialSpawnCount = 0;
-        mSpecialSpawnRate = 0.15f;
+        mSpecialSpawnRate = 0.10f;
         mRateSpecialSpawnAmend = 0.0f;
     }
 
@@ -156,16 +160,20 @@ public class SpawnManager : MonoBehaviour
                 // 특수좀비 스폰카운터에 도달했을 경우
                 if (canSpawnSpecialZombie())
                 {
-                    ++mSpecialSpawnCount;
-
+                    if (!Fever.IsFeverOn)
+                    {
+                        ++mSpecialSpawnCount;
+                    }
                     // 특수좀비 객체를 생성하고 타겟의 자식으로 설정
                     GameObject zombie = Instantiate(SpecialZombieObject, target.transform) as GameObject;
                     zombie.transform.SetParent(target.transform);
                 }
                 else
                 {
-                    ++mNormalSpawnCount;
-
+                    if (!Fever.IsFeverOn)
+                    {
+                        ++mNormalSpawnCount;
+                    }
                     // 일반좀비 객체를 생성하고 타겟의 자식으로 설정
                     GameObject zombie = Instantiate(NormalZombieObject, target.transform) as GameObject;
                     zombie.transform.SetParent(target.transform);
@@ -184,12 +192,12 @@ public class SpawnManager : MonoBehaviour
         // 실제 확률이 기대 확률보다 크면 스폰 확률을 줄이기 위해 보정값을 줄인다
         if (rateSpawnNow > mSpecialSpawnRate)
         {
-            mRateSpecialSpawnAmend -= 0.1f;
+            mRateSpecialSpawnAmend -= 0.05f;
         }
         // 반대로 실제 확률이 기대 확률보다 작으면 스폰 확률을 늘이기 위해 보정값을 늘인다
         else if (rateSpawnNow < mSpecialSpawnRate)
         {
-            mRateSpecialSpawnAmend += 0.1f;
+            mRateSpecialSpawnAmend += 0.05f;
         }
 
         // 난수를 생성하여 스폰할 것인지 정한다

@@ -19,7 +19,7 @@ public class Fever : MonoBehaviour
     public SpawnManager SpawnManager = null;
 
     // fever의 최대치를 기록하는 상수
-    public const int MAX_FEVER_COUNT = 10;
+    public const int MAX_FEVER_COUNT = 20;
     // fever 상태의 On/Off를 기록하는 변수
     public bool IsFeverOn { get; private set; }
     // 처치한 좀비 수를 기록하는 변수
@@ -82,7 +82,7 @@ public class Fever : MonoBehaviour
         FeverCount = 0;
         mFeverTimeCurr = 0.0f;
         mFeverTimer = 0.0f;
-        mFeverBuffTime = 20.0f;
+        mFeverBuffTime = 15.0f;
 
         mSoundManager = SoundManager.Instance;
     }

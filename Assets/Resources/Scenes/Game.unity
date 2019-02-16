@@ -156,6 +156,7 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+  mLevelInterval: NaN
 --- !u!4 &52694834
 Transform:
   m_ObjectHideFlags: 0
@@ -317,6 +318,8 @@ MonoBehaviour:
     type: 2}
   SpecialZombieObject: {fileID: 1062128306954058, guid: 43bf5bfdbe3a0b84dbfb0576858b1741,
     type: 2}
+  mSpawnCooldown: NaN
+  mSpecialSpawnRate: NaN
 --- !u!4 &205809100
 Transform:
   m_ObjectHideFlags: 0
@@ -3298,6 +3301,7 @@ MonoBehaviour:
   BombAnimationObject: {fileID: 1976223448534862, guid: e2690fa2f36c8e947a53abf19bdd5d5f,
     type: 2}
   Panel: {fileID: 512360825}
+  Fever: {fileID: 1580132891}
 --- !u!1 &1646795077
 GameObject:
   m_ObjectHideFlags: 0

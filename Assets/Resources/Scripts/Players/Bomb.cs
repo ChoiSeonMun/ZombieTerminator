@@ -11,6 +11,7 @@ public class Bomb : MonoBehaviour
     public Text BombText = null;
     public Object BombAnimationObject = null;
     public GameObject Panel = null;
+    public Fever Fever = null;
 
     private SoundManager mSoundManager = null;
 
@@ -21,7 +22,7 @@ public class Bomb : MonoBehaviour
 
     public void OnClickBomb()
     {
-        if(BombCount > 0)
+        if((BombCount > 0)&&(!Fever.IsFeverOn))
         {
             mSoundManager.PlayOneShot("bomb-explosion");
 

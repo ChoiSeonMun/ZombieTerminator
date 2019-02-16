@@ -48,7 +48,7 @@ public class Gun : MonoBehaviour
 
     public void onFeverOn()
     {
-        mDamage = mDamage * 2;
+        mDamage = mDamage * 3;
         mReloadDelay = 0.0f;
         mFireDelay = 0.0f;
     }
@@ -57,7 +57,7 @@ public class Gun : MonoBehaviour
     {
         mDamage = 35;
         mReloadDelay = 1.0f;
-        mFireDelay = 0.15f;
+        mFireDelay = 0.0f;
     }
 
     public void OnClickReload()

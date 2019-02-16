@@ -95,6 +95,10 @@ public class Zombie : MonoBehaviour
             }
             Player.GainScore(10);
         }
+        else if (Life > LifeMax)
+        {
+            ;
+        }
         // 수명이 다할 때까지 살아남았다면
         else
         {
