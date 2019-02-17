@@ -20,13 +20,13 @@ public class GameManager : MonoBehaviour
         PAUSED,
         GAMEOVER
     };
-    public SpawnManager SpawnManager = null;
-    public Player Player = null;
-    public Fever Fever = null;
-    public Button MenuButton = null;
-    public GameObject MenuPanel = null;
-    public GameObject StartPanel = null;
-    public GameObject EndPanel = null;
+    public EventManager eventManager = null;
+    public Player player = null;
+    public Fever fever = null;
+    public Button menuButton = null;
+    public GameObject menuPanel = null;
+    public GameObject startPanel = null;
+    public GameObject endPanel = null;
 
     private EState mState = EState.UNDEFINED;
     private event EventHandler<StateArgs> mStarts = null;
@@ -126,22 +126,21 @@ public class GameManager : MonoBehaviour
                 break;
 
             case EState.READY:
-                StartPanel.SetActive(true);
+                startPanel.SetActive(true);
                 break;
 
             case EState.PLAYING:
                 mSoundManager.PlayOneShot("game-start");
-                Player.SetActive(true);
+                player.SetActive(true);
                 break;
 
             case EState.PAUSED:
-                MenuPanel.SetActive(true);
-                SpawnManager.StopTarget();
+                menuPanel.SetActive(true);
+                eventManager.pauseEvent.Invoke();
                 break;
 
             case EState.GAMEOVER:
                 mSoundManager.PlayOneShot("game-over");
-                SpawnManager.StopTarget();
                 // 게임이 끝나면, 게임 시도 횟수를 증가한다.
                 ++mGameTrial;
                 // 게임을 5번 플레이 했다면, 광고를 시청하게 한다
@@ -150,7 +149,7 @@ public class GameManager : MonoBehaviour
                     Advertisement.Show();
                     mGameTrial = 0;
                 }
-                EndPanel.SetActive(true);
+                endPanel.SetActive(true);
                 break;
         }
     }
@@ -163,7 +162,7 @@ public class GameManager : MonoBehaviour
                 break;
 
             case EState.READY:
-                Image img = StartPanel.GetComponent<Image>();
+                Image img = startPanel.GetComponent<Image>();
                 // PanelStart 의 Image 를 업데이트마다 투명하게 만든다
                 // 완전히 투명해졌을 경우 플레이를 시작한다
                 Color newColor = img.color;
@@ -194,20 +193,20 @@ public class GameManager : MonoBehaviour
                 break;
 
             case EState.READY:
-                StartPanel.SetActive(false);
+                startPanel.SetActive(false);
                 break;
 
             case EState.PLAYING:
-                Player.SetActive(false);
+                player.SetActive(false);
                 break;
 
             case EState.PAUSED:
-                SpawnManager.ResumeTarget();
-                MenuPanel.SetActive(false);
+                eventManager.resumeEvent.Invoke();
+                menuPanel.SetActive(false);
                 break;
 
             case EState.GAMEOVER:
-                EndPanel.SetActive(false);
+                endPanel.SetActive(false);
                 break;
         }
     }

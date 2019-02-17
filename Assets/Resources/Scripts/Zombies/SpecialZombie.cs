@@ -8,12 +8,12 @@ public class SpecialZombie : Zombie
     {
         base.initialize();
 
-        LifeMax = 100;
-        Life = LifeMax;
-        Lifetime = 3.0f;
-        Runtime = 0.0f;
+        lifeMax = 100;
+        life = lifeMax;
+        lifetime = 3.0f;
+        runtime = 0.0f;
 
-        SoundManager.PlayOneShot("special-zombie-spawn");
+        soundManager.PlayOneShot("special-zombie-spawn");
     }
 
     void Update()
@@ -28,10 +28,10 @@ public class SpecialZombie : Zombie
         base.die();
 
         // 플레이어의 공격으로 죽었을시
-        if (Life <= 0.0f)
+        if (life <= 0.0f)
         {
-            SoundManager.PlayOneShot("special-zombie-die");
-            Player.GetComponent<Bomb>().AddBomb();
+            soundManager.PlayOneShot("special-zombie-die");
+            player.GetComponent<Bomb>().AddBomb();
         }
     }
 }

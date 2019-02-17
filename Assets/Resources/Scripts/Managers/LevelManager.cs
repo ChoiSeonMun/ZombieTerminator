@@ -10,28 +10,54 @@ public class LevelManager : MonoBehaviour
         get;
         private set;
     }
-    public UnityEvent LevelUpEvent = null;
+    public EventManager eventManager = null;
+    // 다음 레벨 업까지의 시간 간격을 저장하는 변수
+    public float levelInterval = float.NaN;
     // 레벨 업을 위한 시간 경과를 저장하는 변수
     private float mLevelTimer = float.NaN;
-    // 다음 레벨 업까지의 시간 간격을 저장하는 변수
-    public float mLevelInterval = float.NaN;
+    // Update 를 중단할지 결정하는 변수
+    private bool mShouldUpdate = false;
+
+    public void OnPauseGame()
+    {
+        mShouldUpdate = false;
+    }
+
+    public void OnResumeGame()
+    {
+        mShouldUpdate = true;
+    }
+
+    public void OnFeverOn()
+    {
+        mShouldUpdate = false;
+    }
+
+    public void OnFeverOff()
+    {
+        mShouldUpdate = true;
+    }
 
     void Awake()
     {
         Level = 0;
+        levelInterval = 10.0f;
         mLevelTimer = 0.0f;
-        mLevelInterval = 10.0f;
+        mShouldUpdate = true;
     }
 
     void Update()
     {
-        checkLevelUp();
+        if (mShouldUpdate)
+        {
+            checkLevelUp();
+        }
     }
 
     private void checkLevelUp()
     {
         mLevelTimer += Time.deltaTime;
-        if (mLevelTimer > mLevelInterval)
+        if (mLevelTimer > levelInterval)
         {
             levelUp();
             mLevelTimer = 0.0f;
@@ -41,7 +67,7 @@ public class LevelManager : MonoBehaviour
     private void levelUp()
     {
         Level++;
-        LevelUpEvent.Invoke();
-        mLevelInterval = (mLevelInterval * 0.375f) + 5.0f;
+        eventManager.levelUpEvent.Invoke();
+        levelInterval = (levelInterval * 0.375f) + 5.0f;
     }
 }

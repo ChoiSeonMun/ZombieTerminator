@@ -12,37 +12,37 @@ public class SoundManager : MonoBehaviour
         private set;
     }
 
-    public AudioClip[] AudioClips = null;
-    public AudioSource OneShotAudio = null;
-    public AudioSource LoopAudio = null;
+    public AudioClip[] audioClips = null;
+    public AudioSource oneShotAudio = null;
+    public AudioSource loopAudio = null;
     private Dictionary<string, AudioClip> mAudioMap = null;
 
     public void PlayOneShot(string name)
     {
-        if(OneShotAudio == null)
+        if(oneShotAudio == null)
         {
             return;
         }
 
-        OneShotAudio.PlayOneShot(mAudioMap[name]);
+        oneShotAudio.PlayOneShot(mAudioMap[name]);
     }
 
     public void PlayLoop(string name)
     {
-        if(LoopAudio == null)
+        if(loopAudio == null)
         {
             return;
         }
 
         if (name == null)
         {
-            LoopAudio.Stop();
+            loopAudio.Stop();
         }
         else
         {
-            LoopAudio.Stop();
-            LoopAudio.clip = mAudioMap[name];
-            LoopAudio.Play();
+            loopAudio.Stop();
+            loopAudio.clip = mAudioMap[name];
+            loopAudio.Play();
         }
     }
 
@@ -69,7 +69,7 @@ public class SoundManager : MonoBehaviour
     private void initialize()
     {
         mAudioMap = new Dictionary<string, AudioClip>();
-        foreach (AudioClip ac in AudioClips)
+        foreach (AudioClip ac in audioClips)
         {
             mAudioMap.Add(ac.name, ac);
         }

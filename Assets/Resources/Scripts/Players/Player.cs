@@ -5,12 +5,13 @@ using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
-    public GameManager GameManager = null;
-    public Gun Gun = null;
-    public Fever Fever = null;
+    public GameManager gameManager = null;
+    public Gun gun = null;
+    public Fever fever = null;
 
-    public Text ScoreText = null;
-    public Text LifeText = null;
+    public Text scoreText = null;
+    public Text lifeText = null;
+
     private int mScore = -1;
     private int mLife = -1;
 
@@ -18,10 +19,10 @@ public class Player : MonoBehaviour
 
     #region Public Functions
 
-    // Gun 으로 하여금 target 을 쏘도록 명령한다
+    // gun 으로 하여금 target 을 쏘도록 명령한다
     public void Shoot(GameObject obj)
     {
-        Gun.Fire(obj);
+        gun.Fire(obj);
     }
 
     public void GainScore(int score)
@@ -46,14 +47,14 @@ public class Player : MonoBehaviour
     // 피버 상태에서는 데미지를 입지 않는다
     public void Hit()
     {
-        if (Fever.IsFeverOn == false)
+        if (fever.IsFeverOn == false)
         {
             mSoundManager.PlayOneShot("hit");
 
             mLife -= 1;
         }
 
-        Fever.ResetFeverCount();
+        fever.ResetFeverCount();
     }
 
     #endregion
@@ -68,11 +69,11 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        ScoreText.text = mScore.ToString();
-        LifeText.text = "X " + mLife.ToString();
+        scoreText.text = mScore.ToString();
+        lifeText.text = "X " + mLife.ToString();
         if(mLife <= 0)
         {
-            GameManager.EndGame();
+            gameManager.EndGame();
         }
     }
 }

@@ -5,9 +5,10 @@ using UnityEngine.UI;
 
 public class Gun : MonoBehaviour
 {
-    public Fever Fever = null;
-    public Text BulletText = null;
-    public Text ReloadDelayText = null;
+    public Fever fever = null;
+    public Text bulletText = null;
+    public Text reloadDelayText = null;
+    public Button reloadButton = null;
 
     // 잔여 탄수의 getter property
     public int BulletCur
@@ -46,6 +47,16 @@ public class Gun : MonoBehaviour
 
     private SoundManager mSoundManager = null;
 
+    public void OnPauseGame()
+    {
+        reloadButton.onClick.RemoveAllListeners();
+    }
+
+    public void OnResumeGame()
+    {
+        reloadButton.onClick.AddListener(OnClickReload);
+    }
+
     public void onFeverOn()
     {
         mDamage = mDamage * 3;
@@ -64,7 +75,10 @@ public class Gun : MonoBehaviour
     {
         if (IsReloading == false)
         {
-            mSoundManager.PlayOneShot("reload");
+            if (fever.IsFeverOn == false)
+            {
+                mSoundManager.PlayOneShot("reload");
+            }
 
             mReloadTime = mSceneTimer;
             // 잔여 탄수를 최대로 채운다
@@ -129,19 +143,22 @@ public class Gun : MonoBehaviour
         mSceneTimer = 1.0f;
 
         mSoundManager = SoundManager.Instance;
+        // 게임이 pause 되었을 때 removeListener 가 정상적으로 작동할 수 있도록 하기 위해
+        // 여기에서 OnClick 을 할당
+        reloadButton.onClick.AddListener(OnClickReload);
     }
 
     void Update()
     {
-        BulletText.text = BulletCur.ToString() + " / " + BulletMax.ToString();
+        bulletText.text = BulletCur.ToString() + " / " + BulletMax.ToString();
         if (IsReloading)
         {
             string delayTime = (mReloadDelay - (mSceneTimer - mReloadTime)).ToString();
-            ReloadDelayText.text = delayTime.Substring(0, delayTime.IndexOf('.') + 2) + " Sec";
+            reloadDelayText.text = delayTime.Substring(0, delayTime.IndexOf('.') + 2) + " Sec";
         }
         else
         {
-            ReloadDelayText.text = "";
+            reloadDelayText.text = "";
         }
 
         updateSceneTimer();
