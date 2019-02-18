@@ -13,24 +13,23 @@ public class Fever : MonoBehaviour
     public Sprite feverBackground = null;
     // 피버 리소스들
     public GameObject feverPanel = null;
-
-    public Gun gun = null;
-    public SpawnManager spawnManager = null;
-
     // fever의 최대치를 기록하는 상수
     public const int MAX_FEVER_COUNT = 20;
     // fever 상태의 On/Off를 기록하는 변수
     public bool IsFeverOn { get; private set; }
     // 처치한 좀비 수를 기록하는 변수
     public int FeverCount { get; private set; }
+
+    private Gun mGun = null;
+    private SpawnManager mSpawnManager = null;
+    private SoundManager mSoundManager = null;
+
     // fever가 시작된 시간을 기록하는 변수
     private float mFeverTimeCurr = float.NaN;
     // fever 객체의 시간을 기록하는 변수
     private float mFeverTimer = float.NaN;
     // fever 상태의 지속시간을 기록하는 변수
     private float mFeverBuffTime = float.NaN;
-
-    private SoundManager mSoundManager = null;
 
     public void GainFeverCount()
     {
@@ -79,10 +78,17 @@ public class Fever : MonoBehaviour
     void Awake()
     {
         FeverCount = 0;
+
+        mGun = eventManager.gun;
+        mSpawnManager = eventManager.spawnManager;
+
         mFeverTimeCurr = 0.0f;
         mFeverTimer = 0.0f;
         mFeverBuffTime = 15.0f;
+    }
 
+    void Start()
+    {
         mSoundManager = SoundManager.Instance;
     }
 

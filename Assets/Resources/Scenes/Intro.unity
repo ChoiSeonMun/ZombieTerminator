@@ -399,7 +399,7 @@ Prefab:
     - target: {fileID: 114331446241648002, guid: 3df5f4f8e21102b46af3a0bda2186355,
         type: 2}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnClickLogin
+      value: Authenticate
       objectReference: {fileID: 0}
     - target: {fileID: 114984388437575268, guid: 3df5f4f8e21102b46af3a0bda2186355,
         type: 2}

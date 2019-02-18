@@ -12,14 +12,17 @@ public class IntroManager : MonoBehaviour
     public float blinkSpeed = 2.0f;
     public GameObject authenticationPanel;
 
-    public void OnClickLogin()
-    {
-        authenticate();
-    }
-
     public void OnClickCancel()
     {
         authenticationPanel.SetActive(false);
+    }
+
+    public void Authenticate()
+    {
+        Social.localUser.Authenticate(bSuccess =>
+        {
+            Debug.Log("Authentication: " + bSuccess);
+        });
     }
 
     void Start()
@@ -30,7 +33,7 @@ public class IntroManager : MonoBehaviour
         PlayGamesPlatform.InitializeInstance(config);
         PlayGamesPlatform.Activate();
 
-        authenticate();
+        Authenticate();
 
         noticeText.text = "Touch to Start";
     }
@@ -53,13 +56,5 @@ public class IntroManager : MonoBehaviour
 
         // Notice Text를 깜빡인다.
         noticeText.color = Color.Lerp(Color.white, Color.black, Mathf.PingPong(Time.time * blinkSpeed, 1));
-    }
-
-    private void authenticate()
-    {
-        Social.localUser.Authenticate(bSuccess =>
-        {
-            Debug.Log("Authentication: " + bSuccess);
-        });
     }
 }

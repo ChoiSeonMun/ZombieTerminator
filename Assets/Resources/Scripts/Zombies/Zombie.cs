@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class Zombie : MonoBehaviour
 {
-    public SoundManager soundManager = null;
     public Player player = null;
     public Fever fever = null;
+    public SoundManager soundManager = null;
 
     public Object clawAnimationObject = null;
     public Object crackAnimationObject = null;
@@ -47,7 +47,6 @@ public class Zombie : MonoBehaviour
 
     protected void initialize()
     {
-        soundManager = SoundManager.Instance;
         GameObject playerGO = GameObject.Find("Player");
         player = playerGO.GetComponent<Player>();
         fever = playerGO.GetComponent<Fever>();

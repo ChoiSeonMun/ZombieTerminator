@@ -5,11 +5,11 @@ using UnityEngine.UI;
 
 public class Gun : MonoBehaviour
 {
-    public Fever fever = null;
+    public EventManager eventManager = null;
+
     public Text bulletText = null;
     public Text reloadDelayText = null;
     public Button reloadButton = null;
-
     // 잔여 탄수의 getter property
     public int BulletCur
     {
@@ -28,6 +28,10 @@ public class Gun : MonoBehaviour
     }
     // 현재 재장전 중인지를 저장하는 변수
     public bool IsReloading { get; private set; }
+
+    private Fever mFever = null;
+    private SoundManager mSoundManager = null;
+
     // 현재 잔여 탄수를 저장하는 변수
     private int mBulletCur = -1;
     // 최대 잔여 탄수를 저장하는 변수
@@ -45,26 +49,24 @@ public class Gun : MonoBehaviour
     private float mShootTimeCurr = float.NaN;
     private float mSceneTimer = float.NaN;
 
-    private SoundManager mSoundManager = null;
-
-    public void OnPauseGame()
+    public void BlockReload()
     {
         reloadButton.onClick.RemoveAllListeners();
     }
 
-    public void OnResumeGame()
+    public void GrantReload()
     {
         reloadButton.onClick.AddListener(OnClickReload);
     }
 
-    public void onFeverOn()
+    public void PowerUp()
     {
         mDamage = mDamage * 3;
         mReloadDelay = 0.0f;
         mFireDelay = 0.0f;
     }
 
-    public void onFeverOff()
+    public void PowerDown()
     {
         mDamage = 35;
         mReloadDelay = 1.0f;
@@ -75,7 +77,7 @@ public class Gun : MonoBehaviour
     {
         if (IsReloading == false)
         {
-            if (fever.IsFeverOn == false)
+            if (mFever.IsFeverOn == false)
             {
                 mSoundManager.PlayOneShot("reload");
             }
@@ -131,21 +133,27 @@ public class Gun : MonoBehaviour
 
     void Awake()
     {
+        IsReloading = false;
+
+        mFever = eventManager.fever;
+
         mBulletCur = 30;
         mBulletMax = 30;
         mDamage = 35;
-        IsReloading = false;
         mReloadTime = 0.0f;
         mReloadDelay = 1.0f;
         mFireDelay = 0.15f;
         mShootTimeLast = 0.0f;
         mShootTimeCurr = 0.0f;
         mSceneTimer = 1.0f;
-
-        mSoundManager = SoundManager.Instance;
         // 게임이 pause 되었을 때 removeListener 가 정상적으로 작동할 수 있도록 하기 위해
         // 여기에서 OnClick 을 할당
         reloadButton.onClick.AddListener(OnClickReload);
+    }
+
+    void Start()
+    {
+        mSoundManager = SoundManager.Instance;
     }
 
     void Update()

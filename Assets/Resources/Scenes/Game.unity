@@ -286,8 +286,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c04bb0e7d021834eb0c2c3260fbe0c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelManager: {fileID: 52694833}
-  fever: {fileID: 1580132891}
+  eventManager: {fileID: 332326762}
   targetButtons:
   - {fileID: 665348746}
   - {fileID: 918422537}
@@ -298,7 +297,6 @@ MonoBehaviour:
   - {fileID: 1398366305}
   - {fileID: 267993393}
   - {fileID: 494815865}
-  player: {fileID: 1580132888}
   normalZombieObject: {fileID: 1835741875122816, guid: 7850298066fa7f74f99c5e66d0391a3a,
     type: 2}
   specialZombieObject: {fileID: 1062128306954058, guid: 43bf5bfdbe3a0b84dbfb0576858b1741,
@@ -887,221 +885,51 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e32e0473a276c34dabd232ece5710be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 1580132888}
+  gun: {fileID: 1580132890}
+  fever: {fileID: 1580132891}
+  bomb: {fileID: 1580132892}
+  gameManager: {fileID: 1005551064}
+  spawnManager: {fileID: 205809099}
+  levelManager: {fileID: 52694833}
+  readyEvent:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  startEvent:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   pauseEvent:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1580132890}
-        m_MethodName: OnPauseGame
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1580132892}
-        m_MethodName: OnPauseGame
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 52694833}
-        m_MethodName: OnPauseGame
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 205809099}
-        m_MethodName: OnPauseGame
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   resumeEvent:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1580132890}
-        m_MethodName: OnResumeGame
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1580132892}
-        m_MethodName: OnResumeGame
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 52694833}
-        m_MethodName: OnResumeGame
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 205809099}
-        m_MethodName: OnResumeGame
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   endEvent:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 205809099}
-        m_MethodName: OnEndGame
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1580132888}
-        m_MethodName: OnEndGame
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   feverOnEvent:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1580132890}
-        m_MethodName: onFeverOn
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 205809099}
-        m_MethodName: OnFeverOn
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 52694833}
-        m_MethodName: OnFeverOn
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   feverOffEvent:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1580132890}
-        m_MethodName: onFeverOff
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 205809099}
-        m_MethodName: OnFeverOff
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 52694833}
-        m_MethodName: OnFeverOff
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   levelUpEvent:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 205809099}
-        m_MethodName: OnLevelUp
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!4 &332326763
@@ -2164,7 +1992,7 @@ Prefab:
     - target: {fileID: 224685545147208572, guid: 3df5f4f8e21102b46af3a0bda2186355,
         type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: -8.500122
+      value: -8.500244
       objectReference: {fileID: 0}
     - target: {fileID: 114331446241648002, guid: 3df5f4f8e21102b46af3a0bda2186355,
         type: 2}
@@ -2816,8 +2644,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   eventManager: {fileID: 332326762}
-  player: {fileID: 1580132888}
-  fever: {fileID: 1580132891}
   menuButton: {fileID: 1829583970}
   menuPanel: {fileID: 1007983610}
   startPanel: {fileID: 787507489}
@@ -3521,9 +3347,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2bed29bbd93577341b94b2bc2de4158b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 1005551064}
-  gun: {fileID: 1580132890}
-  fever: {fileID: 1580132891}
+  eventManager: {fileID: 332326762}
   scoreText: {fileID: 978194149}
   lifeText: {fileID: 1646795079}
 --- !u!4 &1580132889
@@ -3550,7 +3374,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 945aa0e032ce1754d9e3c62e3682bccc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fever: {fileID: 1580132891}
+  eventManager: {fileID: 332326762}
   bulletText: {fileID: 1818074921}
   reloadDelayText: {fileID: 1453960734}
   reloadButton: {fileID: 255124090}
@@ -3570,8 +3394,6 @@ MonoBehaviour:
   normalBackground: {fileID: 21300000, guid: 98b066fd832212b40b82d0763cce50c1, type: 3}
   feverBackground: {fileID: 21300000, guid: 02e2cc5e4f603804c8c188b2968c1a6c, type: 3}
   feverPanel: {fileID: 416712453}
-  gun: {fileID: 1580132890}
-  spawnManager: {fileID: 205809099}
 --- !u!114 &1580132892
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3583,6 +3405,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4af348497444e3a47a8b3a8fa474cd3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  eventManager: {fileID: 332326762}
   bombButton: {fileID: 1963849494}
   bombButtonImage: {fileID: 1963849495}
   emptyBomb: {fileID: 21300000, guid: 0a9e90ec420d0834fad7a63ce05cf3b1, type: 3}
@@ -3591,7 +3414,6 @@ MonoBehaviour:
   bombAnimationObject: {fileID: 1976223448534862, guid: e2690fa2f36c8e947a53abf19bdd5d5f,
     type: 2}
   panel: {fileID: 512360825}
-  fever: {fileID: 1580132891}
 --- !u!1 &1646795077
 GameObject:
   m_ObjectHideFlags: 0

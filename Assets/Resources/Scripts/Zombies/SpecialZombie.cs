@@ -12,7 +12,11 @@ public class SpecialZombie : Zombie
         life = lifeMax;
         lifetime = 3.0f;
         runtime = 0.0f;
+    }
 
+    void Start()
+    {
+        soundManager = SoundManager.Instance;
         soundManager.PlayOneShot("special-zombie-spawn");
     }
 

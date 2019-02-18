@@ -5,10 +5,9 @@ using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
 {
-    public LevelManager levelManager = null;
-    public Fever fever = null;
+    public EventManager eventManager = null;
+
     public ButtonExtension[] targetButtons = null;
-    public Player player = null;
     public UnityEngine.Object normalZombieObject = null;
     public UnityEngine.Object specialZombieObject = null;
 
@@ -16,6 +15,11 @@ public class SpawnManager : MonoBehaviour
     public float spawnCooldown = float.NaN;
     // 특수 좀비를 Spawn할 확률
     public float specialSpawnRate = float.NaN;
+
+    private Fever mFever = null;
+    private Player mPlayer = null;
+    private LevelManager mLevelManager = null;
+
     private System.Random mRand = null;
     // Fever 현재 쿨다운을 임시적으로 기록할 변수
     private float mSpawnCooldownTemp = float.NaN;
@@ -29,21 +33,26 @@ public class SpawnManager : MonoBehaviour
     // 게임이 중단되는 것을 저장하기 위한 변수
     private bool mIsStopped = false;
 
-    public void OnLevelUp()
+    public void DecreaseSpawnCooldown()
     {
         spawnCooldown = (spawnCooldown * 0.5f) + 0.35f;
     }
 
-    public void OnFeverOn()
+    public void SpawnSpeedUp()
     {
         mSpawnCooldownTemp = spawnCooldown;
         spawnCooldown = 0.05f;
         specialSpawnRate = 0.05f;
     }
 
-    public void OnFeverOff()
+    public void SpawnSpeedDown()
     {
         spawnCooldown = mSpawnCooldownTemp;
+        specialSpawnRate = 0.10f;
+    }
+
+    public void DestroyZombies()
+    {
         // 좀비를 가지고 있는 target 을 순회하면서, 각 좀비를 죽인다
         foreach (ButtonExtension target in targetButtons)
         {
@@ -58,10 +67,9 @@ public class SpawnManager : MonoBehaviour
                 }
             }
         }
-        specialSpawnRate = 0.10f;
     }
 
-    public void OnPauseGame()
+    public void StopTargets()
     {
         mIsStopped = true;
 
@@ -75,7 +83,7 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
-    public void OnResumeGame()
+    public void ResumeTargets()
     {
         mIsStopped = false;
 
@@ -89,15 +97,15 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
-    public void OnEndGame()
-    {
-        OnPauseGame();
-    }
-
     void Awake()
     {
         spawnCooldown = 2.0f;
         specialSpawnRate = 0.10f;
+
+        mPlayer = eventManager.player;
+        mFever = eventManager.fever;
+        mLevelManager = eventManager.levelManager;
+
         mRand = new System.Random();
         mSpawnCooldownTemp = 0.0f;
         mSpawnTimer = 0.0f;
@@ -122,7 +130,7 @@ public class SpawnManager : MonoBehaviour
             // target 이 눌렸다면, 해당 target 에 대해 사격한다
             if (targetButton.IsReleased)
             {
-                player.Shoot(targetButton.gameObject);
+                mPlayer.Shoot(targetButton.gameObject);
             }
         }
     }
@@ -164,7 +172,7 @@ public class SpawnManager : MonoBehaviour
                 // 특수좀비 스폰카운터에 도달했을 경우
                 if (canSpawnSpecialZombie())
                 {
-                    if (!fever.IsFeverOn)
+                    if (mFever.IsFeverOn == false)
                     {
                         ++mSpecialSpawnCount;
                     }
@@ -174,7 +182,7 @@ public class SpawnManager : MonoBehaviour
                 }
                 else
                 {
-                    if (!fever.IsFeverOn)
+                    if (mFever.IsFeverOn == false)
                     {
                         ++mNormalSpawnCount;
                     }

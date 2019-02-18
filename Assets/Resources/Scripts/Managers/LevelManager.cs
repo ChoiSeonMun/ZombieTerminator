@@ -18,22 +18,12 @@ public class LevelManager : MonoBehaviour
     // Update 를 중단할지 결정하는 변수
     private bool mShouldUpdate = false;
 
-    public void OnPauseGame()
+    public void BlockUpdate()
     {
         mShouldUpdate = false;
     }
 
-    public void OnResumeGame()
-    {
-        mShouldUpdate = true;
-    }
-
-    public void OnFeverOn()
-    {
-        mShouldUpdate = false;
-    }
-
-    public void OnFeverOff()
+    public void GrantUpdate()
     {
         mShouldUpdate = true;
     }

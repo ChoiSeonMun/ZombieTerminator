@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class Bomb : MonoBehaviour
 {
+    public EventManager eventManager = null;
+
     public Button bombButton = null;
     public Image bombButtonImage = null;
     public Sprite emptyBomb = null;
@@ -12,8 +14,8 @@ public class Bomb : MonoBehaviour
     public Text bombText = null;
     public Object bombAnimationObject = null;
     public GameObject panel = null;
-    public Fever fever = null;
 
+    private Fever mFever = null;
     private SoundManager mSoundManager = null;
 
     public float BombCount
@@ -21,19 +23,19 @@ public class Bomb : MonoBehaviour
         get; private set;
     }
 
-    public void OnPauseGame()
+    public void BlockBomb()
     {
         bombButton.onClick.RemoveAllListeners();
     }
 
-    public void OnResumeGame()
+    public void GrantBomb()
     {
         bombButton.onClick.AddListener(OnClickBomb);
     }
 
     public void OnClickBomb()
     {
-        if ((BombCount > 0) && (fever.IsFeverOn == false))
+        if ((BombCount > 0) && (mFever.IsFeverOn == false))
         {
             mSoundManager.PlayOneShot("bomb-explosion");
 
@@ -70,12 +72,16 @@ public class Bomb : MonoBehaviour
     void Awake()
     {
         BombCount = 3;
-
-        mSoundManager = SoundManager.Instance;
-
         // 게임이 pause 되었을 때 removeListener 가 정상적으로 작동할 수 있도록 하기 위해
         // 여기에서 OnClick 을 할당
         bombButton.onClick.AddListener(OnClickBomb);
+
+        mFever = eventManager.fever;
+    }
+
+    void Start()
+    {
+        mSoundManager = SoundManager.Instance;
     }
 
     void Update()

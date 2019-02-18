@@ -21,12 +21,14 @@ public class GameManager : MonoBehaviour
         GAMEOVER
     };
     public EventManager eventManager = null;
-    public Player player = null;
-    public Fever fever = null;
+
     public Button menuButton = null;
     public GameObject menuPanel = null;
     public GameObject startPanel = null;
     public GameObject endPanel = null;
+
+    private Player mPlayer = null;
+    private SoundManager mSoundManager = null;
 
     private EState mState = EState.UNDEFINED;
     private event EventHandler<StateArgs> mStarts = null;
@@ -46,15 +48,13 @@ public class GameManager : MonoBehaviour
     // Game scene 이 여러 번 시작되고 종료되어도 그 값을 유지하기 위해 static
     private static int mGameTrial = 0;
 
-    private SoundManager mSoundManager = null;
-
     #region Public Functions
 
     public void ChangeToPaused()
     {
         if (mState == EState.PLAYING)
         {
-            changeState(EState.PAUSED);
+            PauseGame();
         }
     }
 
@@ -70,13 +70,57 @@ public class GameManager : MonoBehaviour
     {
         if (mState == EState.PAUSED)
         {
-            changeState(EState.PLAYING);
+            ResumeGame();
         }
+    }
+
+    public void ReadyGame()
+    {
+        mState = EState.READY;
+
+        startPanel.SetActive(true);
+    }
+
+    public void StartGame()
+    {
+        mState = EState.PLAYING;
+
+        startPanel.SetActive(false);
+        mSoundManager.PlayOneShot("game-start");
+        mPlayer.SetActive(true);
+    }
+
+    public void PauseGame()
+    {
+        mState = EState.PAUSED;
+        eventManager.pauseEvent.Invoke();
+
+        menuPanel.SetActive(true);
+    }
+
+    public void ResumeGame()
+    {
+        mState = EState.PLAYING;
+        eventManager.resumeEvent.Invoke();
+
+        menuPanel.SetActive(false);
     }
 
     public void EndGame()
     {
-        changeState(EState.GAMEOVER);
+        mState = EState.GAMEOVER;
+        eventManager.endEvent.Invoke();
+
+        mSoundManager.PlayOneShot("game-over");
+        // 게임이 끝나면, 게임 시도 횟수를 증가한다.
+        ++mGameTrial;
+        // 게임을 5번 플레이 했다면, 광고를 시청하게 한다
+        if (mGameTrial == 5)
+        {
+            Advertisement.Show();
+            mGameTrial = 0;
+        }
+        endPanel.SetActive(true);
     }
 
     #endregion
@@ -85,11 +129,14 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        mStarts = onStarts;
+        mPlayer = eventManager.player;
         mUpdates = onUpdates;
-        mEnds = onEnds;
-        changeState(EState.READY);
 
+        ReadyGame();
+    }
+
+    void Start()
+    {
         mSoundManager = SoundManager.Instance;
         mSoundManager.PlayLoop("in-game-normal");
     }
@@ -98,6 +145,7 @@ public class GameManager : MonoBehaviour
     {
         mUpdates(this, new StateArgs(mState));
     }
+
     void OnDestroy()
     {
         // 다른 scene으로 전환할 때 BGM을 교체하기 위함
@@ -111,50 +159,6 @@ public class GameManager : MonoBehaviour
 
     #region Scene Change
 
-    private void changeState(EState state)
-    {
-        mEnds(this, new StateArgs(mState));
-        mState = state;
-        mStarts(this, new StateArgs(mState));
-    }
-
-    private void onStarts(object sender, StateArgs args)
-    {
-        switch(args.State)
-        {
-            case EState.UNDEFINED:
-                break;
-
-            case EState.READY:
-                startPanel.SetActive(true);
-                break;
-
-            case EState.PLAYING:
-                mSoundManager.PlayOneShot("game-start");
-                player.SetActive(true);
-                break;
-
-            case EState.PAUSED:
-                menuPanel.SetActive(true);
-                eventManager.pauseEvent.Invoke();
-                break;
-
-            case EState.GAMEOVER:
-                mSoundManager.PlayOneShot("game-over");
-                eventManager.endEvent.Invoke();
-                // 게임이 끝나면, 게임 시도 횟수를 증가한다.
-                ++mGameTrial;
-                // 게임을 5번 플레이 했다면, 광고를 시청하게 한다
-                if (mGameTrial == 5)
-                {
-                    Advertisement.Show();
-                    mGameTrial = 0;
-                }
-                endPanel.SetActive(true);
-                break;
-        }
-    }
-
     private void onUpdates(object sender, StateArgs args)
     {
         switch (args.State)
@@ -167,11 +171,11 @@ public class GameManager : MonoBehaviour
                 // PanelStart 의 Image 를 업데이트마다 투명하게 만든다
                 // 완전히 투명해졌을 경우 플레이를 시작한다
                 Color newColor = img.color;
-                newColor.a -= (Time.deltaTime / 4.0f);
+                newColor.a -= (Time.deltaTime / 2.0f);
                 img.color = newColor;
                 if (img.color.a <= 0.0f)
                 {
-                    changeState(EState.PLAYING);
+                    StartGame();
                 }
                 break;
 
@@ -182,32 +186,6 @@ public class GameManager : MonoBehaviour
                 break;
 
             case EState.GAMEOVER:
-                break;
-        }
-    }
-
-    private void onEnds(object sender, StateArgs args)
-    {
-        switch (args.State)
-        {
-            case EState.UNDEFINED:
-                break;
-
-            case EState.READY:
-                startPanel.SetActive(false);
-                break;
-
-            case EState.PLAYING:
-                player.SetActive(false);
-                break;
-
-            case EState.PAUSED:
-                eventManager.resumeEvent.Invoke();
-                menuPanel.SetActive(false);
-                break;
-
-            case EState.GAMEOVER:
-                endPanel.SetActive(false);
                 break;
         }
     }

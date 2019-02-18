@@ -5,32 +5,40 @@ using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
-    public GameManager gameManager = null;
-    public Gun gun = null;
-    public Fever fever = null;
+    public EventManager eventManager = null;
 
     public Text scoreText = null;
     public Text lifeText = null;
 
+    private GameManager mGameManager = null;
+    private Gun mGun = null;
+    private Fever mFever = null;
+    private SoundManager mSoundManager = null;
+
     private int mScore = -1;
     private int mLife = -1;
 
-    private SoundManager mSoundManager = null;
-
     #region Public Functions
 
-    public void OnEndGame()
+    public void ReportScore()
     {
-        Social.ReportScore(mScore, "CgkItcrr5bIWEAIQAw", (bool bSuccess) =>
+        Social.Active.ReportScore(mScore, "CgkItcrr5bIWEAIQAw", bSuccess =>
         {
-            Debug.Log("ReportScore: " + bSuccess);
+            if (bSuccess)
+            {
+                Debug.Log($"{mScore} reported");
+            }
+            else
+            {
+                Debug.Log("Authentication is required");
+            }
         });
     }
 
     // gun 으로 하여금 target 을 쏘도록 명령한다
     public void Shoot(GameObject obj)
     {
-        gun.Fire(obj);
+        mGun.Fire(obj);
     }
 
     public void GainScore(int score)
@@ -55,23 +63,30 @@ public class Player : MonoBehaviour
     // 피버 상태에서는 데미지를 입지 않는다
     public void Hit()
     {
-        if (fever.IsFeverOn == false)
+        if ((mFever.IsFeverOn == false) && (mLife >= 0))
         {
             mSoundManager.PlayOneShot("hit");
 
             mLife -= 1;
         }
 
-        fever.ResetFeverCount();
+        mFever.ResetFeverCount();
     }
 
     #endregion
 
     void Awake()
     {
+        mGameManager = eventManager.gameManager;
+        mGun = eventManager.gun;
+        mFever = eventManager.fever;
+
         mLife = 3;
         mScore = 0;
+    }
 
+    void Start()
+    {
         mSoundManager = SoundManager.Instance;
     }
 
@@ -81,7 +96,7 @@ public class Player : MonoBehaviour
         lifeText.text = "X " + mLife.ToString();
         if(mLife <= 0)
         {
-            gameManager.EndGame();
+            mGameManager.EndGame();
         }
     }
 }
