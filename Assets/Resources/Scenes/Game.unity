@@ -140,22 +140,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66da99a01e0460e44941b5f27b4421f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LevelUpEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 205809099}
-        m_MethodName: onLevelUp
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
+  eventManager: {fileID: 332326762}
+  levelInterval: NaN
 --- !u!4 &52694834
 Transform:
   m_ObjectHideFlags: 0
@@ -300,9 +286,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c04bb0e7d021834eb0c2c3260fbe0c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LevelManager: {fileID: 52694833}
-  Fever: {fileID: 1580132891}
-  TargetButtons:
+  eventManager: {fileID: 332326762}
+  targetButtons:
   - {fileID: 665348746}
   - {fileID: 918422537}
   - {fileID: 601119788}
@@ -312,11 +297,12 @@ MonoBehaviour:
   - {fileID: 1398366305}
   - {fileID: 267993393}
   - {fileID: 494815865}
-  Player: {fileID: 1580132888}
-  NormalZombieObject: {fileID: 1835741875122816, guid: 7850298066fa7f74f99c5e66d0391a3a,
+  normalZombieObject: {fileID: 1835741875122816, guid: 7850298066fa7f74f99c5e66d0391a3a,
     type: 2}
-  SpecialZombieObject: {fileID: 1062128306954058, guid: 43bf5bfdbe3a0b84dbfb0576858b1741,
+  specialZombieObject: {fileID: 1062128306954058, guid: 43bf5bfdbe3a0b84dbfb0576858b1741,
     type: 2}
+  spawnCooldown: NaN
+  specialSpawnRate: NaN
 --- !u!4 &205809100
 Transform:
   m_ObjectHideFlags: 0
@@ -480,18 +466,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 255124091}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1580132890}
-        m_MethodName: OnClickReload
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &255124091
@@ -883,6 +858,93 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!1 &332326761
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 332326763}
+  - component: {fileID: 332326762}
+  m_Layer: 0
+  m_Name: EventManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &332326762
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 332326761}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e32e0473a276c34dabd232ece5710be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 1580132888}
+  gun: {fileID: 1580132890}
+  fever: {fileID: 1580132891}
+  bomb: {fileID: 1580132892}
+  gameManager: {fileID: 1005551064}
+  spawnManager: {fileID: 205809099}
+  levelManager: {fileID: 52694833}
+  readyEvent:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  startEvent:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  pauseEvent:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  resumeEvent:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  endEvent:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  feverOnEvent:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  feverOffEvent:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  levelUpEvent:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+--- !u!4 &332326763
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 332326761}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 156.71841, y: 310.1505, z: -4.6875}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &416712453
 GameObject:
   m_ObjectHideFlags: 0
@@ -1043,6 +1105,16 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!82 &505661793 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 82880598487263438, guid: d15a38ac054d1f547b05c4845110cee7,
+    type: 2}
+  m_PrefabInternal: {fileID: 592632986}
+--- !u!82 &505661794 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 82460936164281092, guid: d15a38ac054d1f547b05c4845110cee7,
+    type: 2}
+  m_PrefabInternal: {fileID: 592632986}
 --- !u!1 &512360825
 GameObject:
   m_ObjectHideFlags: 0
@@ -1141,6 +1213,11 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 114223690114797328, guid: d15a38ac054d1f547b05c4845110cee7,
+        type: 2}
+      propertyPath: audioClips.Array.size
+      value: 17
+      objectReference: {fileID: 0}
     - target: {fileID: 4576564913498268, guid: d15a38ac054d1f547b05c4845110cee7, type: 2}
       propertyPath: m_LocalPosition.x
       value: 258.00494
@@ -1173,6 +1250,101 @@ Prefab:
       propertyPath: m_RootOrder
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 114223690114797328, guid: d15a38ac054d1f547b05c4845110cee7,
+        type: 2}
+      propertyPath: oneShotAudio
+      value: 
+      objectReference: {fileID: 505661794}
+    - target: {fileID: 114223690114797328, guid: d15a38ac054d1f547b05c4845110cee7,
+        type: 2}
+      propertyPath: loopAudio
+      value: 
+      objectReference: {fileID: 505661793}
+    - target: {fileID: 114223690114797328, guid: d15a38ac054d1f547b05c4845110cee7,
+        type: 2}
+      propertyPath: audioClips.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: 6d590152c807bb048bd281cb22a0e2f7, type: 3}
+    - target: {fileID: 114223690114797328, guid: d15a38ac054d1f547b05c4845110cee7,
+        type: 2}
+      propertyPath: audioClips.Array.data[1]
+      value: 
+      objectReference: {fileID: 8300000, guid: a8a34619bb27163459c7c2f132de8f43, type: 3}
+    - target: {fileID: 114223690114797328, guid: d15a38ac054d1f547b05c4845110cee7,
+        type: 2}
+      propertyPath: audioClips.Array.data[2]
+      value: 
+      objectReference: {fileID: 8300000, guid: efb023773fb946b4eb7c1b7c18e909c4, type: 3}
+    - target: {fileID: 114223690114797328, guid: d15a38ac054d1f547b05c4845110cee7,
+        type: 2}
+      propertyPath: audioClips.Array.data[3]
+      value: 
+      objectReference: {fileID: 8300000, guid: 2612f2609a9e9a546b35fa5a164e3eb8, type: 3}
+    - target: {fileID: 114223690114797328, guid: d15a38ac054d1f547b05c4845110cee7,
+        type: 2}
+      propertyPath: audioClips.Array.data[4]
+      value: 
+      objectReference: {fileID: 8300000, guid: b32de1535ecdeed49b174060933261db, type: 3}
+    - target: {fileID: 114223690114797328, guid: d15a38ac054d1f547b05c4845110cee7,
+        type: 2}
+      propertyPath: audioClips.Array.data[5]
+      value: 
+      objectReference: {fileID: 8300000, guid: e987c022ea2cb74448fd687f5e7b746d, type: 3}
+    - target: {fileID: 114223690114797328, guid: d15a38ac054d1f547b05c4845110cee7,
+        type: 2}
+      propertyPath: audioClips.Array.data[6]
+      value: 
+      objectReference: {fileID: 8300000, guid: afbdd41b74cc27e499bad86b50bd1f0e, type: 3}
+    - target: {fileID: 114223690114797328, guid: d15a38ac054d1f547b05c4845110cee7,
+        type: 2}
+      propertyPath: audioClips.Array.data[7]
+      value: 
+      objectReference: {fileID: 8300000, guid: aa3de7bdee71dfc449f58b8918feb020, type: 3}
+    - target: {fileID: 114223690114797328, guid: d15a38ac054d1f547b05c4845110cee7,
+        type: 2}
+      propertyPath: audioClips.Array.data[8]
+      value: 
+      objectReference: {fileID: 8300000, guid: b76cf483d3fb0f04a97d7fb6473e0c79, type: 3}
+    - target: {fileID: 114223690114797328, guid: d15a38ac054d1f547b05c4845110cee7,
+        type: 2}
+      propertyPath: audioClips.Array.data[9]
+      value: 
+      objectReference: {fileID: 8300000, guid: 44ac466c49458a94dac0fea8eb4ad3d0, type: 3}
+    - target: {fileID: 114223690114797328, guid: d15a38ac054d1f547b05c4845110cee7,
+        type: 2}
+      propertyPath: audioClips.Array.data[10]
+      value: 
+      objectReference: {fileID: 8300000, guid: af9022ecf3b4e114a9f01b7e0bbf97fd, type: 3}
+    - target: {fileID: 114223690114797328, guid: d15a38ac054d1f547b05c4845110cee7,
+        type: 2}
+      propertyPath: audioClips.Array.data[11]
+      value: 
+      objectReference: {fileID: 8300000, guid: f0273fd450447fc47acf151c94be285e, type: 3}
+    - target: {fileID: 114223690114797328, guid: d15a38ac054d1f547b05c4845110cee7,
+        type: 2}
+      propertyPath: audioClips.Array.data[12]
+      value: 
+      objectReference: {fileID: 8300000, guid: c74ad122b3c4a5d45b8610d23526f34d, type: 3}
+    - target: {fileID: 114223690114797328, guid: d15a38ac054d1f547b05c4845110cee7,
+        type: 2}
+      propertyPath: audioClips.Array.data[13]
+      value: 
+      objectReference: {fileID: 8300000, guid: 83a354e50acd0474ea5485823320f788, type: 3}
+    - target: {fileID: 114223690114797328, guid: d15a38ac054d1f547b05c4845110cee7,
+        type: 2}
+      propertyPath: audioClips.Array.data[14]
+      value: 
+      objectReference: {fileID: 8300000, guid: 673cc1b42bff25b4d8c5e2a760aaf0ff, type: 3}
+    - target: {fileID: 114223690114797328, guid: d15a38ac054d1f547b05c4845110cee7,
+        type: 2}
+      propertyPath: audioClips.Array.data[15]
+      value: 
+      objectReference: {fileID: 8300000, guid: f9256ce863336cd4bbfe8d3702c423ec, type: 3}
+    - target: {fileID: 114223690114797328, guid: d15a38ac054d1f547b05c4845110cee7,
+        type: 2}
+      propertyPath: audioClips.Array.data[16]
+      value: 
+      objectReference: {fileID: 8300000, guid: ddc89512d7d6fad4a91f0bf6532892f7, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d15a38ac054d1f547b05c4845110cee7, type: 2}
   m_IsPrefabAsset: 0
@@ -1820,7 +1992,7 @@ Prefab:
     - target: {fileID: 224685545147208572, guid: 3df5f4f8e21102b46af3a0bda2186355,
         type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: -8.500122
+      value: -8.500244
       objectReference: {fileID: 0}
     - target: {fileID: 114331446241648002, guid: 3df5f4f8e21102b46af3a0bda2186355,
         type: 2}
@@ -2471,13 +2643,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41d455e09f9511e4a800fa01a73f6b71, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SpawnManager: {fileID: 205809099}
-  Player: {fileID: 1580132888}
-  Fever: {fileID: 1580132891}
-  MenuButton: {fileID: 1829583970}
-  MenuPanel: {fileID: 1007983610}
-  StartPanel: {fileID: 787507489}
-  EndPanel: {fileID: 241442771}
+  eventManager: {fileID: 332326762}
+  menuButton: {fileID: 1829583970}
+  menuPanel: {fileID: 1007983610}
+  startPanel: {fileID: 787507489}
+  endPanel: {fileID: 241442771}
 --- !u!4 &1005551065
 Transform:
   m_ObjectHideFlags: 0
@@ -3177,11 +3347,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2bed29bbd93577341b94b2bc2de4158b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GameManager: {fileID: 1005551064}
-  Gun: {fileID: 1580132890}
-  Fever: {fileID: 1580132891}
-  ScoreText: {fileID: 978194149}
-  LifeText: {fileID: 1646795079}
+  eventManager: {fileID: 332326762}
+  scoreText: {fileID: 978194149}
+  lifeText: {fileID: 1646795079}
 --- !u!4 &1580132889
 Transform:
   m_ObjectHideFlags: 0
@@ -3206,9 +3374,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 945aa0e032ce1754d9e3c62e3682bccc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Fever: {fileID: 1580132891}
-  BulletText: {fileID: 1818074921}
-  ReloadDelayText: {fileID: 1453960734}
+  eventManager: {fileID: 332326762}
+  bulletText: {fileID: 1818074921}
+  reloadDelayText: {fileID: 1453960734}
+  reloadButton: {fileID: 255124090}
 --- !u!114 &1580132891
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3220,66 +3389,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69b7b9c6eadb5804cadf7b257599f104, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FeverOnEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1580132890}
-        m_MethodName: onFeverOn
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 205809099}
-        m_MethodName: onFeverOn
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  FeverOffEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1580132890}
-        m_MethodName: onFeverOff
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 205809099}
-        m_MethodName: onFeverOff
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  BackgroundPanel: {fileID: 1171821971}
-  NormalBackground: {fileID: 21300000, guid: 98b066fd832212b40b82d0763cce50c1, type: 3}
-  FeverBackground: {fileID: 21300000, guid: 02e2cc5e4f603804c8c188b2968c1a6c, type: 3}
-  FeverPanel: {fileID: 416712453}
-  Gun: {fileID: 1580132890}
-  SpawnManager: {fileID: 0}
+  eventManager: {fileID: 332326762}
+  backgroundPanel: {fileID: 1171821971}
+  normalBackground: {fileID: 21300000, guid: 98b066fd832212b40b82d0763cce50c1, type: 3}
+  feverBackground: {fileID: 21300000, guid: 02e2cc5e4f603804c8c188b2968c1a6c, type: 3}
+  feverPanel: {fileID: 416712453}
 --- !u!114 &1580132892
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3291,13 +3405,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4af348497444e3a47a8b3a8fa474cd3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BombButton: {fileID: 1963849495}
-  EmptyBomb: {fileID: 21300000, guid: 0a9e90ec420d0834fad7a63ce05cf3b1, type: 3}
-  FillBomb: {fileID: 21300000, guid: 1fdf3aac6fc4ece438dd81c866f85394, type: 3}
-  BombText: {fileID: 821092358}
-  BombAnimationObject: {fileID: 1976223448534862, guid: e2690fa2f36c8e947a53abf19bdd5d5f,
+  eventManager: {fileID: 332326762}
+  bombButton: {fileID: 1963849494}
+  bombButtonImage: {fileID: 1963849495}
+  emptyBomb: {fileID: 21300000, guid: 0a9e90ec420d0834fad7a63ce05cf3b1, type: 3}
+  fillBomb: {fileID: 21300000, guid: 1fdf3aac6fc4ece438dd81c866f85394, type: 3}
+  bombText: {fileID: 821092358}
+  bombAnimationObject: {fileID: 1976223448534862, guid: e2690fa2f36c8e947a53abf19bdd5d5f,
     type: 2}
-  Panel: {fileID: 512360825}
+  panel: {fileID: 512360825}
 --- !u!1 &1646795077
 GameObject:
   m_ObjectHideFlags: 0
@@ -3723,18 +3839,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1963849495}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1580132892}
-        m_MethodName: OnClickBomb
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &1963849495

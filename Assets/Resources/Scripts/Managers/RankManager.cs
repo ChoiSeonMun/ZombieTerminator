@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class RankManager : MonoBehaviour
 {
-    public Button BackButton = null;
+    public Button backButton = null;
 
     public void LoadMain()
     {

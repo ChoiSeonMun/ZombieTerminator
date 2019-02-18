@@ -6,32 +6,30 @@ using UnityEngine.Events;
 
 public class Fever : MonoBehaviour
 {
-    public UnityEvent FeverOnEvent = null;
-    public UnityEvent FeverOffEvent = null;
+    public EventManager eventManager = null;
     // 배경 이미지와 스프라이트 리소스
-    public Image BackgroundPanel = null;
-    public Sprite NormalBackground = null;
-    public Sprite FeverBackground = null;
+    public Image backgroundPanel = null;
+    public Sprite normalBackground = null;
+    public Sprite feverBackground = null;
     // 피버 리소스들
-    public GameObject FeverPanel = null;
-
-    public Gun Gun = null;
-    public SpawnManager SpawnManager = null;
-
+    public GameObject feverPanel = null;
     // fever의 최대치를 기록하는 상수
-    public const int MAX_FEVER_COUNT = 10;
+    public const int MAX_FEVER_COUNT = 20;
     // fever 상태의 On/Off를 기록하는 변수
     public bool IsFeverOn { get; private set; }
     // 처치한 좀비 수를 기록하는 변수
     public int FeverCount { get; private set; }
+
+    private Gun mGun = null;
+    private SpawnManager mSpawnManager = null;
+    private SoundManager mSoundManager = null;
+
     // fever가 시작된 시간을 기록하는 변수
     private float mFeverTimeCurr = float.NaN;
     // fever 객체의 시간을 기록하는 변수
     private float mFeverTimer = float.NaN;
     // fever 상태의 지속시간을 기록하는 변수
     private float mFeverBuffTime = float.NaN;
-
-    private SoundManager mSoundManager = null;
 
     public void GainFeverCount()
     {
@@ -51,28 +49,28 @@ public class Fever : MonoBehaviour
     public void SetFeverOn()
     {
         // 피버 리소스 변경
-        BackgroundPanel.sprite = FeverBackground;
-        FeverPanel.transform.GetChild(1).gameObject.SetActive(false);
-        FeverPanel.transform.GetChild(2).gameObject.SetActive(true);
-        FeverPanel.transform.GetChild(3).gameObject.SetActive(true);
+        backgroundPanel.sprite = feverBackground;
+        feverPanel.transform.GetChild(1).gameObject.SetActive(false);
+        feverPanel.transform.GetChild(2).gameObject.SetActive(true);
+        feverPanel.transform.GetChild(3).gameObject.SetActive(true);
 
         // fever를 활성화 시키고, fever 시작 시간을 기록한다
         mSoundManager.PlayLoop("in-game-fever");
         IsFeverOn = true;
         mFeverTimeCurr = mFeverTimer;
-        FeverOnEvent.Invoke();
+        eventManager.feverOnEvent.Invoke();
     }
 
     public void SetFeverOff()
     {
         // 피버 리소스 복구
-        BackgroundPanel.sprite = NormalBackground;
-        FeverPanel.transform.GetChild(1).gameObject.SetActive(true);
-        FeverPanel.transform.GetChild(2).gameObject.SetActive(false);
-        FeverPanel.transform.GetChild(3).gameObject.SetActive(false);
+        backgroundPanel.sprite = normalBackground;
+        feverPanel.transform.GetChild(1).gameObject.SetActive(true);
+        feverPanel.transform.GetChild(2).gameObject.SetActive(false);
+        feverPanel.transform.GetChild(3).gameObject.SetActive(false);
 
         // fever를 비활성화 시킨다
-        FeverOffEvent.Invoke();
+        eventManager.feverOffEvent.Invoke();
         IsFeverOn = false;
         mSoundManager.PlayLoop("in-game-normal");
     }
@@ -80,10 +78,17 @@ public class Fever : MonoBehaviour
     void Awake()
     {
         FeverCount = 0;
+
+        mGun = eventManager.gun;
+        mSpawnManager = eventManager.spawnManager;
+
         mFeverTimeCurr = 0.0f;
         mFeverTimer = 0.0f;
-        mFeverBuffTime = 20.0f;
+        mFeverBuffTime = 15.0f;
+    }
 
+    void Start()
+    {
         mSoundManager = SoundManager.Instance;
     }
 
@@ -93,7 +98,7 @@ public class Fever : MonoBehaviour
         mFeverTimer = mFeverTimer + Time.deltaTime;
 
         // 피버 카운트가 10 이상이면 fever를 킨다
-        if (FeverCount == MAX_FEVER_COUNT)
+        if (FeverCount >= MAX_FEVER_COUNT)
         {
             FeverCount = 0;
             SetFeverOn();
@@ -115,13 +120,13 @@ public class Fever : MonoBehaviour
             }
 
             // 게이지 바 업데이트
-            RectTransform rect = FeverPanel.transform.GetChild(2).GetComponent<RectTransform>();
+            RectTransform rect = feverPanel.transform.GetChild(2).GetComponent<RectTransform>();
             rect.sizeDelta = new Vector2((1.0f - timeLapsed / mFeverBuffTime) * 950, 39);
         }
         else
         {
             // 게이지 바 업데이트
-            RectTransform rect = FeverPanel.transform.GetChild(1).GetComponent<RectTransform>();
+            RectTransform rect = feverPanel.transform.GetChild(1).GetComponent<RectTransform>();
             rect.sizeDelta = new Vector2(((float)(FeverCount) / (float)(Fever.MAX_FEVER_COUNT)) * 950, 39);
         }
     }
