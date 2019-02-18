@@ -141,6 +141,7 @@ public class GameManager : MonoBehaviour
 
             case EState.GAMEOVER:
                 mSoundManager.PlayOneShot("game-over");
+                eventManager.endEvent.Invoke();
                 // 게임이 끝나면, 게임 시도 횟수를 증가한다.
                 ++mGameTrial;
                 // 게임을 5번 플레이 했다면, 광고를 시청하게 한다

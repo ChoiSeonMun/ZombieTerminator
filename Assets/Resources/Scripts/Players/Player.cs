@@ -19,6 +19,14 @@ public class Player : MonoBehaviour
 
     #region Public Functions
 
+    public void OnEndGame()
+    {
+        Social.ReportScore(mScore, "CgkItcrr5bIWEAIQAw", (bool bSuccess) =>
+        {
+            Debug.Log("ReportScore: " + bSuccess);
+        });
+    }
+
     // gun 으로 하여금 target 을 쏘도록 명령한다
     public void Shoot(GameObject obj)
     {

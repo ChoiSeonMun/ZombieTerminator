@@ -60,14 +60,14 @@ public class LevelManager : MonoBehaviour
         if (mLevelTimer > levelInterval)
         {
             levelUp();
-            mLevelTimer = 0.0f;
         }
     }
 
     private void levelUp()
     {
         Level++;
+        levelInterval = levelInterval + 5.0f;
+        mLevelTimer = 0.0f;
         eventManager.levelUpEvent.Invoke();
-        levelInterval = (levelInterval * 0.375f) + 5.0f;
     }
 }

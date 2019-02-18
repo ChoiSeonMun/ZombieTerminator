@@ -92,7 +92,7 @@ public class Fever : MonoBehaviour
         mFeverTimer = mFeverTimer + Time.deltaTime;
 
         // 피버 카운트가 10 이상이면 fever를 킨다
-        if (FeverCount == MAX_FEVER_COUNT)
+        if (FeverCount >= MAX_FEVER_COUNT)
         {
             FeverCount = 0;
             SetFeverOn();

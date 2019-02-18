@@ -29,19 +29,19 @@ public class SpawnManager : MonoBehaviour
     // 게임이 중단되는 것을 저장하기 위한 변수
     private bool mIsStopped = false;
 
-    public void onLevelUp()
+    public void OnLevelUp()
     {
-        spawnCooldown = (spawnCooldown * 0.525f) + 0.66f;
+        spawnCooldown = (spawnCooldown * 0.5f) + 0.35f;
     }
 
-    public void onFeverOn()
+    public void OnFeverOn()
     {
         mSpawnCooldownTemp = spawnCooldown;
         spawnCooldown = 0.05f;
         specialSpawnRate = 0.05f;
     }
 
-    public void onFeverOff()
+    public void OnFeverOff()
     {
         spawnCooldown = mSpawnCooldownTemp;
         // 좀비를 가지고 있는 target 을 순회하면서, 각 좀비를 죽인다
@@ -71,7 +71,6 @@ public class SpawnManager : MonoBehaviour
             {
                 GameObject zombie = target.transform.GetChild(0).gameObject;
                 zombie.SetActive(false);
-                // Destroy(zombie.gameObject, 0.01f);
             }
         }
     }
@@ -88,6 +87,11 @@ public class SpawnManager : MonoBehaviour
                 zombie.SetActive(true);
             }
         }
+    }
+
+    public void OnEndGame()
+    {
+        OnPauseGame();
     }
 
     void Awake()

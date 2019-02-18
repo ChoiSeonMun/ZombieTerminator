@@ -6,6 +6,7 @@ public class EventManager : MonoBehaviour
 {
     public UnityEvent pauseEvent = null;
     public UnityEvent resumeEvent = null;
+    public UnityEvent endEvent = null;
 
     public UnityEvent feverOnEvent = null;
     public UnityEvent feverOffEvent = null;

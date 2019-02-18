@@ -10,6 +10,17 @@ public class IntroManager : MonoBehaviour
 {
     public Text noticeText;
     public float blinkSpeed = 2.0f;
+    public GameObject authenticationPanel;
+
+    public void OnClickLogin()
+    {
+        authenticate();
+    }
+
+    public void OnClickCancel()
+    {
+        authenticationPanel.SetActive(false);
+    }
 
     void Start()
     {
@@ -26,22 +37,17 @@ public class IntroManager : MonoBehaviour
 
     void Update()
     {
-        // Main 씬 로드
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonDown(0))
         {
             if (Social.localUser.authenticated)
             {
+                // Main 씬 로드
                 SceneManager.LoadScene("Main");
             }
             else
             {
-                // 대화상자를 띄운다.
-                Debug.Log("네트워크 환경을 확인해주세요.");
-                Debug.Log("[구글 플레이 게임에 로그인하기 버튼]");
-                Debug.Log("[취소버튼]");
-
-                // if (loginButton.isClicked)
-                //  authenticate();
+                // 대화상자를 띄운다
+                authenticationPanel.SetActive(true);
             }
         }
 
