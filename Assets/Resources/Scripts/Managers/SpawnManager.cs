@@ -26,10 +26,10 @@ public class SpawnManager : MonoBehaviour
     // 이전 Spawn 으로부터 얼마나 시간이 지났는지를 저장하는 변수
     private float mSpawnTimer = float.NaN;
     // 특수 좀비를 Spawn할 확률을 조정하기 위해 일반 좀비와 특수 좀비의 스폰 수를 기록하는 변수들
-    private int mNormalSpawnCount = -1;
-    private int mSpecialSpawnCount = -1;
+    public int mNormalSpawnCount = -1;
+    public int mSpecialSpawnCount = -1;
     // 특수 좀비의 Spawn 확률을 보정하는 변수
-    private float mRateSpecialSpawnAmend = float.NaN;
+    public float mRateSpecialSpawnAmend = float.NaN;
     // 게임이 중단되는 것을 저장하기 위한 변수
     private bool mIsStopped = false;
 
@@ -169,7 +169,7 @@ public class SpawnManager : MonoBehaviour
             // 타겟에 자식이 없다면 ( 좀비가 없다면 )
             if (target.transform.childCount == 0)
             {
-                // 특수좀비 스폰카운터에 도달했을 경우
+                // 난수를 생성하여 특수좀비를 소환할 지 결정한다
                 if (canSpawnSpecialZombie())
                 {
                     if (mFever.IsFeverOn == false)
@@ -201,25 +201,33 @@ public class SpawnManager : MonoBehaviour
     {
         float rateSpawnNow = (float)mSpecialSpawnCount / (float)(mSpecialSpawnCount + mNormalSpawnCount);
 
-        // 실제 확률이 기대 확률보다 크면 스폰 확률을 줄이기 위해 보정값을 줄인다
-        if (rateSpawnNow > specialSpawnRate)
+        if ((mFever.IsFeverOn == false))
         {
-            mRateSpecialSpawnAmend -= 0.05f;
+            // 실제 확률이 기대 확률보다 크면 스폰 확률을 줄이기 위해 보정값을 줄인다
+            if (rateSpawnNow > specialSpawnRate)
+            {
+                mRateSpecialSpawnAmend = -0.05f;
+            }
+            // 반대로 실제 확률이 기대 확률보다 작으면 스폰 확률을 늘이기 위해 보정값을 늘인다
+            else if (rateSpawnNow < specialSpawnRate)
+            {
+                mRateSpecialSpawnAmend = +0.05f;
+            }
+            // 난수를 생성하여 비교한다
+            if (mRand.NextDouble() < (specialSpawnRate + mRateSpecialSpawnAmend))
+            {
+                return true;
+            }
         }
-        // 반대로 실제 확률이 기대 확률보다 작으면 스폰 확률을 늘이기 위해 보정값을 늘인다
-        else if (rateSpawnNow < specialSpawnRate)
-        {
-            mRateSpecialSpawnAmend += 0.05f;
-        }
-
-        // 난수를 생성하여 스폰할 것인지 정한다
-        if (mRand.NextDouble() < (specialSpawnRate + mRateSpecialSpawnAmend))
-        {
-            return true;
-        }
+        // 피버 일때에는 보정치의 효과를 받지 않는다
         else
         {
-            return false;
+            if (mRand.NextDouble() < (specialSpawnRate))
+            {
+                return true;
+            }
         }
+
+        return false;
     }
 }
