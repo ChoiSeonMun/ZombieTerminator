@@ -62,6 +62,15 @@ public class GameManager : MonoBehaviour
     {
         if ((mState == EState.PAUSED) || (mState == EState.GAMEOVER))
         {
+            // 게임이 끝나면, 게임 시도 횟수를 증가한다.
+            ++mGameTrial;
+            // 게임을 5번 플레이 했다면, 광고를 시청하게 한다
+            if (mGameTrial == 5)
+            {
+                Advertisement.Show();
+                mGameTrial = 0;
+            }
+
             SceneManager.LoadScene("Main");
         }
     }
@@ -112,14 +121,6 @@ public class GameManager : MonoBehaviour
         eventManager.endEvent.Invoke();
 
         mSoundManager.PlayOneShot("game-over");
-        // 게임이 끝나면, 게임 시도 횟수를 증가한다.
-        ++mGameTrial;
-        // 게임을 5번 플레이 했다면, 광고를 시청하게 한다
-        if (mGameTrial == 5)
-        {
-            Advertisement.Show();
-            mGameTrial = 0;
-        }
         endPanel.SetActive(true);
     }
 
