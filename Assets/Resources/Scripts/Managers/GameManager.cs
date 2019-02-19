@@ -6,9 +6,6 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.Advertisements;
 
-// Game scene 을 총괄하는 클래스
-// 담당 업무는 UI 관리, 아이템 기능 그리고 Spawn 기능
-// 그 외 업무는 다른 클래스에게 맡긴다
 public class GameManager : MonoBehaviour
 {
     // Game scene 이 가질 수 있는 상태값들
@@ -118,7 +115,6 @@ public class GameManager : MonoBehaviour
     public void EndGame()
     {
         mState = EState.GAMEOVER;
-        eventManager.endEvent.Invoke();
 
         mSoundManager.PlayOneShot("game-over");
         endPanel.SetActive(true);
