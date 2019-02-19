@@ -34,6 +34,7 @@ public class EventManager : MonoBehaviour
         resumeEvent.AddListener(levelManager.GrantUpdate);
         resumeEvent.AddListener(spawnManager.ResumeTargets);
         //
+        endEvent.AddListener(gameManager.EndGame);
         endEvent.AddListener(spawnManager.StopTargets);
         endEvent.AddListener(player.ReportScore);
         //
