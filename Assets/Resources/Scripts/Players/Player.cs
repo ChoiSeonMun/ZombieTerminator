@@ -96,7 +96,8 @@ public class Player : MonoBehaviour
         lifeText.text = "X " + mLife.ToString();
         if(mLife <= 0)
         {
-            mGameManager.EndGame();
+            eventManager.endEvent.Invoke();
+            gameObject.SetActive(false);
         }
     }
 }
