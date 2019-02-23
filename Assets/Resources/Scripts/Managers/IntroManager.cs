@@ -12,9 +12,12 @@ public class IntroManager : MonoBehaviour
     public float blinkSpeed = 2.0f;
     public GameObject authenticationPanel;
 
+    private bool mIsPanelActive = false;
+
     public void OnClickCancel()
     {
         authenticationPanel.SetActive(false);
+        mIsPanelActive = false;
     }
 
     public void Authenticate()
@@ -40,7 +43,7 @@ public class IntroManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && mIsPanelActive == false)
         {
             if (Social.localUser.authenticated)
             {
@@ -49,8 +52,11 @@ public class IntroManager : MonoBehaviour
             }
             else
             {
+                Debug.Log("dialog panel activated");
+
                 // 대화상자를 띄운다
                 authenticationPanel.SetActive(true);
+                mIsPanelActive = true;
             }
         }
 
