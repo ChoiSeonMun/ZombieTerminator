@@ -169,7 +169,6 @@ public class SpawnManager : MonoBehaviour
             // 타겟에 자식이 없다면 ( 좀비가 없다면 )
             if (target.transform.childCount == 0)
             {
-                // 난수를 생성하여 특수좀비를 소환할 지 결정한다
                 if (canSpawnSpecialZombie())
                 {
                     if (mFever.IsFeverOn == false)
@@ -201,7 +200,8 @@ public class SpawnManager : MonoBehaviour
     {
         float rateSpawnNow = (float)mSpecialSpawnCount / (float)(mSpecialSpawnCount + mNormalSpawnCount);
 
-        if ((mFever.IsFeverOn == false))
+        // 피버가 아닐 때에만 특수좀비 확률계산을 수행한다
+        if (mFever.IsFeverOn == false)
         {
             // 실제 확률이 기대 확률보다 크면 스폰 확률을 줄이기 위해 보정값을 줄인다
             if (rateSpawnNow > specialSpawnRate)
@@ -215,14 +215,6 @@ public class SpawnManager : MonoBehaviour
             }
             // 난수를 생성하여 비교한다
             if (mRand.NextDouble() < (specialSpawnRate + mRateSpecialSpawnAmend))
-            {
-                return true;
-            }
-        }
-        // 피버 일때에는 보정치의 효과를 받지 않는다
-        else
-        {
-            if (mRand.NextDouble() < (specialSpawnRate))
             {
                 return true;
             }
