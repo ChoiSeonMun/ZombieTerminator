@@ -12,17 +12,18 @@ public class IntroManager : MonoBehaviour
     public float blinkSpeed = 2.0f;
     public GameObject authenticationPanel;
 
+    private bool mIsCanInput = false;
+
+    public void OnClickLogin()
+    {
+        authenticate();
+        loadMain();
+    }
+
     public void OnClickCancel()
     {
         authenticationPanel.SetActive(false);
-    }
-
-    public void Authenticate()
-    {
-        Social.localUser.Authenticate(bSuccess =>
-        {
-            Debug.Log("Authentication: " + bSuccess);
-        });
+        mIsCanInput = true;
     }
 
     void Start()
@@ -33,28 +34,46 @@ public class IntroManager : MonoBehaviour
         PlayGamesPlatform.InitializeInstance(config);
         PlayGamesPlatform.Activate();
 
-        Authenticate();
-
-        noticeText.text = "Touch to Start";
+        authenticate();
+        mIsCanInput = true;
     }
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && mIsCanInput == true)
         {
             if (Social.localUser.authenticated)
             {
                 // Main 씬 로드
-                SceneManager.LoadScene("Main");
+                loadMain();
             }
             else
             {
+                Debug.Log("dialog panel activated");
+
                 // 대화상자를 띄운다
                 authenticationPanel.SetActive(true);
+                mIsCanInput = false;
             }
         }
 
         // Notice Text를 깜빡인다.
         noticeText.color = Color.Lerp(Color.white, Color.black, Mathf.PingPong(Time.time * blinkSpeed, 1));
+    }
+
+    private void authenticate()
+    {
+        Social.localUser.Authenticate(bSuccess =>
+        {
+            Debug.Log("Authentication: " + bSuccess);
+        });
+    }
+
+    private void loadMain()
+    {
+        if (Social.localUser.authenticated)
+        {
+            SceneManager.LoadScene("Main");
+        }
     }
 }
