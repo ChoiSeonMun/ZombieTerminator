@@ -24,7 +24,7 @@
 
 public static class GPGSIds
 {
-        public const string leaderboard_whos_the_best = "CgkItcrr5bIWEAIQAw"; // <GPGSID>
+        public const string leaderboard_whos_the_best_terminator = "CgkItcrr5bIWEAIQBw"; // <GPGSID>
 
 }
 
