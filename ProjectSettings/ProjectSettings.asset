@@ -155,7 +155,7 @@ PlayerSettings:
     Android: com.bcsdlab.game.zombie_terminator2
     Standalone: com.Company.ProductName
   buildNumber: {}
-  AndroidBundleVersionCode: 900
+  AndroidBundleVersionCode: 1000
   AndroidMinSdkVersion: 16
   AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 1
