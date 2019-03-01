@@ -303,6 +303,9 @@ MonoBehaviour:
     type: 2}
   spawnCooldown: NaN
   specialSpawnRate: NaN
+  mNormalSpawnCount: -1
+  mSpecialSpawnCount: -1
+  mRateSpecialSpawnAmend: NaN
 --- !u!4 &205809100
 Transform:
   m_ObjectHideFlags: 0
@@ -327,6 +330,7 @@ GameObject:
   - component: {fileID: 241442772}
   - component: {fileID: 241442774}
   - component: {fileID: 241442773}
+  - component: {fileID: 241442775}
   m_Layer: 5
   m_Name: EndPanel
   m_TagString: Untagged
@@ -391,6 +395,18 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 241442771}
   m_CullTransparentMesh: 0
+--- !u!114 &241442775
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 241442771}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b73f2583ac7f5344b1568e29deac0b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameManager: {fileID: 1005551064}
 --- !u!1 &255124088
 GameObject:
   m_ObjectHideFlags: 0
@@ -892,16 +908,6 @@ MonoBehaviour:
   gameManager: {fileID: 1005551064}
   spawnManager: {fileID: 205809099}
   levelManager: {fileID: 52694833}
-  readyEvent:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  startEvent:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
   pauseEvent:
     m_PersistentCalls:
       m_Calls: []
@@ -2671,6 +2677,18 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 224079139304593842, guid: 3df5f4f8e21102b46af3a0bda2186355,
     type: 2}
   m_PrefabInternal: {fileID: 816340571}
+--- !u!114 &1007983612
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1007983610}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f3d6e36f72e0b418e70b337f35e4e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameManager: {fileID: 1005551064}
 --- !u!1 &1031354718
 GameObject:
   m_ObjectHideFlags: 0

@@ -18,7 +18,6 @@ public class SpawnManager : MonoBehaviour
 
     private Fever mFever = null;
     private Player mPlayer = null;
-    private LevelManager mLevelManager = null;
 
     private System.Random mRand = null;
     // Fever 현재 쿨다운을 임시적으로 기록할 변수
@@ -104,7 +103,6 @@ public class SpawnManager : MonoBehaviour
 
         mPlayer = eventManager.player;
         mFever = eventManager.fever;
-        mLevelManager = eventManager.levelManager;
 
         mRand = new System.Random();
         mSpawnCooldownTemp = 0.0f;

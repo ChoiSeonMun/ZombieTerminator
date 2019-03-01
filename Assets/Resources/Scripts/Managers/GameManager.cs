@@ -28,9 +28,7 @@ public class GameManager : MonoBehaviour
     private SoundManager mSoundManager = null;
 
     private EState mState = EState.UNDEFINED;
-    private event EventHandler<StateArgs> mStarts = null;
     private event EventHandler<StateArgs> mUpdates = null;
-    private event EventHandler<StateArgs> mEnds = null;
     private class StateArgs : EventArgs
     {
         public StateArgs(EState state)

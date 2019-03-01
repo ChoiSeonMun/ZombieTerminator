@@ -20,8 +20,6 @@ public class Fever : MonoBehaviour
     // 처치한 좀비 수를 기록하는 변수
     public int FeverCount { get; private set; }
 
-    private Gun mGun = null;
-    private SpawnManager mSpawnManager = null;
     private SoundManager mSoundManager = null;
 
     // fever가 시작된 시간을 기록하는 변수
@@ -78,9 +76,6 @@ public class Fever : MonoBehaviour
     void Awake()
     {
         FeverCount = 0;
-
-        mGun = eventManager.gun;
-        mSpawnManager = eventManager.spawnManager;
 
         mFeverTimeCurr = 0.0f;
         mFeverTimer = 0.0f;

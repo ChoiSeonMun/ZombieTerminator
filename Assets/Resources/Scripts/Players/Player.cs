@@ -10,7 +10,6 @@ public class Player : MonoBehaviour
     public Text scoreText = null;
     public Text lifeText = null;
 
-    private GameManager mGameManager = null;
     private Gun mGun = null;
     private Fever mFever = null;
     private SoundManager mSoundManager = null;
@@ -77,7 +76,6 @@ public class Player : MonoBehaviour
 
     void Awake()
     {
-        mGameManager = eventManager.gameManager;
         mGun = eventManager.gun;
         mFever = eventManager.fever;
 
