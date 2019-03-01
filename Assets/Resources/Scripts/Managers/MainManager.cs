@@ -18,6 +18,6 @@ public class MainManager : MonoBehaviour
 
     public void ShowLeaderboard()
     {
-        PlayGamesPlatform.Instance.ShowLeaderboardUI("CgkItcrr5bIWEAIQAw");
+        PlayGamesPlatform.Instance.ShowLeaderboardUI("CgkItcrr5bIWEAIQBw");
     }
 }
