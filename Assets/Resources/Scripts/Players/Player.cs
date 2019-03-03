@@ -21,7 +21,7 @@ public class Player : MonoBehaviour
 
     public void ReportScore()
     {
-        Social.Active.ReportScore(mScore, "CgkItcrr5bIWEAIQAw", bSuccess =>
+        Social.Active.ReportScore(mScore, "CgkItcrr5bIWEAIQBw", bSuccess =>
         {
             if (bSuccess)
             {
