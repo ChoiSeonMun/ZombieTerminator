@@ -10,6 +10,8 @@ public class MainManager : MonoBehaviour
 {
     public Button startButton;
     public Button rankButton;
+    public Button quitButton;
+    public GameObject quitPanel;
 
     public void LoadGame()
     {
@@ -19,5 +21,41 @@ public class MainManager : MonoBehaviour
     public void ShowLeaderboard()
     {
         PlayGamesPlatform.Instance.ShowLeaderboardUI("CgkItcrr5bIWEAIQBw");
+    }
+
+    public void AskQuit()
+    {
+        removeOnclicks();
+        quitPanel.SetActive(true);
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
+
+    public void BackToGame()
+    {
+        quitPanel.SetActive(false);
+        addOnclicks();
+    }
+
+    private void Start()
+    {
+        addOnclicks();
+    }
+
+    private void addOnclicks()
+    {
+        startButton.onClick.AddListener(LoadGame);
+        rankButton.onClick.AddListener(ShowLeaderboard);
+        quitButton.onClick.AddListener(AskQuit);
+    }
+
+    private void removeOnclicks()
+    {
+        startButton.onClick.RemoveAllListeners();
+        rankButton.onClick.RemoveAllListeners();
+        quitButton.onClick.RemoveAllListeners();
     }
 }
