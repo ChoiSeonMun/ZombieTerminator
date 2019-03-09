@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -32,16 +33,20 @@ public class ButtonExtension : MonoBehaviour, IPointerDownHandler, IPointerUpHan
     public void OnPointerDown(PointerEventData ped)
     {
         IsPressed = true;
+        syncPressed();
     }
 
     // 버튼이 떼어지는 이벤트가 발생하면 false 저장
     public void OnPointerUp(PointerEventData ped)
     {
         IsPressed = false;
+        syncPressed();
     }
 
-    private void LateUpdate()
+    private async void syncPressed()
     {
+        // 프레임 하나만큼 시잔의 절반을 기다린다
+        await Task.Delay((int)(Time.deltaTime * 1000.0f) / 2);
         WasPressed = IsPressed;
     }
 }

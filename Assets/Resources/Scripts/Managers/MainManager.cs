@@ -21,6 +21,7 @@ public class MainManager : MonoBehaviour
     public void ShowLeaderboard()
     {
         PlayGamesPlatform.Instance.ShowLeaderboardUI("CgkItcrr5bIWEAIQBw");
+        loadIntro();
     }
 
     public void AskQuit()
@@ -57,5 +58,13 @@ public class MainManager : MonoBehaviour
         startButton.onClick.RemoveAllListeners();
         rankButton.onClick.RemoveAllListeners();
         quitButton.onClick.RemoveAllListeners();
+    }
+
+    private void loadIntro()
+    {
+        if(Social.localUser.authenticated == false)
+        {
+            SceneManager.LoadScene("Intro");
+        }
     }
 }
