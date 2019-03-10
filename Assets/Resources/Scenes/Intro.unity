@@ -1160,6 +1160,7 @@ GameObject:
   - component: {fileID: 1937825300}
   - component: {fileID: 1937825302}
   - component: {fileID: 1937825301}
+  - component: {fileID: 1937825303}
   m_Layer: 5
   m_Name: AuthPanel
   m_TagString: Untagged
@@ -1222,6 +1223,18 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1937825299}
   m_CullTransparentMesh: 0
+--- !u!114 &1937825303
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1937825299}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8302784b3a008b9468370fb7f6304a0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  introManager: {fileID: 857178355}
 --- !u!1 &2026208922
 GameObject:
   m_ObjectHideFlags: 0

@@ -45,7 +45,7 @@ public class ButtonExtension : MonoBehaviour, IPointerDownHandler, IPointerUpHan
 
     private async void syncPressed()
     {
-        // 프레임 하나만큼 시잔의 절반을 기다린다
+        // 프레임 하나만큼 시간의 절반을 기다린다
         await Task.Delay((int)(Time.deltaTime * 1000.0f) / 2);
         WasPressed = IsPressed;
     }

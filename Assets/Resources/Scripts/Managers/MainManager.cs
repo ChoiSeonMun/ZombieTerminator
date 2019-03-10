@@ -21,7 +21,6 @@ public class MainManager : MonoBehaviour
     public void ShowLeaderboard()
     {
         PlayGamesPlatform.Instance.ShowLeaderboardUI("CgkItcrr5bIWEAIQBw");
-        loadIntro();
     }
 
     public void AskQuit()
@@ -46,6 +45,15 @@ public class MainManager : MonoBehaviour
         addOnclicks();
     }
 
+    private void Update()
+    {
+        // 구글플레이가 로그아웃되어있는 경우, Intro Scene으로 돌려보낸다
+        if (Social.localUser.authenticated == false)
+        {
+            SceneManager.LoadScene("Intro");
+        }
+    }
+
     private void addOnclicks()
     {
         startButton.onClick.AddListener(LoadGame);
@@ -58,13 +66,5 @@ public class MainManager : MonoBehaviour
         startButton.onClick.RemoveAllListeners();
         rankButton.onClick.RemoveAllListeners();
         quitButton.onClick.RemoveAllListeners();
-    }
-
-    private void loadIntro()
-    {
-        if(Social.localUser.authenticated == false)
-        {
-            SceneManager.LoadScene("Intro");
-        }
     }
 }
