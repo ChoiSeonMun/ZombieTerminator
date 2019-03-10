@@ -45,6 +45,15 @@ public class MainManager : MonoBehaviour
         addOnclicks();
     }
 
+    private void Update()
+    {
+        // 구글플레이가 로그아웃되어있는 경우, Intro Scene으로 돌려보낸다
+        if (Social.localUser.authenticated == false)
+        {
+            SceneManager.LoadScene("Intro");
+        }
+    }
+
     private void addOnclicks()
     {
         startButton.onClick.AddListener(LoadGame);
