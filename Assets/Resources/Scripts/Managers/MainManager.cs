@@ -14,7 +14,7 @@ public class MainManager : MonoBehaviour
     public Button creditButton;
     public GameObject quitPanel;
     public GameObject creditPanel;
-    public GameObject Title;
+    public GameObject title;
 
     public void LoadGame()
     {
@@ -92,7 +92,7 @@ public class MainManager : MonoBehaviour
         rankButton.gameObject.SetActive(false);
         quitButton.gameObject.SetActive(false);
         creditButton.gameObject.SetActive(false);
-        Title.SetActive(false);
+        title.SetActive(false);
     }
 
     private void setActiveAllComponents()
@@ -102,6 +102,6 @@ public class MainManager : MonoBehaviour
         quitButton.gameObject.SetActive(true);
         creditButton.gameObject.SetActive(true);
         addOnclicks();
-        Title.SetActive(true);
+        title.SetActive(true);
     }
 }
