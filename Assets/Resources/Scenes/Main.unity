@@ -742,7 +742,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 834.62}
+  m_AnchoredPosition: {x: 0, y: 830}
   m_SizeDelta: {x: 480, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &736593633
@@ -1693,7 +1693,8 @@ MonoBehaviour:
     Die Sounds\nhttps://youtu.be/wg8u3AQj1Ac\nGun Fire Sound\nhttps://freesound.org/people/Bird_man/sounds/275151/\r\nFire
     Fail Sound\nhttps://freesound.org/people/Nanashi/sounds/104410/\r\nGlass Crack
     Sound\nhttps://freesound.org/people/cmusounddesign/sounds/84705/\nBomb Explosion
-    Sound\nhttps://freesound.org/people/LiamG_SFX/sounds/322509/\nReload Sound\nhttps://freesound.org/people/GFL7/sounds/276960/"
+    Sound\nhttps://freesound.org/people/LiamG_SFX/sounds/322509/\nReload Sound\nhttps://freesound.org/people/GFL7/sounds/276960/\nFont
+    Resource\nhttps://www.dafont.com/zombie-control.font\r"
 --- !u!222 &1687961534
 CanvasRenderer:
   m_ObjectHideFlags: 0
