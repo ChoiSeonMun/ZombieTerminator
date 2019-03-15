@@ -158,7 +158,7 @@ public class Gun : MonoBehaviour
 
     void Update()
     {
-        bulletText.text = BulletCur.ToString() + " / " + BulletMax.ToString();
+        bulletText.text = BulletCur.ToString() + "/" + BulletMax.ToString();
         if (IsReloading)
         {
             string delayTime = (mReloadDelay - (mSceneTimer - mReloadTime)).ToString();
