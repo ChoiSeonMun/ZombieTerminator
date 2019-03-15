@@ -17,6 +17,11 @@ public class IntroManager : MonoBehaviour
     public void OnClickLogin()
     {
         authenticate();
+
+        if(Application.isEditor)
+        {
+            SceneManager.LoadScene("Main");
+        }
     }
 
     public void OnClickCancel()

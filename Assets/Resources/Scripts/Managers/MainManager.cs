@@ -62,10 +62,13 @@ public class MainManager : MonoBehaviour
 
     private void Update()
     {
-        // 구글플레이가 로그아웃되어있는 경우, Intro Scene으로 돌려보낸다
-        if (Social.localUser.authenticated == false)
+        if (Application.isEditor == false)
         {
-            SceneManager.LoadScene("Intro");
+            // 구글플레이가 로그아웃되어있는 경우, Intro Scene으로 돌려보낸다
+            if (Social.localUser.authenticated == false)
+            {
+                SceneManager.LoadScene("Intro");
+            }
         }
     }
 
