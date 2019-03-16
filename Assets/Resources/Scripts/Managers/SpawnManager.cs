@@ -61,7 +61,6 @@ public class SpawnManager : MonoBehaviour
 
                 if (zombie != null)
                 {
-                    zombie.TakeDamage(-zombie.lifeMax);
                     Destroy(zombie.gameObject);
                 }
             }

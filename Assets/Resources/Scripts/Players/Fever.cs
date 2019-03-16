@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using System.Threading.Tasks;
 
 public class Fever : MonoBehaviour
 {
@@ -28,6 +29,7 @@ public class Fever : MonoBehaviour
     private float mFeverTimer = float.NaN;
     // fever 상태의 지속시간을 기록하는 변수
     private float mFeverBuffTime = float.NaN;
+    private bool mFeverUpdate = false;
 
     public void GainFeverCount()
     {
@@ -54,7 +56,7 @@ public class Fever : MonoBehaviour
 
         // fever를 활성화 시키고, fever 시작 시간을 기록한다
         mSoundManager.PlayLoop("in-game-fever");
-        IsFeverOn = true;
+        mFeverUpdate = true;
         mFeverTimeCurr = mFeverTimer;
         eventManager.feverOnEvent.Invoke();
     }
@@ -69,7 +71,7 @@ public class Fever : MonoBehaviour
 
         // fever를 비활성화 시킨다
         eventManager.feverOffEvent.Invoke();
-        IsFeverOn = false;
+        mFeverUpdate = true;
         mSoundManager.PlayLoop("in-game-normal");
     }
 
@@ -100,6 +102,15 @@ public class Fever : MonoBehaviour
         }
 
         updateFeverGuage();
+    }
+
+    private void LateUpdate()
+    {
+        if(mFeverUpdate)
+        {
+            mFeverUpdate = false;
+            IsFeverOn = !IsFeverOn;
+        }
     }
 
     private void updateFeverGuage()

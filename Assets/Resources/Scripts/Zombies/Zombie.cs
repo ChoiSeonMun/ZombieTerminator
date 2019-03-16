@@ -94,12 +94,7 @@ public class Zombie : MonoBehaviour
             }
             player.GainScore(10);
         }
-        else if (life > lifeMax)
-        {
-            ;
-        }
-        // 수명이 다할 때까지 살아남았다면
-        else
+        else if (fever.IsFeverOn == false)
         {
             attack();
         }
