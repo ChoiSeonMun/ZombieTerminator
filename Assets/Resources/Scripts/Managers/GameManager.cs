@@ -122,7 +122,7 @@ public class GameManager : MonoBehaviour
 
     #region Unity Functions
 
-    void Awake()
+    protected void Awake()
     {
         mPlayer = eventManager.player;
         mUpdates = onUpdates;
@@ -130,18 +130,18 @@ public class GameManager : MonoBehaviour
         ReadyGame();
     }
 
-    void Start()
+    protected void Start()
     {
         mSoundManager = SoundManager.Instance;
         mSoundManager.PlayLoop("in-game-normal");
     }
 
-    void Update()
+    protected void Update()
     {
         mUpdates(this, new StateArgs(mState));
     }
 
-    void OnDestroy()
+    protected void OnDestroy()
     {
         // 다른 scene으로 전환할 때 BGM을 교체하기 위함
         if (mSoundManager != null)

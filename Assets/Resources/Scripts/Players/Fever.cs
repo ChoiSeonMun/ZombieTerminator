@@ -94,7 +94,7 @@ public class Fever : MonoBehaviour
         // fever객체의 타이머의 시간을 증가시킨다
         mFeverTimer = mFeverTimer + Time.deltaTime;
 
-        // 피버 카운트가 10 이상이면 fever를 킨다
+        // 피버 카운트가 일정 수치 이상이면 fever를 킨다
         if (FeverCount >= MAX_FEVER_COUNT)
         {
             FeverCount = 0;
