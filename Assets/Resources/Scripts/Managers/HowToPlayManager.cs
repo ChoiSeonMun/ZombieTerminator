@@ -10,111 +10,111 @@ public class HowToPlayManager : GameManager
 {
     public GameObject dialog = null;
 
-    private Text dialogText = null;
-    private Button dialogButton = null;
+    private Text mDialogText = null;
+    private Button mDialogButton = null;
 
     private delegate void checkDelegate();
     private checkDelegate checkFunction = null;
 
-    public void GreetingOn()
+    public void OnGreeting()
     {
         pauseTutorial();
-        dialogText.text = "Welcome to tutorial !\nPress OK to process";
-        dialogButton.onClick.AddListener(GreetingOff);
+        mDialogText.text = "Welcome to tutorial !\nPress OK to process";
+        mDialogButton.onClick.AddListener(OffGreeting);
     }
 
-    public void GreetingOff()
+    public void OffGreeting()
     {
         resumeTutorial();
         checkFunction = checkZombieSpawn;
     }
 
-    public void ZombieWarnOn()
+    public void OnWarningZombie()
     {
         pauseTutorial();
-        dialogText.text = "Zombie is approaching to you !\nPress it to attack !\nMissing it means losing life !";
-        dialogButton.onClick.AddListener(ZombieWarnOff);
+        mDialogText.text = "Zombie is approaching to you !\nPress it to attack !\nMissing it means losing life !";
+        mDialogButton.onClick.AddListener(OffWarningZombie);
     }
 
-    public void ZombieWarnOff()
+    public void OffWarningZombie()
     {
         resumeTutorial();
         checkFunction = checkZombieDead;
     }
 
-    public void ZombieDeadOn()
+    public void OnKillingZombie()
     {
         pauseTutorial();
-        dialogText.text = "Got some score, look above !\nLost some ammo, look below !\n";
-        dialogButton.onClick.AddListener(ZombieDeadOff);
+        mDialogText.text = "Got some score, look above !\nLost some ammo, look below !\n";
+        mDialogButton.onClick.AddListener(OffKillingZombie);
     }
 
-    public void ZombieDeadOff()
+    public void OffKillingZombie()
     {
         resumeTutorial();
         checkFunction = checkLowAmmo;
     }
 
-    public void LowAmmoOn()
+    public void OnLowAmmo()
     {
         pauseTutorial();
-        dialogText.text = "You have low ammo !\nPress bullet to reload !\nBomb button will help you, too !";
-        dialogButton.onClick.AddListener(LowAmmoOff);
+        mDialogText.text = "You have low ammo !\nPress bullet to reload !\nBomb button will help you, too !";
+        mDialogButton.onClick.AddListener(OffLowAmmo);
     }
 
-    public void LowAmmoOff()
+    public void OffLowAmmo()
     {
         resumeTutorial();
         checkFunction = checkFeverGuage;
     }
 
-    public void GuageWarnOn()
+    public void OnWarningGuage()
     {
         pauseTutorial();
-        dialogText.text = "Whenever zombie dies, fever \nguage increases, look above !\nFever guage is reset, \nwhenever you hit !";
-        dialogButton.onClick.AddListener(GuageWarnOff);
+        mDialogText.text = "Whenever zombie dies, fever \nguage increases, look above !\nFever guage is reset, \nwhenever you hit !";
+        mDialogButton.onClick.AddListener(OffWarningGuage);
     }
 
-    public void GuageWarnOff()
+    public void OffWarningGuage()
     {
         resumeTutorial();
         checkFunction = checkFeverOn;
     }
 
-    public void FeverWarnOn()
+    public void OnWarningFever()
     {
         pauseTutorial();
-        dialogText.text = "Fever guage is full !\nFever mode has been started !\nYou do not get damage !\nAnd one shot one kill !\nEven no reload delay !";
-        dialogButton.onClick.AddListener(FeverWarnOff);
+        mDialogText.text = "Fever guage is full !\nFever mode has been started !\nYou do not get damage !\nAnd one shot one kill !\nEven no reload delay !";
+        mDialogButton.onClick.AddListener(OffWarningFever);
     }
 
-    public void FeverWarnOff()
+    public void OffWarningFever()
     {
         resumeTutorial();
         checkFunction = checkFeverOff;
     }
 
-    public void GoodbyeOn()
+    public void OnGoodbye()
     {
         pauseTutorial();
-        dialogText.text = "Fever mode ended !\nNow you returned to normal !\nTutorial completed, \nCongratulations !";
-        dialogButton.onClick.AddListener(GoodbyeOff);
+        mDialogText.text = "Fever mode ended !\nNow you returned to normal !\nTutorial completed, \nCongratulations !";
+        mDialogButton.onClick.AddListener(OffGoodbye);
     }
 
-    public void GoodbyeOff()
+    public void OffGoodbye()
     {
         resumeTutorial();
         checkFunction = checkRealEnd;
     }
 
-    public void RealEndOn()
+    public void OnRealEnd()
     {
         pauseTutorial();
-        dialogText.text = "You do not have to stay here !\nPlease go back !";
-        dialogButton.onClick.AddListener(RealEndOff);
+        mDialogText.text = "You do not have to stay here !\nPlease go back !";
+        mDialogButton.onClick.AddListener(OffRealEnd);
     }
 
-    public void RealEndOff()
+    public void OffRealEnd()
     {
         SceneManager.LoadScene("Main");
     }
@@ -123,15 +123,15 @@ public class HowToPlayManager : GameManager
     {
         base.Awake();
 
-        dialogText = dialog.GetComponentInChildren<Text>();
-        dialogButton = dialog.GetComponentInChildren<Button>();
+        mDialogText = dialog.GetComponentInChildren<Text>();
+        mDialogButton = dialog.GetComponentInChildren<Button>();
     }
 
     new void Start()
     {
         base.Start();
 
-        GreetingOn();
+        OnGreeting();
     }
 
     new void Update()
@@ -148,7 +148,7 @@ public class HowToPlayManager : GameManager
     {
         Time.timeScale = 0.0f;
         checkFunction = null;
-        dialogButton.onClick.RemoveAllListeners();
+        mDialogButton.onClick.RemoveAllListeners();
         dialog.SetActive(true);
     }
 
@@ -170,7 +170,7 @@ public class HowToPlayManager : GameManager
 
                 if(zombie != null)
                 {
-                    ZombieWarnOn();
+                    OnWarningZombie();
                     break;
                 }
             }
@@ -189,7 +189,7 @@ public class HowToPlayManager : GameManager
                 
                 if(child.name == "CrackAnimation(Clone)")
                 {
-                    ZombieDeadOn();
+                    OnKillingZombie();
                     break;
                 }
             }
@@ -202,7 +202,7 @@ public class HowToPlayManager : GameManager
 
         if(bullets <= 5)
         {
-            LowAmmoOn();
+            OnLowAmmo();
         }
     }
 
@@ -212,7 +212,7 @@ public class HowToPlayManager : GameManager
 
         if(feverGuage >= 15)
         {
-            GuageWarnOn();
+            OnWarningGuage();
         }
     }
 
@@ -222,7 +222,7 @@ public class HowToPlayManager : GameManager
 
         if(feverOn == true)
         {
-            FeverWarnOn();
+            OnWarningFever();
         }
     }
 
@@ -232,7 +232,7 @@ public class HowToPlayManager : GameManager
 
         if(feverOn == false)
         {
-            GoodbyeOn();
+            OnGoodbye();
         }
     }
 
@@ -242,7 +242,7 @@ public class HowToPlayManager : GameManager
 
         if(int.Parse(score) > 2000)
         {
-            RealEndOn();
+            OnRealEnd();
         }
     }
 };
