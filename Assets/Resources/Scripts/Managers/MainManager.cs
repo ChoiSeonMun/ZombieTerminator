@@ -16,6 +16,11 @@ public class MainManager : MonoBehaviour
     public GameObject creditPanel;
     public GameObject title;
 
+    public void LoadHowToPlay()
+    {
+        SceneManager.LoadScene("HowToPlay");
+    }
+
     public void LoadGame()
     {
         SceneManager.LoadScene("Game");
