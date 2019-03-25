@@ -15,6 +15,11 @@ public class SpawnManager : MonoBehaviour
     public float spawnCooldown = float.NaN;
     // 특수 좀비를 Spawn할 확률
     public float specialSpawnRate = float.NaN;
+    // 특수 좀비를 Spawn할 확률을 조정하기 위해 일반 좀비와 특수 좀비의 스폰 수를 기록하는 변수들
+    public int mNormalSpawnCount = -1;
+    public int mSpecialSpawnCount = -1;
+    // 특수 좀비의 Spawn 확률을 보정하는 변수
+    public float mRateSpecialSpawnAmend = float.NaN;
 
     private Fever mFever = null;
     private Player mPlayer = null;
@@ -24,11 +29,6 @@ public class SpawnManager : MonoBehaviour
     private float mSpawnCooldownTemp = float.NaN;
     // 이전 Spawn 으로부터 얼마나 시간이 지났는지를 저장하는 변수
     private float mSpawnTimer = float.NaN;
-    // 특수 좀비를 Spawn할 확률을 조정하기 위해 일반 좀비와 특수 좀비의 스폰 수를 기록하는 변수들
-    public int mNormalSpawnCount = -1;
-    public int mSpecialSpawnCount = -1;
-    // 특수 좀비의 Spawn 확률을 보정하는 변수
-    public float mRateSpecialSpawnAmend = float.NaN;
     // 게임이 중단되는 것을 저장하기 위한 변수
     private bool mIsStopped = false;
 
@@ -61,7 +61,6 @@ public class SpawnManager : MonoBehaviour
 
                 if (zombie != null)
                 {
-                    zombie.TakeDamage(-zombie.lifeMax);
                     Destroy(zombie.gameObject);
                 }
             }

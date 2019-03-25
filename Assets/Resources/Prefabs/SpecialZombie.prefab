@@ -86,17 +86,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ba4d8decb30cdc46b31c96535322f4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Player: {fileID: 0}
-  Fever: {fileID: 0}
-  LevelManager: {fileID: 0}
-  ClawAnimationObject: {fileID: 0}
-  CrackAnimationObject: {fileID: 0}
-  CrackAnimator: {fileID: 0}
-  ZombieAnimator: {fileID: 0}
-  mLife: 0
-  mLifeMax: 0
-  mRuntime: NaN
-  mLifetime: NaN
+  player: {fileID: 0}
+  fever: {fileID: 0}
+  soundManager: {fileID: 0}
+  clawAnimationObject: {fileID: 0}
+  crackAnimationObject: {fileID: 0}
+  crackAnimator: {fileID: 0}
+  zombieAnimator: {fileID: 0}
+  life: 0
+  lifeMax: 0
+  runtime: NaN
+  lifetime: NaN
 --- !u!222 &222847371231130866
 CanvasRenderer:
   m_ObjectHideFlags: 1

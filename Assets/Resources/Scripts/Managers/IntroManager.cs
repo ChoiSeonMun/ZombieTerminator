@@ -17,7 +17,11 @@ public class IntroManager : MonoBehaviour
     public void OnClickLogin()
     {
         authenticate();
-        loadMain();
+
+        if(Application.isEditor)
+        {
+            SceneManager.LoadScene("Main");
+        }
     }
 
     public void OnClickCancel()
@@ -34,30 +38,25 @@ public class IntroManager : MonoBehaviour
         PlayGamesPlatform.InitializeInstance(config);
         PlayGamesPlatform.Activate();
 
-        authenticate();
         mIsCanInput = true;
     }
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0) && mIsCanInput == true)
+        // 로그인이 완료되면 Main Scene으로 이동한다
+        if (Social.localUser.authenticated)
         {
-            if (Social.localUser.authenticated)
-            {
-                // Main 씬 로드
-                loadMain();
-            }
-            else
-            {
-                Debug.Log("dialog panel activated");
-
-                // 대화상자를 띄운다
-                authenticationPanel.SetActive(true);
-                mIsCanInput = false;
-            }
+            SceneManager.LoadScene("Main");
         }
 
-        // Notice Text를 깜빡인다.
+        if (Input.GetMouseButtonDown(0) && mIsCanInput == true)
+        {
+            // 대화상자를 띄운다
+            authenticationPanel.SetActive(true);
+            mIsCanInput = false;
+        }
+
+        // Notice Text를 깜빡인다
         noticeText.color = Color.Lerp(Color.white, Color.black, Mathf.PingPong(Time.time * blinkSpeed, 1));
     }
 
@@ -67,13 +66,5 @@ public class IntroManager : MonoBehaviour
         {
             Debug.Log("Authentication: " + bSuccess);
         });
-    }
-
-    private void loadMain()
-    {
-        if (Social.localUser.authenticated)
-        {
-            SceneManager.LoadScene("Main");
-        }
     }
 }
