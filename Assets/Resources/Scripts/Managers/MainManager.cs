@@ -8,6 +8,7 @@ using GooglePlayGames.BasicApi;
 
 public class MainManager : MonoBehaviour
 {
+    public Button tutorialButton;
     public Button startButton;
     public Button rankButton;
     public Button quitButton;
@@ -79,6 +80,7 @@ public class MainManager : MonoBehaviour
 
     private void addOnclicks()
     {
+        tutorialButton.onClick.AddListener(LoadHowToPlay);
         startButton.onClick.AddListener(LoadGame);
         rankButton.onClick.AddListener(ShowLeaderboard);
         quitButton.onClick.AddListener(AskQuit);
@@ -87,6 +89,7 @@ public class MainManager : MonoBehaviour
 
     private void removeOnclicks()
     {
+        tutorialButton.onClick.RemoveAllListeners();
         startButton.onClick.RemoveAllListeners();
         rankButton.onClick.RemoveAllListeners();
         quitButton.onClick.RemoveAllListeners();
@@ -96,6 +99,8 @@ public class MainManager : MonoBehaviour
     private void setInactiveAllComponents()
     {
         removeOnclicks();
+
+        tutorialButton.gameObject.SetActive(false);
         startButton.gameObject.SetActive(false);
         rankButton.gameObject.SetActive(false);
         quitButton.gameObject.SetActive(false);
@@ -105,11 +110,13 @@ public class MainManager : MonoBehaviour
 
     private void setActiveAllComponents()
     {
+        tutorialButton.gameObject.SetActive(true);
         startButton.gameObject.SetActive(true);
         rankButton.gameObject.SetActive(true);
         quitButton.gameObject.SetActive(true);
         creditButton.gameObject.SetActive(true);
-        addOnclicks();
         title.SetActive(true);
+
+        addOnclicks();
     }
 }

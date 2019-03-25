@@ -1170,6 +1170,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb90344aa19d8f14c989ba6d7c02637d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tutorialButton: {fileID: 1616795829}
   startButton: {fileID: 1470154792}
   rankButton: {fileID: 1957908065}
   quitButton: {fileID: 701031102}
@@ -1514,7 +1515,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.13633205, y: 0.565}
   m_AnchorMax: {x: 0.8553711, y: 0.94754}
-  m_AnchoredPosition: {x: 1.5, y: -1.230011}
+  m_AnchoredPosition: {x: 1.5, y: -1.2299805}
   m_SizeDelta: {x: 254.80005, y: 245.59998}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1330768350
@@ -1996,18 +1997,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1616795830}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1034068591}
-        m_MethodName: LoadHowToPlay
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &1616795830
