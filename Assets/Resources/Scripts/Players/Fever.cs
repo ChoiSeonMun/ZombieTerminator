@@ -30,6 +30,7 @@ public class Fever : MonoBehaviour
     // fever 상태의 지속시간을 기록하는 변수
     private float mFeverBuffTime = float.NaN;
     private bool mbFeverUpdate = false;
+    private bool mbFeverPause = false;
 
     public void GainFeverCount()
     {
@@ -75,6 +76,14 @@ public class Fever : MonoBehaviour
         mSoundManager.PlayLoop("in-game-normal");
     }
 
+    public void PauseFever() {
+        mbFeverPause = true;
+    }
+
+    public void ResumeFever() {
+        mbFeverPause = false;
+    }
+
     void Awake()
     {
         FeverCount = 0;
@@ -92,8 +101,10 @@ public class Fever : MonoBehaviour
     void Update()
     {
         // fever객체의 타이머의 시간을 증가시킨다
-        mFeverTimer = mFeverTimer + Time.deltaTime;
-
+        if (!mbFeverPause)
+        {
+            mFeverTimer = mFeverTimer + Time.deltaTime;
+        }
         // 피버 카운트가 일정 수치 이상이면 fever를 킨다
         if (FeverCount >= MAX_FEVER_COUNT)
         {
