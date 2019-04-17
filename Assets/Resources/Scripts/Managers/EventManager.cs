@@ -28,11 +28,13 @@ public class EventManager : MonoBehaviour
         pauseEvent.AddListener(bomb.BlockBomb);
         pauseEvent.AddListener(levelManager.BlockUpdate);
         pauseEvent.AddListener(spawnManager.StopTargets);
+        pauseEvent.AddListener(fever.PauseFever);
         //
         resumeEvent.AddListener(gun.GrantReload);
         resumeEvent.AddListener(bomb.GrantBomb);
         resumeEvent.AddListener(levelManager.GrantUpdate);
         resumeEvent.AddListener(spawnManager.ResumeTargets);
+        resumeEvent.AddListener(fever.ResumeFever);
         //
         endEvent.AddListener(gameManager.EndGame);
         endEvent.AddListener(spawnManager.StopTargets);
